@@ -245,7 +245,7 @@ curated font set.
 - [ ] T084 Run `npm run check`, then every step of `specs/001-core-manuscript-pipeline/quickstart.md`, and record results
 - [ ] T085 Manual visual check (US5 scenario 7): render Burmese text with vowel signs in the `my-sans` and `my-serif` italic faces and confirm glyphs are slanted and vowel signs stay attached; note the result in `docs/decision-log.md`
 - [ ] T086 Maintainer step, needs explicit approval: publish the `fonts-v1` GitHub release with the font files from T067 and replace the `base_url` placeholder in `assets/fonts-manifest.json`
-- [ ] T087 Create `.github/workflows/ci.yml`: on push and pull request, `ubuntu-latest`, Node 26 (`actions/setup-node` with `node-version-file: .nvmrc`), `npm ci`, `npm run check`; this is the Linux CI runner SC-007 refers to and the merge gate (constitution Development Workflow)
+- [X] T087 Create `.github/workflows/ci.yml`: on push and pull request, `ubuntu-latest`, Node 26 (`actions/setup-node` with `node-version-file: .nvmrc`), `npm ci`, `npm run check`; this is the Linux CI runner SC-007 refers to and the merge gate (constitution Development Workflow)
 
 ---
 
