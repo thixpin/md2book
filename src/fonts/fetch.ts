@@ -41,6 +41,12 @@ export async function fetchFontSet(
   const dir = setDir(fontsRoot(options), set.id);
   await mkdir(dir, { recursive: true });
   const source = process.env.MD2BOOK_FONTS_SOURCE || options.manifest.base_url;
+  if (source.startsWith("<")) {
+    throw new BookError(
+      "fonts",
+      "the font release is not published yet; set MD2BOOK_FONTS_SOURCE to a mirror URL or local folder",
+    );
+  }
 
   const files: string[] = [];
   for (const { file, sha256: expected } of setFiles(set)) {

@@ -149,4 +149,6 @@ differences from the original Python toolchain in
 ## Licence
 
 MIT for the package. The fonts are licensed under the SIL Open Font
-License 1.1; `LICENSE-OFL.txt` is installed next to them.
+License 1.1; `LICENSE-OFL.txt` is installed next to them. The small
+test fonts in `test/fixtures/fonts-source/` are OFL subsets of the same
+Noto fonts and carry the same licence file.

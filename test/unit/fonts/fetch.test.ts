@@ -79,6 +79,22 @@ describe("fetchFontSet", () => {
     expect(readdirSync(result.dir).sort()).toEqual(EXPECTED);
   });
 
+  it("explains when the manifest's release URL is still a placeholder", async () => {
+    vi.stubEnv("MD2BOOK_FONTS_SOURCE", "");
+    const manifest = await loadManifest(FIXTURE_MANIFEST);
+    const unpublished = { ...manifest, base_url: "<GitHub release download URL for fonts-v1>/" };
+    const error: unknown = await fetchFontSet(unpublished.sets["my-sans"], {
+      fontsDir: tempDir(),
+      manifest: unpublished,
+    }).catch((e: unknown) => e);
+    expect(error).toEqual(
+      new BookError(
+        "fonts",
+        "the font release is not published yet; set MD2BOOK_FONTS_SOURCE to a mirror URL or local folder",
+      ),
+    );
+  });
+
   it("cannot reach a non-local URL in tests", async () => {
     const error: unknown = await fetchMySans("https://example.com/fonts/").catch((e: unknown) => e);
     expect(String(error)).toMatch(/network access in tests/);
