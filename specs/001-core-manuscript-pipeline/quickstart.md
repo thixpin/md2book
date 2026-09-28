@@ -52,12 +52,19 @@ is covered by `test/unit/fonts/fetch.test.ts` and
 checksum-failure case: exit 1 naming the file, nothing kept in the
 cache.
 
-After the `fonts-v1` release exists (task T086), fetch the real set:
+`fonts --config` loads the book config, so add a cover first (a
+missing cover stops every run, FR-004). After the `fonts-v1` release
+exists (task T086), fetch the real set:
 
 ```console
+$ mkdir cover && cp /path/to/cover.png cover/cover.png
 $ export MD2BOOK_FONTS="$(mktemp -d)"
 $ npx book-build fonts --config book.json
 ```
+
+Before the release, a maintainer can run the same step against the
+locally built files (task T067) with
+`MD2BOOK_FONTS_SOURCE=/path/to/book-build-tool/build/fonts`.
 
 Expected: the seven files of the chosen set and `LICENSE-OFL.txt` in
 `$MD2BOOK_FONTS/en-sans/`. This step needs the network once.

@@ -242,7 +242,7 @@ curated font set.
 - [X] T081 [P] Write `test/unit/errors-catalog.test.ts` asserting every SC-004 error (missing cover, empty glob, bad chapter heading, bad part file, chapter not covered by any part, three snippet errors, missing fonts, wrong config type, unsupported language or font set, init target present) produces exactly one line naming the file, key or command
 - [X] T082 [P] Write root `README.md` (real package docs): install (Node 26+, `nvm use`), `book-build init`, `book-build fonts`, config keys (link the contract), languages and font sets, licence notes (MIT package; fonts SIL OFL 1.1). Code lines in examples ≤ 72 characters
 - [X] T083 Update `docs/decision-log.md` with any difference found by T079 and any font face missing in T066
-- [ ] T084 Run `npm run check`, then every step of `specs/001-core-manuscript-pipeline/quickstart.md`, and record results
+- [X] T084 Run `npm run check`, then every step of `specs/001-core-manuscript-pipeline/quickstart.md`, and record results
 - [ ] T085 Manual visual check (US5 scenario 7): render Burmese text with vowel signs in the `my-sans` and `my-serif` italic faces and confirm glyphs are slanted and vowel signs stay attached; note the result in `docs/decision-log.md`
 - [ ] T086 Maintainer step, needs explicit approval: publish the `fonts-v1` GitHub release with the font files from T067 and replace the `base_url` placeholder in `assets/fonts-manifest.json`
 - [X] T087 Create `.github/workflows/ci.yml`: on push and pull request, `ubuntu-latest`, Node 26 (`actions/setup-node` with `node-version-file: .nvmrc`), `npm ci`, `npm run check`; this is the Linux CI runner SC-007 refers to and the merge gate (constitution Development Workflow)
