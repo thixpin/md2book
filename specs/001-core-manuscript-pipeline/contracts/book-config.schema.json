@@ -40,7 +40,8 @@
         "my",
         "en"
       ],
-      "default": "my"
+      "default": "my",
+      "type": "string"
     },
     "identifier": {
       "type": "string",
@@ -100,7 +101,8 @@
         "serif"
       ],
       "default": "sans",
-      "description": "Curated font set for the book's language."
+      "description": "Curated font set for the book's language.",
+      "type": "string"
     },
     "code_root": {
       "type": "string",
@@ -118,7 +120,8 @@
           "enum": [
             "myanmar",
             "ascii"
-          ]
+          ],
+          "type": "string"
         },
         "contents_heading": {
           "type": "string"
