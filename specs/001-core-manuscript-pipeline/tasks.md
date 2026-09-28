@@ -127,14 +127,14 @@ inside fences, and every error path.
 
 ### Tests for User Story 3 ⚠️
 
-- [ ] T033 [P] [US3] Write `test/unit/manuscript/dedent.test.ts` matching Python `textwrap.dedent`: common leading whitespace removed; whitespace-only lines ignored for the margin and normalised to empty; tabs vs spaces mismatch keeps the common prefix only
-- [ ] T034 [P] [US3] Write `test/unit/manuscript/snippets.test.ts`: marker matched on the trimmed line (indentation and trailing spaces allowed); whole-file include drops every `//` and `#` region marker line; region include takes content to the matching `#endregion` with depth counting, drops nested markers, keeps their content, dedents, strips leading/trailing blank lines; markers inside ```` ``` ```` or `~~~` fences untouched, including after an unterminated fence; language map `.ts→ts .js→js .json→json .py→python .sh→bash`, other → no language; output ```` ```{lang}\n{code}\n``` ````; `includes` list records `path` or `path#region`; errors `file not found: {path}`, `region not found: {path}#{region}`, `region not closed: {path}#{region}` each as `BookError` naming the chapter; region names ASCII `[A-Za-z0-9_-]`
+- [X] T033 [P] [US3] Write `test/unit/manuscript/dedent.test.ts` matching Python `textwrap.dedent`: common leading whitespace removed; whitespace-only lines ignored for the margin and normalised to empty; tabs vs spaces mismatch keeps the common prefix only
+- [X] T034 [P] [US3] Write `test/unit/manuscript/snippets.test.ts`: marker matched on the trimmed line (indentation and trailing spaces allowed); whole-file include drops every `//` and `#` region marker line; region include takes content to the matching `#endregion` with depth counting, drops nested markers, keeps their content, dedents, strips leading/trailing blank lines; markers inside ```` ``` ```` or `~~~` fences untouched, including after an unterminated fence; language map `.ts→ts .js→js .json→json .py→python .sh→bash`, other → no language; output ```` ```{lang}\n{code}\n``` ````; `includes` list records `path` or `path#region`; errors `file not found: {path}`, `region not found: {path}#{region}`, `region not closed: {path}#{region}` each as `BookError` naming the chapter; region names ASCII `[A-Za-z0-9_-]`
 
 ### Implementation for User Story 3
 
-- [ ] T035 [P] [US3] Implement `src/manuscript/dedent.ts` to pass T033
-- [ ] T036 [US3] Implement `src/manuscript/snippets.ts` `expandSnippets(chapter, codeRoot)` using `MARKER_RE` = `^<!--\s*include:\s*([^#\s]+)(?:#([A-Za-z0-9_-]+))?\s*-->\s*$`, `REGION_RE` = `^\s*(?://|#)\s*#(end)?region\b\s*([A-Za-z0-9_-]*)\s*$`, `FENCE_RE` = ``^\s*(```|~~~)`` (data-model.md → Reference constants), setting `chapter.expandedMd` and `chapter.includes`; pass T034
-- [ ] T037 [US3] Keep `expandSnippets` internal (not exported from `src/index.ts`, Constitution VIII); run `test/unit/public-api.test.ts` (T022) to confirm
+- [X] T035 [P] [US3] Implement `src/manuscript/dedent.ts` to pass T033
+- [X] T036 [US3] Implement `src/manuscript/snippets.ts` `expandSnippets(chapter, codeRoot)` using `MARKER_RE` = `^<!--\s*include:\s*([^#\s]+)(?:#([A-Za-z0-9_-]+))?\s*-->\s*$`, `REGION_RE` = `^\s*(?://|#)\s*#(end)?region\b\s*([A-Za-z0-9_-]*)\s*$`, `FENCE_RE` = ``^\s*(```|~~~)`` (data-model.md → Reference constants), setting `chapter.expandedMd` and `chapter.includes`; pass T034
+- [X] T037 [US3] Keep `expandSnippets` internal (not exported from `src/index.ts`, Constitution VIII); run `test/unit/public-api.test.ts` (T022) to confirm
 
 **Checkpoint**: US3 independently testable
 
