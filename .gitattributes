@@ -1,0 +1,5 @@
+# Keep the CRLF fixture byte-exact so the line-ending test stays meaningful.
+test/fixtures/book-mm/chapters/chapter-01.md -text
+# Binary fixtures
+*.ttf binary
+*.png binary

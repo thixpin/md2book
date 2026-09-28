@@ -1,0 +1,8 @@
+dist/
+coverage/
+reference/
+specs/
+.specify/
+.claude/
+test/fixtures/
+package-lock.json

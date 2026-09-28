@@ -3,3 +3,11 @@
 
 # Python bytecode from Spec Kit scripts
 __pycache__/
+
+# Node
+node_modules/
+dist/
+coverage/
+*.log
+.env*
+.DS_Store
