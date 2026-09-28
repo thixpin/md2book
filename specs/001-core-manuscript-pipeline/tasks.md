@@ -149,24 +149,24 @@ and plain text to expected output.
 
 ### Tests for User Story 4 ⚠️
 
-- [ ] T038 [P] [US4] Write `test/unit/markdown/render.test.ts`: output parses with `fast-xml-parser` `XMLValidator` (well-formed XHTML); pipe tables render, `---:` right-aligns; `---` → `<hr />`; HTML comments pass through; two callouts separated only by blank lines stay separate (CommonMark, no splitter)
-- [ ] T039 [P] [US4] Write `test/unit/markdown/highlight.test.ts`: ts/js/json/python/bash blocks → `<pre class="code"><code class="language-X">` with spans using only these classes from data-model.md → Reference constants (`k kc kd kn kp kr kt ow`, `s s1 s2 sa sb sc dl sd se sh si sx sr ss`, `m mb mf mh mi mo il`, `c ch cm c1 cs cpf`, `nc nf fm nb bp`, `cp nd`, `err`); language name lower-cased; no language or unknown language → unchanged escaped block
-- [ ] T040 [P] [US4] Write `test/unit/markdown/console.test.ts`: `console`/`terminal`/`shell-session` → `<div class="terminal"><div class="terminal-bar">` + 3 `<span class="terminal-dot"></span>` + `</div><pre class="console"><code>…</code></pre></div>`; `$ ` lines → `<span class="gp">$ </span>` + bash-highlighted command; other lines → `<span class="go">`
-- [ ] T041 [P] [US4] Write `test/unit/markdown/callouts.test.ts`: `[!NOTE]`/`[!WARNING]`/`[!TRY]` (any case) → `<div class="callout callout-{kind}"><p class="callout-title">{Title}</p>{body}</div>` with an empty leading `<p></p>` removed; titles from `strings.callout_titles`; `[!X]` unknown stays a blockquote
-- [ ] T042 [P] [US4] Write `test/unit/markdown/wide.test.ts`: longest visible line > 56 → class `wide`, > 72 → `xwide` (not both); markup stripped and entities decoded before measuring; existing classes kept
-- [ ] T043 [P] [US4] Write `test/unit/markdown/plain-text.test.ts`: tags → space, entities decoded (HTML5 named entities as Python `html.unescape`), runs of spaces/tabs collapsed, newlines kept
-- [ ] T044 [P] [US4] Write `test/unit/markdown/chapter-head.test.ts`: `<header class="chapter-head"><p class="chapter-number">{label}</p><h1>{title}</h1></header>` with escaping (data-model.md → Reference constants)
+- [X] T038 [P] [US4] Write `test/unit/markdown/render.test.ts`: output parses with `fast-xml-parser` `XMLValidator` (well-formed XHTML); pipe tables render, `---:` right-aligns; `---` → `<hr />`; HTML comments pass through; two callouts separated only by blank lines stay separate (CommonMark, no splitter)
+- [X] T039 [P] [US4] Write `test/unit/markdown/highlight.test.ts`: ts/js/json/python/bash blocks → `<pre class="code"><code class="language-X">` with spans using only these classes from data-model.md → Reference constants (`k kc kd kn kp kr kt ow`, `s s1 s2 sa sb sc dl sd se sh si sx sr ss`, `m mb mf mh mi mo il`, `c ch cm c1 cs cpf`, `nc nf fm nb bp`, `cp nd`, `err`); language name lower-cased; no language or unknown language → unchanged escaped block
+- [X] T040 [P] [US4] Write `test/unit/markdown/console.test.ts`: `console`/`terminal`/`shell-session` → `<div class="terminal"><div class="terminal-bar">` + 3 `<span class="terminal-dot"></span>` + `</div><pre class="console"><code>…</code></pre></div>`; `$ ` lines → `<span class="gp">$ </span>` + bash-highlighted command; other lines → `<span class="go">`
+- [X] T041 [P] [US4] Write `test/unit/markdown/callouts.test.ts`: `[!NOTE]`/`[!WARNING]`/`[!TRY]` (any case) → `<div class="callout callout-{kind}"><p class="callout-title">{Title}</p>{body}</div>` with an empty leading `<p></p>` removed; titles from `strings.callout_titles`; `[!X]` unknown stays a blockquote
+- [X] T042 [P] [US4] Write `test/unit/markdown/wide.test.ts`: longest visible line > 56 → class `wide`, > 72 → `xwide` (not both); markup stripped and entities decoded before measuring; existing classes kept
+- [X] T043 [P] [US4] Write `test/unit/markdown/plain-text.test.ts`: tags → space, entities decoded (HTML5 named entities as Python `html.unescape`), runs of spaces/tabs collapsed, newlines kept
+- [X] T044 [P] [US4] Write `test/unit/markdown/chapter-head.test.ts`: `<header class="chapter-head"><p class="chapter-number">{label}</p><h1>{title}</h1></header>` with escaping (data-model.md → Reference constants)
 
 ### Implementation for User Story 4
 
-- [ ] T045 [P] [US4] Implement `src/markdown/highlight.ts`: `Prism.tokenize` with all components loaded; mapping table from research.md R-03, emitting only classes listed in data-model.md → Reference constants (`keyword`→`k`, `boolean`→`kc`, `string`→`s2`, `number`→`mi`, `comment`→`c1`, `function`→`nf`, `class-name`→`nc`, `builtin`→`nb`, unmapped → plain text); pass T039
-- [ ] T046 [P] [US4] Implement `src/markdown/console.ts` (console lexer + terminal wrapper) to pass T040
-- [ ] T047 [P] [US4] Implement `src/markdown/callouts.ts` porting `_callout` / `_CALLOUT_RE` to pass T041
-- [ ] T048 [P] [US4] Implement `src/markdown/wide.ts` porting `_tag_wide_pre` to pass T042
-- [ ] T049 [P] [US4] Implement `src/markdown/plain-text.ts` using `entities` decoding to pass T043
-- [ ] T050 [P] [US4] Implement `src/markdown/chapter-head.ts` to pass T044
-- [ ] T051 [US4] Implement `src/markdown/render.ts` `renderMarkdown(md, strings)`: markdown-it (`xhtmlOut: true`, `html: true`) → fenced-block highlighting (T045/T046) → callouts (T047) → wide tagging (T048); `renderChapter(chapter, strings)` sets `html` and `plainText`; pass T038
-- [ ] T052 [US4] Keep `renderMarkdown`, `renderChapter` and `chapterHeadHtml` internal (not exported from `src/index.ts`, Constitution VIII); run `test/unit/public-api.test.ts` (T022) to confirm
+- [X] T045 [P] [US4] Implement `src/markdown/highlight.ts`: `Prism.tokenize` with all components loaded; mapping table from research.md R-03, emitting only classes listed in data-model.md → Reference constants (`keyword`→`k`, `boolean`→`kc`, `string`→`s2`, `number`→`mi`, `comment`→`c1`, `function`→`nf`, `class-name`→`nc`, `builtin`→`nb`, unmapped → plain text); pass T039
+- [X] T046 [P] [US4] Implement `src/markdown/console.ts` (console lexer + terminal wrapper) to pass T040
+- [X] T047 [P] [US4] Implement `src/markdown/callouts.ts` porting `_callout` / `_CALLOUT_RE` to pass T041
+- [X] T048 [P] [US4] Implement `src/markdown/wide.ts` porting `_tag_wide_pre` to pass T042
+- [X] T049 [P] [US4] Implement `src/markdown/plain-text.ts` using `entities` decoding to pass T043
+- [X] T050 [P] [US4] Implement `src/markdown/chapter-head.ts` to pass T044
+- [X] T051 [US4] Implement `src/markdown/render.ts` `renderMarkdown(md, strings)`: markdown-it (`xhtmlOut: true`, `html: true`) → fenced-block highlighting (T045/T046) → callouts (T047) → wide tagging (T048); `renderChapter(chapter, strings)` sets `html` and `plainText`; pass T038
+- [X] T052 [US4] Keep `renderMarkdown`, `renderChapter` and `chapterHeadHtml` internal (not exported from `src/index.ts`, Constitution VIII); run `test/unit/public-api.test.ts` (T022) to confirm
 
 **Checkpoint**: US4 independently testable
 
