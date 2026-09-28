@@ -79,13 +79,13 @@ server only.
 
 ### Tests ⚠️
 
-- [ ] T018 [P] [US2] Write `test/e2e/helpers.ts`: build a fixture site into a temp dir (generated back cover allowed), serve it with `src/web/serve.ts` on a random port, launch Chromium with Playwright; device table from REF §10 (12 entries: viewport, `deviceScaleFactor` 2, touch/mouse, Surface Duo fold via viewport segments emulation where available, else skipped with a note)
-- [ ] T019 [P] [US2] Write `test/e2e/layout.test.ts` (SC-003): per device — expected one page or spread (measure visible page boxes), spine centred (± 2 px; on the fold for the Duo), controls within the viewport, `scrollWidth <= clientWidth`, and on touch devices every control ≥ 44 px
-- [ ] T020 [P] [US2] Write `test/e2e/reader.test.ts` (SC-004): starts closed on cover; → opens (after 820 ms) and turns; ← back; Next/Previous buttons; touch swipe forward and one back swipe on the phone size; position restored after reload; bookmark toggle + Contents list entry; bookmarks/position with `localStorage` throwing still read fine; search finds a word and jumps; address and title follow a chapter without new history entries; `prefers-reduced-motion` turns instantly; English fixture shows ASCII folios; delayed stylesheet and fonts (route delay 1.5 s) still paginate correctly; the page text is found by `window.find`
+- [X] T018 [P] [US2] Write `test/e2e/helpers.ts`: build a fixture site into a temp dir (generated back cover allowed), serve it with `src/web/serve.ts` on a random port, launch Chromium with Playwright; device table from REF §10 (12 entries: viewport, `deviceScaleFactor` 2, touch/mouse, Surface Duo fold via viewport segments emulation where available, else skipped with a note)
+- [X] T019 [P] [US2] Write `test/e2e/layout.test.ts` (SC-003): per device — expected one page or spread (measure visible page boxes), spine centred (± 2 px; on the fold for the Duo), controls within the viewport, `scrollWidth <= clientWidth`, and on touch devices every control ≥ 44 px
+- [X] T020 [P] [US2] Write `test/e2e/reader.test.ts` (SC-004): starts closed on cover; → opens (after 820 ms) and turns; ← back; Next/Previous buttons; touch swipe forward and one back swipe on the phone size; position restored after reload; bookmark toggle + Contents list entry; bookmarks/position with `localStorage` throwing still read fine; search finds a word and jumps; address and title follow a chapter without new history entries; `prefers-reduced-motion` turns instantly; English fixture shows ASCII folios; delayed stylesheet and fonts (route delay 1.5 s) still paginate correctly; the page text is found by `window.find`
 
 ### Implementation
 
-- [ ] T021 [US2] Fix any failing reader behaviour only by correcting the build output (DOM/CSS/asset paths) — never by changing reader constants or fixes (FR-022); if a reference behaviour cannot be reproduced, stop and record it in `docs/decision-log.md`
+- [X] T021 [US2] Fix any failing reader behaviour only by correcting the build output (DOM/CSS/asset paths) — never by changing reader constants or fixes (FR-022); if a reference behaviour cannot be reproduced, stop and record it in `docs/decision-log.md`
 
 **Checkpoint**: reader parity verified on the matrix.
 
