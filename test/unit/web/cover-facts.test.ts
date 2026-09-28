@@ -27,4 +27,12 @@ describe("coverFacts", () => {
     expect(facts.edge).toEqual([255, 0, 0]);
     expect(facts.width).toBe(80);
   });
+
+  it("samples inside the image even for a cover narrower than 3 px", async () => {
+    const path = join(tempDir(), "tiny.png");
+    await sharp({ create: { width: 1, height: 1, channels: 3, background: "#123456" } })
+      .png()
+      .toFile(path);
+    expect((await coverFacts(path)).edge).toEqual([0x12, 0x34, 0x56]);
+  });
 });

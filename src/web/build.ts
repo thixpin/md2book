@@ -8,9 +8,17 @@ import { expandSnippets } from "../manuscript/snippets.ts";
 import { renderChapter } from "../markdown/render.ts";
 import { writeAssets } from "./assets.ts";
 import { writeBackCover } from "./back-cover.ts";
-import { coverFacts } from "./images.ts";
+import { coverFacts, writeFavicons, writeOgImage } from "./images.ts";
+import { pageDescription } from "./description.ts";
+import { warn } from "../errors.ts";
 import { page } from "./page.ts";
-import { computeBookKey, readerHtml, readerToolbar, type WebBook } from "./reader-dom.ts";
+import {
+  chapterHref,
+  computeBookKey,
+  readerHtml,
+  readerToolbar,
+  type WebBook,
+} from "./reader-dom.ts";
 
 export interface WebBuildOptions {
   /** Output directory; the site goes to `<out>/web/`. */
@@ -40,7 +48,12 @@ export async function buildWeb(
   const coverName = `cover${extname(config.cover)}`;
   copyFileSync(config.cover, join(web, coverName));
 
+  const favicon = await writeFavicons(config, web);
   const facts = await coverFacts(config.cover);
+  await writeOgImage(config.cover, web, facts);
+  if (!config.web_url) {
+    warn("web_url is not set; canonical and og:url are omitted and og:image is relative");
+  }
   const book: WebBook = {
     config,
     chapters,
@@ -52,33 +65,41 @@ export async function buildWeb(
   };
 
   const bookDescription = config.description || config.subtitle || config.title;
-  const shell = (title: string, content: string, description: string) =>
-    page(config, {
-      title,
-      content,
-      description,
-      stylesheet: assets.stylesheet,
-      script: assets.script,
-      headerTools: readerToolbar(),
-    });
+  const common = { stylesheet: assets.stylesheet, favicon };
+  const reader = { ...common, script: assets.script, headerTools: readerToolbar() };
   writeFileSync(
     join(web, "index.html"),
-    shell(config.title, readerHtml(book, ""), bookDescription),
+    page(config, {
+      ...reader,
+      title: config.title,
+      content: readerHtml(book, ""),
+      description: bookDescription,
+      path: "/",
+      ogType: "book",
+    }),
   );
   mkdirSync(join(web, "chapters"));
   for (const ch of chapters) {
     writeFileSync(
       join(web, "chapters", `${ch.slug}.html`),
-      shell(`${config.title} | ${ch.title}`, readerHtml(book, ch.slug), bookDescription),
+      page(config, {
+        ...reader,
+        title: `${config.title} | ${ch.title}`,
+        content: readerHtml(book, ch.slug),
+        description: pageDescription(ch.html ?? "", bookDescription),
+        path: chapterHref(ch.slug),
+        ogType: "article",
+      }),
     );
   }
   writeFileSync(
     join(web, "404.html"),
     page(config, {
+      ...common,
       title: `${config.title} | Page not found`,
       content: '<h1>Page not found</h1><p><a href="/">Open the book</a></p>',
       description: bookDescription,
-      stylesheet: assets.stylesheet,
+      path: null,
     }),
   );
   return { dir: web, chapters: chapters.length };

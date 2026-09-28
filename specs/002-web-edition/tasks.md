@@ -95,16 +95,16 @@ server only.
 
 ### Tests ⚠️
 
-- [ ] T022 [P] [US3] Write `test/unit/web/description.test.ts` porting REF §11 cases 4–5: cut at a space, ends with `…`, ≤ 156 code points, prefix of the paragraph, never from `<h2>`; markup stripped (`Use <code>a &amp; b</code>.` → `Use a & b.`); fallback without `<p>`
-- [ ] T023 [P] [US3] Write `test/unit/web/page.test.ts`: titles (index, chapter, 404); description meta; og:type `book`/`article`; og site_name/title/description/image(+width 1200, height 630, alt `{title} cover`); twitter card; canonical + og:url only with `web_url` (warning without); 404 `noindex`, no canonical, no script; favicon links only with favicon
-- [ ] T024 [P] [US3] Write `test/unit/web/images.test.ts` porting REF §11 cases 6–9: cover facts on a two-colour test PNG (ratio 5 decimals, edge average); `og-image.png` IHDR is 1200 × 630; no favicon → nothing written, returns false; non-SVG or missing favicon → error mentioning `svg`; SVG favicon → square 32 px and 180 px PNGs + `favicon.svg`
+- [X] T022 [P] [US3] Write `test/unit/web/description.test.ts` porting REF §11 cases 4–5: cut at a space, ends with `…`, ≤ 156 code points, prefix of the paragraph, never from `<h2>`; markup stripped (`Use <code>a &amp; b</code>.` → `Use a & b.`); fallback without `<p>`
+- [X] T023 [P] [US3] Write `test/unit/web/page.test.ts`: titles (index, chapter, 404); description meta; og:type `book`/`article`; og site_name/title/description/image(+width 1200, height 630, alt `{title} cover`); twitter card; canonical + og:url only with `web_url` (warning without); 404 `noindex`, no canonical, no script; favicon links only with favicon
+- [X] T024 [P] [US3] Write `test/unit/web/images.test.ts` porting REF §11 cases 6–9: cover facts on a two-colour test PNG (ratio 5 decimals, edge average); `og-image.png` IHDR is 1200 × 630; no favicon → nothing written, returns false; non-SVG or missing favicon → error mentioning `svg`; SVG favicon → square 32 px and 180 px PNGs + `favicon.svg`
 - [X] T025 [P] [US3] Write `test/unit/web/back-cover.test.ts`: configured back cover copied as `back-cover{ext}`; configured but missing → error naming it; generated (Chromium) → `back-cover.png` of 850 × round(850/ratio) px whose corner pixel equals the edge colour; Chromium missing → one-line error with `npx playwright install chromium` (simulated)
 
 ### Implementation
 
-- [ ] T026 [P] [US3] Implement `src/web/description.ts` to pass T022
-- [ ] T027 [US3] Complete `src/web/page.ts` social tags and 404 to pass T023
-- [ ] T028 [P] [US3] Implement `src/web/images.ts` with `sharp` (cover facts, OG image, favicons) to pass T024
+- [X] T026 [P] [US3] Implement `src/web/description.ts` to pass T022
+- [X] T027 [US3] Complete `src/web/page.ts` social tags and 404 to pass T023
+- [X] T028 [P] [US3] Implement `src/web/images.ts` with `sharp` (cover facts, OG image, favicons) to pass T024
 - [X] T029 [US3] Implement `src/web/back-cover.ts` (copy or Playwright render with the set's bold/regular faces) to pass T025; wire into `buildWeb`
 
 ---

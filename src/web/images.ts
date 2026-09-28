@@ -1,4 +1,9 @@
+import { copyFileSync, existsSync } from "node:fs";
+import { extname, join } from "node:path";
 import sharp from "sharp";
+import type { BookConfig } from "../config/load.ts";
+import { BookError } from "../errors.ts";
+import { OG_IMAGE } from "./page.ts";
 
 export interface CoverFacts {
   width: number;
@@ -20,8 +25,10 @@ export async function coverFacts(path: string): Promise<CoverFacts> {
     .raw()
     .toBuffer({ resolveWithObject: true });
   const { width: w, height: h, channels } = info;
+  // Coordinates are clamped so covers narrower than 3 px still sample inside the image.
+  const clamp = (v: number, max: number) => Math.min(Math.max(v, 0), max - 1);
   const pixel = (x: number, y: number) => {
-    const i = (y * w + x) * channels;
+    const i = (clamp(y, h) * w + clamp(x, w)) * channels;
     return [data[i]!, data[i + 1]!, data[i + 2]!];
   };
   const stepY = Math.max(1, Math.floor(h / 40));
@@ -46,4 +53,34 @@ export function pyRound(value: number): number {
 
 export function edgeCss(edge: CoverFacts["edge"]): string {
   return `rgb(${edge.map(pyRound).join(" ")})`;
+}
+
+/** Share image: the whole cover centred on a 1200×630 card in the cover's edge colour. */
+export async function writeOgImage(cover: string, web: string, facts: CoverFacts): Promise<void> {
+  const { name, width, height } = OG_IMAGE;
+  const coverWidth = Math.round(height * facts.ratio);
+  const [r, g, b] = facts.edge.map(pyRound) as [number, number, number];
+  const resized = await sharp(cover).resize(coverWidth, height, { fit: "fill" }).png().toBuffer();
+  await sharp({ create: { width, height, channels: 3, background: { r, g, b } } })
+    .composite([{ input: resized, left: Math.round((width - coverWidth) / 2), top: 0 }])
+    .png()
+    .toFile(join(web, name));
+}
+
+const FAVICON_PNGS = [
+  ["favicon-32.png", 32],
+  ["apple-touch-icon.png", 180],
+] as const;
+
+/** Copies the SVG favicon and renders its PNG fallbacks; false when `favicon` is not set. */
+export async function writeFavicons(config: BookConfig, web: string): Promise<boolean> {
+  if (!config.favicon) return false;
+  if (extname(config.favicon) !== ".svg" || !existsSync(config.favicon)) {
+    throw new BookError(config.favicon, "favicon must be an existing .svg file");
+  }
+  copyFileSync(config.favicon, join(web, "favicon.svg"));
+  for (const [name, size] of FAVICON_PNGS) {
+    await sharp(config.favicon, { density: 384 }).resize(size, size).png().toFile(join(web, name));
+  }
+  return true;
 }

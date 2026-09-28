@@ -43,8 +43,13 @@ describe("buildWeb", { timeout: 60_000 }, () => {
         "fonts/NotoSans-Regular.ttf",
         "fonts/NotoSansMono-Regular.ttf",
         "index.html",
+        "og-image.png",
+        "favicon.svg",
+        "favicon-32.png",
+        "apple-touch-icon.png",
       ]),
     );
+    expect(files).toHaveLength(8 + 11); // 8 font files + the 11 other contract files
     expect(files.filter((f) => /^style\.[0-9a-f]{12}\.css$/.test(f))).toHaveLength(1);
     expect(files.filter((f) => /^reader\.[0-9a-f]{12}\.js$/.test(f))).toHaveLength(1);
     expect(files.filter((f) => f.startsWith("fonts/"))).toHaveLength(8);
