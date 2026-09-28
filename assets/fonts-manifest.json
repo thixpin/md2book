@@ -1,0 +1,251 @@
+{
+  "version": 1,
+  "release": "fonts-v1",
+  "base_url": "<GitHub release download URL for fonts-v1>/",
+  "sets": {
+    "my-sans": {
+      "language": "my",
+      "style": "sans",
+      "body_family": "Noto Sans Myanmar",
+      "mono_family": "Noto Sans Mono",
+      "faces": [
+        {
+          "role": "body-regular",
+          "file": "NotoSansMyanmar-Regular.ttf",
+          "weight": 400,
+          "italic": false,
+          "sha256": "218c3992b3f59156bc9ff6aee3fc6a1434e231244604c96eb5142878c0202ea3"
+        },
+        {
+          "role": "body-semibold",
+          "file": "NotoSansMyanmar-SemiBold.ttf",
+          "weight": 600,
+          "italic": false,
+          "sha256": "265e46e82451baaa38cc9d4c8d8dabb8d424029e486c2fc4c48014b5c258fc0a"
+        },
+        {
+          "role": "body-bold",
+          "file": "NotoSansMyanmar-Bold.ttf",
+          "weight": 700,
+          "italic": false,
+          "sha256": "8b10b83bfdf4ec0754da1d9d773e948d60b77e5d79cc715e0e19d0188b7ccf0e"
+        },
+        {
+          "role": "body-italic",
+          "file": "NotoSansMyanmar-Italic.ttf",
+          "weight": 400,
+          "italic": true,
+          "sha256": "cb19c1e66d1d986f3558ff6eeba3b0ae55a7662db0a715b7856f00cd3884a185"
+        },
+        {
+          "role": "body-bolditalic",
+          "file": "NotoSansMyanmar-BoldItalic.ttf",
+          "weight": 700,
+          "italic": true,
+          "sha256": "a5ca9a52b0124498ea16500eccc24933fe0469f09999e35d01883db198fd73fa"
+        },
+        {
+          "role": "mono-regular",
+          "file": "NotoSansMono-Regular.ttf",
+          "weight": 400,
+          "italic": false,
+          "sha256": "a13eeb0e860858caab9bc1caf28ef1a98efe3317f3952f6bfe43c18b2c94de92"
+        },
+        {
+          "role": "mono-bold",
+          "file": "NotoSansMono-Bold.ttf",
+          "weight": 700,
+          "italic": false,
+          "sha256": "35842ad22f763a324b286eda088d10133afd22e845ec53711904ad28e2c98930"
+        }
+      ],
+      "licence": {
+        "file": "LICENSE-OFL.txt",
+        "sha256": "246a75859267af7da466823969d2e2b407ed8455ee5f74f4c8d63d8783be9b57"
+      }
+    },
+    "my-serif": {
+      "language": "my",
+      "style": "serif",
+      "body_family": "Noto Serif Myanmar",
+      "mono_family": "Noto Sans Mono",
+      "faces": [
+        {
+          "role": "body-regular",
+          "file": "NotoSerifMyanmar-Regular.ttf",
+          "weight": 400,
+          "italic": false,
+          "sha256": "dbf1e9044a7d2a599bb44b15e947c0b1c933b930a2cb7db8c0d1e03dacb0403a"
+        },
+        {
+          "role": "body-semibold",
+          "file": "NotoSerifMyanmar-SemiBold.ttf",
+          "weight": 600,
+          "italic": false,
+          "sha256": "fe0b5b0fed9f35cfa210b8c2491785a52e0ae19e37604c0a62cc074176b07c08"
+        },
+        {
+          "role": "body-bold",
+          "file": "NotoSerifMyanmar-Bold.ttf",
+          "weight": 700,
+          "italic": false,
+          "sha256": "2a9511a4df4ec31a1f433667ad38464c7d31fdc792bcc12af65a1148bf3f80b7"
+        },
+        {
+          "role": "body-italic",
+          "file": "NotoSerifMyanmar-Italic.ttf",
+          "weight": 400,
+          "italic": true,
+          "sha256": "ca04268b55a5812e67573c2408a2738d94aa90dd95638add34a70317c2154ee9"
+        },
+        {
+          "role": "body-bolditalic",
+          "file": "NotoSerifMyanmar-BoldItalic.ttf",
+          "weight": 700,
+          "italic": true,
+          "sha256": "2a8b1adcfaab4e35ac9aecf3dbe60cbb6aec9b52f67a95caafac14a525425b26"
+        },
+        {
+          "role": "mono-regular",
+          "file": "NotoSansMono-Regular.ttf",
+          "weight": 400,
+          "italic": false,
+          "sha256": "a13eeb0e860858caab9bc1caf28ef1a98efe3317f3952f6bfe43c18b2c94de92"
+        },
+        {
+          "role": "mono-bold",
+          "file": "NotoSansMono-Bold.ttf",
+          "weight": 700,
+          "italic": false,
+          "sha256": "35842ad22f763a324b286eda088d10133afd22e845ec53711904ad28e2c98930"
+        }
+      ],
+      "licence": {
+        "file": "LICENSE-OFL.txt",
+        "sha256": "246a75859267af7da466823969d2e2b407ed8455ee5f74f4c8d63d8783be9b57"
+      }
+    },
+    "en-sans": {
+      "language": "en",
+      "style": "sans",
+      "body_family": "Noto Sans",
+      "mono_family": "Noto Sans Mono",
+      "faces": [
+        {
+          "role": "body-regular",
+          "file": "NotoSans-Regular.ttf",
+          "weight": 400,
+          "italic": false,
+          "sha256": "f3961a9cde016d41a4879aecda1474d3a36d6bf54fa0e4643de029cc2248b0e8"
+        },
+        {
+          "role": "body-semibold",
+          "file": "NotoSans-SemiBold.ttf",
+          "weight": 600,
+          "italic": false,
+          "sha256": "a7af8d4a11e8e49fea9a19786a6469210b512cd4061413e8036bdd2425722795"
+        },
+        {
+          "role": "body-bold",
+          "file": "NotoSans-Bold.ttf",
+          "weight": 700,
+          "italic": false,
+          "sha256": "87cb2d84472a7d66da659ee47b6cdb9552326e8c128245231f191b6ac72529d9"
+        },
+        {
+          "role": "body-italic",
+          "file": "NotoSans-Italic.ttf",
+          "weight": 400,
+          "italic": true,
+          "sha256": "678288f868807d4d64a6f3b51466871d117d915780381ce9d0ed4b3bcbd06d37"
+        },
+        {
+          "role": "body-bolditalic",
+          "file": "NotoSans-BoldItalic.ttf",
+          "weight": 700,
+          "italic": true,
+          "sha256": "3d367743f371f28671d2764e911a53d7c20ec9b6aa8791d059e7090389fc52a5"
+        },
+        {
+          "role": "mono-regular",
+          "file": "NotoSansMono-Regular.ttf",
+          "weight": 400,
+          "italic": false,
+          "sha256": "a13eeb0e860858caab9bc1caf28ef1a98efe3317f3952f6bfe43c18b2c94de92"
+        },
+        {
+          "role": "mono-bold",
+          "file": "NotoSansMono-Bold.ttf",
+          "weight": 700,
+          "italic": false,
+          "sha256": "35842ad22f763a324b286eda088d10133afd22e845ec53711904ad28e2c98930"
+        }
+      ],
+      "licence": {
+        "file": "LICENSE-OFL.txt",
+        "sha256": "246a75859267af7da466823969d2e2b407ed8455ee5f74f4c8d63d8783be9b57"
+      }
+    },
+    "en-serif": {
+      "language": "en",
+      "style": "serif",
+      "body_family": "Noto Serif",
+      "mono_family": "Noto Sans Mono",
+      "faces": [
+        {
+          "role": "body-regular",
+          "file": "NotoSerif-Regular.ttf",
+          "weight": 400,
+          "italic": false,
+          "sha256": "a15cfbbc1539d707115111d672d590a3d70d4f74b4c0a315956da20ae19a14e1"
+        },
+        {
+          "role": "body-semibold",
+          "file": "NotoSerif-SemiBold.ttf",
+          "weight": 600,
+          "italic": false,
+          "sha256": "4f5f40f178242ed30eb4c32f12d39469da086e7e9957cb2e3fa5f28e0e3d1efe"
+        },
+        {
+          "role": "body-bold",
+          "file": "NotoSerif-Bold.ttf",
+          "weight": 700,
+          "italic": false,
+          "sha256": "24ad531e6b05ddad8c3d89572d2c93eb86a6b74e652ce7ee3c3e171de68e84c3"
+        },
+        {
+          "role": "body-italic",
+          "file": "NotoSerif-Italic.ttf",
+          "weight": 400,
+          "italic": true,
+          "sha256": "c4b3c971741ecdb40f5a443bce754e8fe91efe761b6ea10c92be7c3597cdadc4"
+        },
+        {
+          "role": "body-bolditalic",
+          "file": "NotoSerif-BoldItalic.ttf",
+          "weight": 700,
+          "italic": true,
+          "sha256": "1bc4f86502eaa368718f6192bee022ea9a703d5af1c18b7d291212657b63074a"
+        },
+        {
+          "role": "mono-regular",
+          "file": "NotoSansMono-Regular.ttf",
+          "weight": 400,
+          "italic": false,
+          "sha256": "a13eeb0e860858caab9bc1caf28ef1a98efe3317f3952f6bfe43c18b2c94de92"
+        },
+        {
+          "role": "mono-bold",
+          "file": "NotoSansMono-Bold.ttf",
+          "weight": 700,
+          "italic": false,
+          "sha256": "35842ad22f763a324b286eda088d10133afd22e845ec53711904ad28e2c98930"
+        }
+      ],
+      "licence": {
+        "file": "LICENSE-OFL.txt",
+        "sha256": "246a75859267af7da466823969d2e2b407ed8455ee5f74f4c8d63d8783be9b57"
+      }
+    }
+  }
+}
