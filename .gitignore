@@ -1,0 +1,5 @@
+# Reference-only source material (original spec pack); not part of the project docs
+/reference/
+
+# Python bytecode from Spec Kit scripts
+__pycache__/

@@ -1,0 +1,167 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "md2book book configuration",
+  "description": "Compatibility surface (Constitution, Engineering Standards). Paths resolve relative to this file. Unknown keys at any level produce a warning naming the key path, not an error; wrong types and missing required keys stop the run.",
+  "type": "object",
+  "required": [
+    "title",
+    "author",
+    "year",
+    "identifier",
+    "output_name",
+    "cover",
+    "chapter_glob"
+  ],
+  "properties": {
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "subtitle": {
+      "type": "string"
+    },
+    "author": {
+      "type": "string",
+      "minLength": 1
+    },
+    "publisher": {
+      "type": "string",
+      "description": "Empty means omitted."
+    },
+    "year": {
+      "type": "string"
+    },
+    "isbn": {
+      "type": "string",
+      "description": "Empty means omitted."
+    },
+    "language": {
+      "enum": [
+        "my",
+        "en"
+      ],
+      "default": "my"
+    },
+    "identifier": {
+      "type": "string",
+      "minLength": 1
+    },
+    "output_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "cover": {
+      "type": "string",
+      "minLength": 1,
+      "description": "PNG or JPEG. Must exist."
+    },
+    "back_cover": {
+      "type": "string"
+    },
+    "favicon": {
+      "type": "string"
+    },
+    "web_url": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "chapter_glob": {
+      "type": "string",
+      "minLength": 1
+    },
+    "part_glob": {
+      "type": "string"
+    },
+    "web_published_chapters": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "recto_chapter_start": {
+      "type": "boolean",
+      "default": false
+    },
+    "running_headers": {
+      "type": "boolean",
+      "default": true
+    },
+    "end_image": {
+      "type": "string"
+    },
+    "end_image_after": {
+      "type": "string"
+    },
+    "font_set": {
+      "enum": [
+        "sans",
+        "serif"
+      ],
+      "default": "sans",
+      "description": "Curated font set for the book's language."
+    },
+    "code_root": {
+      "type": "string",
+      "description": "Base for snippet paths. Default: nearest ancestor with .git, else this file's directory."
+    },
+    "strings": {
+      "type": "object",
+      "description": "Series strings. Defaults come from the language profile; explicit values win.",
+      "properties": {
+        "chapter_label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "chapter_digits": {
+          "enum": [
+            "myanmar",
+            "ascii"
+          ]
+        },
+        "contents_heading": {
+          "type": "string"
+        },
+        "page_names": {
+          "type": "object",
+          "properties": {
+            "cover": {
+              "type": "string"
+            },
+            "contents": {
+              "type": "string"
+            },
+            "back_cover": {
+              "type": "string"
+            }
+          }
+        },
+        "callout_titles": {
+          "type": "object",
+          "properties": {
+            "note": {
+              "type": "string"
+            },
+            "warning": {
+              "type": "string"
+            },
+            "try": {
+              "type": "string"
+            }
+          }
+        },
+        "licence_text": {
+          "type": "string"
+        },
+        "typeface_line": {
+          "type": "string"
+        },
+        "storage_prefix": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  }
+}
