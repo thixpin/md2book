@@ -124,9 +124,9 @@ server only.
 
 ## Phase 7: Polish
 
-- [ ] T033 [P] Write `scripts/equivalence-web.ts` (SC-001): build `book-01` with the Python `web.py` in a temporary copy of `development-book/publish` (the checkout untouched) and with ours; compare file trees ignoring hash segments and the element/attribute skeleton of `index.html` and `chapters/ch01.html`; exit 1 on differences
-- [ ] T034 [P] Write `test/integration/web-perf.test.ts`: 20-chapter synthetic book builds in < 30 s with a copied back cover (SC-006)
-- [ ] T035 Update `README.md` (web and serve commands, Chromium install note, `web_published_chapters`) and `docs/decision-log.md` (all FR-021 edits, no web end image, English folios, Vitest + Playwright library)
+- [X] T033 [P] Write `scripts/equivalence-web.ts` (SC-001): build `book-01` with the Python `web.py` in a temporary copy of `development-book/publish` (the checkout untouched) and with ours; compare file trees ignoring hash segments and the element/attribute skeleton of `index.html` and `chapters/ch01.html`; exit 1 on differences
+- [X] T034 [P] Write `test/integration/web-perf.test.ts`: 20-chapter synthetic book builds in < 30 s with a copied back cover (SC-006)
+- [X] T035 Update `README.md` (web and serve commands, Chromium install note, `web_published_chapters`) and `docs/decision-log.md` (all FR-021 edits, no web end image, English folios, Vitest + Playwright library)
 - [ ] T036 Run `npm run check`, `npm run test:e2e`, `npm run equivalence:web`, and the quickstart; rebuild the demo book in the scratch folder with `book-build web` and open it
 
 ---

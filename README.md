@@ -5,11 +5,11 @@ web edition and a QA report, with first-class support for Myanmar
 (Burmese) script. The CLI is `book-build`.
 
 > **Status: early development.** This release contains the core
-> manuscript pipeline (config, chapters, parts, code snippets, Markdown
-> rendering, fonts) and the `init` and `fonts` commands. The `pdf`,
-> `epub`, `qa`, `all`, `web`, `serve` and `cover` commands are reserved
-> and print "not available yet". The package is not on npm yet, and
-> the font download needs the `fonts-v1` release to be published.
+> manuscript pipeline, the `init` and `fonts` commands, and the web
+> edition (`web`, `serve`). The `pdf`, `epub`, `qa`, `all` and `cover`
+> commands are reserved and print "not available yet". The package is
+> not on npm yet, and the font download needs the `fonts-v1` release to
+> be published.
 
 ## Requirements
 
@@ -44,6 +44,31 @@ Add a cover image at `cover/cover.png`, then fetch the fonts:
 
 ```console
 $ book-build fonts --config my-book/book.json
+```
+
+## Web edition
+
+Publish chosen chapters as a static site that reads like a real book:
+it opens from a closed cover, pages turn with a curled sheet, and wide
+screens show a two-page spread. List the public chapters in the config;
+other chapter files are never read:
+
+```json
+"web_published_chapters": ["chapter-01.md", "chapter-02.md"]
+```
+
+```console
+$ book-build web --config my-book/book.json
+$ book-build serve --config my-book/book.json --port 8000
+```
+
+The site is written to `dist/<config name>/web/` (or `--out <dir>`) and
+must be served from the root of its domain. Set `web_url` for canonical
+and share links. `favicon` (an SVG) and `back_cover` are optional; without
+`back_cover` a plain one is generated, which needs Chromium once:
+
+```console
+$ npx playwright install chromium
 ```
 
 ## Fonts
@@ -129,10 +154,11 @@ file. The full schema is in
 The API mirrors the CLI:
 
 ```ts
-import { init, fonts } from "@thixpin/md2book";
+import { init, fonts, web } from "@thixpin/md2book";
 
 await init({ dir: "my-book", lang: "en", title: "T", author: "A" });
-const { dir } = await fonts({ config: "my-book/book.json" });
+await fonts({ config: "my-book/book.json" });
+const { dir } = await web({ config: "my-book/book.json" });
 ```
 
 ## Development
