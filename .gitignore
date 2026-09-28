@@ -11,3 +11,6 @@ coverage/
 *.log
 .env*
 .DS_Store
+
+# Maintainer font build output (uploaded to the fonts release, not committed)
+build/
