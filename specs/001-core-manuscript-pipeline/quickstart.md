@@ -14,6 +14,8 @@ Run these from the repository root after the slice is implemented. Contracts:
 
 - For the equivalence check only: a checkout of `development-book` at
   commit `d235dbd`, and Python 3 with its `publish/requirements.txt`.
+- For maintainer font steps only (T053, T066–T067): Python 3 with
+  fontTools. Contributors running `npm run check` need neither.
 
 ## 1. Install and run the checks
 
@@ -44,17 +46,21 @@ Expected: `"language": "my"`, and the heading uses `အခန်း (၁)`.
 
 ## 3. Fetch fonts offline from a local source (US-5)
 
+The offline path (fixture fonts, local folder and a local HTTP server)
+is covered by `test/unit/fonts/fetch.test.ts` and
+`test/integration/cli-fonts.test.ts` in `npm run check`, including the
+checksum-failure case: exit 1 naming the file, nothing kept in the
+cache.
+
+After the `fonts-v1` release exists (task T086), fetch the real set:
+
 ```console
-$ REPO=/path/to/book-build-tool
-$ export MD2BOOK_FONTS_SOURCE="$REPO/test/fixtures/fonts-source"
 $ export MD2BOOK_FONTS="$(mktemp -d)"
 $ npx book-build fonts --config book.json
 ```
 
 Expected: the seven files of the chosen set and `LICENSE-OFL.txt` in
-`$MD2BOOK_FONTS/en-sans/`. The checksum failure path (a source file
-whose SHA-256 does not match the manifest) is covered by the unit
-suite: exit 1 naming the file, nothing kept in the cache.
+`$MD2BOOK_FONTS/en-sans/`. This step needs the network once.
 
 ## 4. Error paths (SC-004)
 

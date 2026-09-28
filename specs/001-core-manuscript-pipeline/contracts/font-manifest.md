@@ -36,6 +36,12 @@ Rules:
   `body-italic`, `body-bolditalic`, `mono-regular`, `mono-bold`.
 - `my-sans` lists exactly the seven file names of REF §7.
 - Download URL of a file = `base_url` + `file` (or `MD2BOOK_FONTS_SOURCE` + `file`).
+- The manifest is only ever the one shipped in the package; it is never read from
+  `MD2BOOK_FONTS_SOURCE` or any download source, so a mirror must serve byte-identical files.
+  (Tests inject a fixture manifest through an internal option that is not a CLI flag or
+  environment variable.)
+- Each set's `body_family` must equal the catalogue in `src/config/language.ts`, which supplies
+  the `strings.typeface_line` default.
 - A file may appear in several sets (e.g. mono faces); it is stored once per set directory.
 - The repository URL behind `base_url` is set when the package repo is published.
 - `version` changes only on an incompatible shape change.

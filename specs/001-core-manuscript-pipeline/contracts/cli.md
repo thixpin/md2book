@@ -2,7 +2,8 @@
 
 This slice contracts `init` and `fonts`. `pdf`, `epub`, `qa`, `all`, `web`, `serve` and `cover`
 are reserved names; they print "not available yet" and exit 1 until their slices land. Every
-command has an exported async function in the programmatic API with the same options.
+implemented command has an exported async function in the programmatic API with the same
+options (this slice: `init` and `fonts`).
 
 Global rules (FR-050): exit 0 on success; on failure, exit 1 with one line on stderr:
 `book-build: <file|key|glob>: <reason>`. Warnings go to stderr prefixed `warning:` and do not

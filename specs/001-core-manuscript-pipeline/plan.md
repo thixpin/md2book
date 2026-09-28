@@ -34,7 +34,7 @@ well-formedness in tests. Playwright is not needed in this slice.
 
 **Project Type**: npm package with a CLI (`book-build`) and a library core.
 
-**Performance Goals**: load + render a 20-chapter book in < 10 s (SC-007); `init` → first run
+**Performance Goals**: load + render a 20-chapter book in < 10 s on the Linux CI runner (SC-007); `init` → first run
 in < 1 min (SC-008).
 
 **Constraints**: no network except `book-build fonts`; never write to manuscript files; never
@@ -52,7 +52,7 @@ prompt mechanism, cmap reader, glob/sort) are resolved in [research.md](./resear
 
 | Principle | Gate for this slice | Status |
 |---|---|---|
-| I. Behavioural equivalence | SC-001–003 compare chapter data, plain text and structure counts with the Python toolchain on `book-01`. Decision log lives at `docs/decision-log.md` (resolves the constitution's `DECISION_LOG_LOCATION` TODO). Initial entries: `--config`/`--out` replace `--book`; `code_root` replaces the fixed repo root; `en` heading shape; Prism tokens instead of Pygments (same class names, token boundaries may differ); console prompt detection limited to `$ `. | Pass |
+| I. Behavioural equivalence | SC-001–003 compare chapter data, plain text and structure counts with the Python toolchain on `book-01`. Decision log lives at `docs/decision-log.md`. Initial entries: `--config`/`--out` replace `--book`; `code_root` replaces the fixed repo root; `en` heading shape; Prism tokens instead of Pygments (same class names, token boundaries may differ); console prompt detection limited to `$ `. | Pass |
 | II. Manuscript read-only | Loader only reads; SC-005 byte-compares fixture sources before/after. `init` refuses to overwrite (FR-064). | Pass |
 | III. Complex scripts | Burmese fixture (`book-mm`) covers heading digits, NFC, stacked consonants in text; Myanmar font sets checked for U+1000 + `a`; `my-sans` is exactly the current 7 files. | Pass |
 | IV. Fail loudly | Every error in spec FR-050/SC-004 is a typed error with a one-line message and a test. FR-046 is a deliberate warning (clarified with the user), not a silent skip. | Pass |
@@ -88,7 +88,7 @@ specs/001-core-manuscript-pipeline/
 ```text
 src/
 ├── cli.ts               # book-build: init, fonts (others reserved)
-├── index.ts             # programmatic API mirroring the CLI
+├── index.ts             # public API: exports only init() and fonts() (Constitution VIII)
 ├── errors.ts            # BookError: one-line message, file/key, exit code
 ├── config/              # zod schema, load, path + code_root resolution, language defaults
 ├── manuscript/          # chapters, parts, snippets (+ dedent), contents list
@@ -98,8 +98,9 @@ src/
 └── init/                # prompts, templates for book.json and sample chapter
 assets/
 └── fonts-manifest.json  # curated sets: files, SHA-256, CSS family names
-scripts/
-├── build-fonts.py       # maintainer-only: builds the four font sets for release
+scripts/                 # maintainer/development tooling only; never part of the CLI or API
+├── build-fonts.py       # builds the four font sets for release; checks SC-006 coverage
+├── make-font-fixtures.py  # subsets fonts into test/fixtures/fonts-source/ (run once)
 ├── dump-python-reference.py  # imports development-book/publish/build.py, writes chapter
 │                             # data, plain text and structure counts as JSON
 └── equivalence.ts       # runs the dump via $DEVBOOK, runs our pipeline, diffs (SC-001–003)
@@ -110,9 +111,10 @@ test/
 │   ├── book-mm/         # Burmese: parts, snippets, callouts, console, CRLF
 │   ├── book-en/         # English headings and profile defaults
 │   ├── code/            # snippet sources with regions
-│   └── fonts-source/    # tiny stand-in font files + manifest for offline tests
+│   └── fonts-source/    # tiny subset fonts + four-set manifest for offline tests
 ├── unit/                # config, chapters, parts, snippets, markdown, fonts, init
-└── integration/         # pipeline over fixtures; equivalence script hook
+├── integration/         # pipeline over fixtures; CLI init and fonts
+└── release/             # checks on real font assets; `npm run test:release` only
 ```
 
 **Structure Decision**: single npm package, trimmed from plan-input's layout to what this slice
@@ -123,4 +125,6 @@ their own slices.
 
 | Violation | Why Needed | Simpler Alternative Rejected Because |
 |---|---|---|
-| Python maintainer script (`scripts/build-fonts.py`) in a TypeScript repo | Myanmar sets need fontTools merge, UPM scaling and outline oblique with GPOS anchor shifting; no mature Node equivalent exists (plan-input D2, R1). It runs only when publishing a font release, never inside the tool. | Porting to Node would reimplement fontTools internals and risk Burmese mark placement; shelling out at run time (D2 b) would make every user install Python. |
+| Python maintainer scripts in a TypeScript repo: `scripts/build-fonts.py` | Myanmar sets need fontTools merge, UPM scaling and outline oblique with GPOS anchor shifting; no mature Node equivalent exists (plan-input D2, R1). It runs only when publishing a font release, never inside the tool. | Porting to Node would reimplement fontTools internals and risk Burmese mark placement; shelling out at run time (D2 b) would make every user install Python. |
+| `scripts/make-font-fixtures.py` (maintainer/dev tooling) | Offline tests need tiny real TrueType files with known cmaps; fontTools subsetting of the existing OFL fonts produces them in a few KB. Run once; outputs committed; never shipped in the package or exposed by the CLI/API. | Hand-crafting TTF bytes in TypeScript is error-prone; committing full fonts bloats the repo. |
+| `scripts/dump-python-reference.py` (development tooling) | SC-001–003 compare against the Python toolchain's own data; the reference implementation is Python, so it is called directly via `$DEVBOOK`. Not in CI by default; never shipped or exposed. | Re-deriving Python results in TypeScript would compare our code with itself. |

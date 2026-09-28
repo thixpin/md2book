@@ -14,8 +14,9 @@ build, web reader, cover CLI/API) are separate features.
 init" — added User Story 6 (project init with language and curated font set choice) and made
 language-dependent defaults and font sets explicit.
 
-Exact constants, patterns and error strings of the Python toolchain this replaces are in
-`reference/docs/reference-current-behaviour.md`, cited below as **[REF §n]**.
+Exact constants, patterns and error strings of the Python toolchain this replaces are cited below
+as **[REF §n]**; the values this slice needs are copied into `data-model.md` → Reference constants
+(the full reference, `reference/docs/reference-current-behaviour.md`, is git-ignored).
 
 ## Clarifications
 
@@ -173,7 +174,8 @@ class names and extracted plain text to expected output.
    other `[!X]` stays a plain blockquote.
 7. **Given** two callouts separated only by blank lines, **When** rendered, **Then** they stay two
    separate callouts.
-8. **Given** a `---` line, **When** rendered, **Then** it becomes a scene break (`* * *`).
+8. **Given** a `---` line, **When** rendered, **Then** it becomes a scene break: an `<hr />`
+   element, which the stylesheet draws as `* * *`.
 9. **Given** any chapter, **When** rendered, **Then** the HTML is well-formed XHTML, and a plain
    text form (markup replaced by spaces, entities decoded, runs of spaces and tabs collapsed) is
    produced for later QA and EPUB comparison.
@@ -353,6 +355,13 @@ pipeline from User Stories 1–4.
   example Myanmar text in an English book), the run MUST print a warning naming the file and the
   character and continue, and MUST record each such character with its file for the QA report.
 
+**Errors**
+
+- **FR-050**: Every failure MUST give a non-zero exit and a single-line message naming the file
+  (or key, glob or command) and the reason; success exits 0.
+- **FR-051**: The system MUST NOT silently skip content: any error condition in this specification stops the run
+  (Constitution IV).
+
 **Project init**
 
 - **FR-060**: `book-build init` MUST create a new book project in the current directory or a
@@ -368,7 +377,7 @@ pipeline from User Stories 1–4.
   `font_set`, generate a unique identifier, set `year` to the current year, and use the
   language defaults of FR-007, except `strings.licence_text`, which init MUST set explicitly to
   `This work is licensed under the MIT License. https://opensource.org/license/mit` (the author
-  can edit it). `output_name` MUST be the title as an ASCII slug:
+  can edit it); init writes no other `strings` keys. `output_name` MUST be the title as an ASCII slug:
   lower-cased, runs of characters other than `a-z0-9` replaced by one hyphen, leading and
   trailing hyphens removed; if nothing remains, `book`. The sample chapter heading MUST match the
   language's label word and digits.
@@ -376,13 +385,6 @@ pipeline from User Stories 1–4.
   exists, it stops, names the file and writes nothing.
 - **FR-065**: Init MUST NOT use the network; it ends by printing the `book-build fonts` command
   for the chosen set.
-
-**Errors**
-
-- **FR-050**: Every failure MUST give a non-zero exit and a single-line message naming the file
-  (or key, glob or command) and the reason; success exits 0.
-- **FR-051**: The system MUST NOT silently skip content: any error condition above stops the run
-  (Constitution IV).
 
 ### Key Entities *(include if feature involves data)*
 
@@ -410,23 +412,26 @@ pipeline from User Stories 1–4.
 - **SC-003**: For every `book-01` chapter, the counts of terminal blocks, highlighted code blocks,
   `wide` and `xwide` blocks, tables and each callout kind equal the Python toolchain's.
 - **SC-004**: 100% of the error conditions in this slice (missing cover, empty glob, bad chapter
-  heading, bad part file, uncovered chapter, three snippet errors, missing fonts, wrong config
-  type, unsupported language or font set, init target file already present) stop the run with a one-line message naming the file, key or command, each covered by an
-  automated test.
+  heading, bad part file, chapter not covered by any part, three snippet errors, missing fonts,
+  wrong config type, unsupported language or font set, init target file already present) stop
+  the run with a one-line message naming the file, key or command, each covered by an automated
+  test.
 - **SC-005**: Running the full slice on a fixture book leaves every source file byte-identical.
 - **SC-006**: Every face of every Myanmar set covers both U+1000 and `a`, and every face of every
   English set covers `a`; after the fonts command has run once, all tests pass with the network
   disabled.
+- **SC-007**: Loading and rendering a 20-chapter book takes under 10 seconds on the project's
+  Linux CI runner (Ubuntu).
 - **SC-008**: For each of the 4 language and font-set combinations, `book-build init` with flags
   produces a project whose sample chapter loads and renders with no error other than the missing
   cover, in under 1 minute from an empty directory to that first run.
-- **SC-007**: Loading and rendering a 20-chapter book takes under 10 seconds on a current laptop.
 
 ## Assumptions
 
 - **Scope**: this feature is Delivery Slice 1. EPUB, PDF, QA report, web build, web reader, cover
-  rendering and the programmatic API are separate features; this slice exposes the
-  `book-build init` and `book-build fonts` commands to authors, and the rest is exercised through
+  rendering and the build commands' API functions are separate features; this slice exposes
+  `book-build init` and `book-build fonts` to authors, through both the CLI and the mirrored
+  programmatic API (`init()`, `fonts()`, Constitution VIII), and the rest is exercised through
   tests.
 - **Code root**: `code_root` is a config key, relative to the config file; its default is the
   git root containing the config file, or the config file's directory if there is none. This
@@ -435,10 +440,12 @@ pipeline from User Stories 1–4.
   `dist/<config basename>/` in the current directory), replacing the Python `--book <name>`.
 - **Fonts**: each curated font set is built once outside the tool with the existing Python script and
   published as a versioned, checksummed download; `book-build fonts` fetches them into a user
-  cache that can be overridden. The exact hosting is decided in `/speckit-plan` (plan-input D2).
+  cache that can be overridden. Hosting: versioned GitHub release assets with SHA-256 in the
+  package's manifest (plan research R-05).
   The Myanmar `sans` set is the current set; the families behind the Myanmar `serif` set and
   the two English sets (expected: Noto Serif Myanmar, Noto Sans, Noto Serif, with Noto Sans Mono
-  for code) are confirmed in `/speckit-plan`, including any need to extend the font build script.
+  for code) are confirmed when `scripts/build-fonts.py` is run; the plan extends that script to
+  the four sets.
 - **Language code**: Myanmar is stored as `my` (its BCP 47 code); `mm` is a country code and is
   accepted only as init input. Only `my` and `en` are supported in this version.
 - **Equivalence**: a Myanmar book using the default `sans` set and default strings behaves

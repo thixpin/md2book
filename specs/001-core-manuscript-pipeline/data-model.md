@@ -49,8 +49,8 @@ key at any level (reported as a path, e.g. `strings.chapter_lable`) → warning,
 | `contents_heading` | `မာတိကာ` | `Contents` |
 | `page_names.cover` / `.contents` / `.back_cover` | `Cover` / `Contents` / `Back cover` | same |
 | `callout_titles.note` / `.warning` / `.try` | `Note` / `Warning` / `Try it yourself` | same |
-| `licence_text` | CC BY-NC-ND 4.0 paragraph from REF §6 | same (init writes MIT text explicitly) |
-| `typeface_line` | `Typeface: <body family of font set>` | same |
+| `licence_text` | CC BY-NC-ND 4.0 paragraph (Reference constants below) | same (init writes MIT text explicitly) |
+| `typeface_line` | `Typeface: <body family of font set>` (catalogue: `my-sans` Noto Sans Myanmar, `my-serif` Noto Serif Myanmar, `en-sans` Noto Sans, `en-serif` Noto Serif) | same |
 | `storage_prefix` | `devbook` | `devbook` |
 
 An explicit value always wins over the profile default. Changing `language` changes only keys
@@ -140,3 +140,67 @@ fonts and finds any file absent stops with the `book-build fonts` command (FR-04
 Writes `book.json` and `chapters/chapter-01.md`; any existing target file → stop, write nothing.
 Derived: `output_name` = title slug (`a-z0-9`, hyphen-joined) or `book`; `strings.licence_text`
 = MIT licence line; `identifier` = `urn:uuid:<random>`; `year` = current year.
+
+## Reference constants
+
+Copied verbatim from the Python toolchain (`development-book/publish/` at `d235dbd`, via
+`reference/docs/reference-current-behaviour.md` §2–§7, which is git-ignored) so that tasks can be
+executed from a fresh clone. Python regex syntax; port with the `u` flag.
+
+### Chapters and parts (REF §2)
+
+```text
+CHAPTER_HEAD_RE = ^#\s+(အခန်း\s*\([၀-၉0-9]+\))\s*-\s*(.+?)\s*$
+PART_HEAD_RE    = ^#\s+(Part\s+[IVX]+)\s*-\s*(.+?)\s*$
+PART_RANGE_RE   = ^chapters:\s*(\d+)\s*-\s*(\d+)\s*$     (multiline)
+SECTIONS        = ^##\s+(.+?)\s*$                        (multiline, body)
+```
+
+- `CHAPTER_HEAD_RE` is the `my` shape. The label word `အခန်း` comes from
+  `strings.chapter_label`. The `en` shape is `^#\s+(<label>\s+[၀-၉0-9]+)\s*-\s*(.+?)\s*$`
+  (no parentheses; clarified 2026-09-28).
+- Contents list without parts: `<ol><li><a href="…">{full_title}</a></li>…</ol>`.
+- With parts: `<ol class="toc-parts"><li class="toc-part"><span class="toc-part-title">Part I - Title</span><ol>…</ol></li></ol>`;
+  a part with no chapters is skipped. Titles are HTML-escaped.
+
+### Snippets (REF §3)
+
+```text
+MARKER_RE = ^<!--\s*include:\s*([^#\s]+)(?:#([\w-]+))?\s*-->\s*$
+REGION_RE = ^\s*(?://|#)\s*#(end)?region\b\s*([\w-]*)\s*$
+FENCE_RE  = ^\s*(```|~~~)
+LANGUAGES = .ts→ts  .js→js  .json→json  .py→python  .sh→bash  (other → no language)
+```
+
+- In the port, `[\w-]` becomes `[A-Za-z0-9_-]` (decision log; research R-10).
+- The marker is matched against the trimmed line; any fence line toggles fence state.
+- Output block: ```` ```{lang}\n{code}\n``` ````. Errors: `file not found: {path}`,
+  `region not found: {path}#{region}`, `region not closed: {path}#{region}`.
+
+### Markdown rendering (REF §4)
+
+- Terminal (`console`, `terminal`, `shell-session`):
+  `<div class="terminal"><div class="terminal-bar"><span class="terminal-dot"></span><span class="terminal-dot"></span><span class="terminal-dot"></span></div><pre class="console"><code>…</code></pre></div>`;
+  prompt spans `gp`, output spans `go`.
+- Highlighted: `<pre class="code"><code class="language-X">…</code></pre>`.
+- Token classes: keywords `k kc kd kn kp kr kt ow`; strings `s s1 s2 sa sb sc dl sd se sh si sx
+  sr ss`; numbers `m mb mf mh mi mo il`; comments `c ch cm c1 cs cpf`; names `nc nf fm nb bp`;
+  preprocessor/decorators `cp nd`; errors `err`; terminal `gp go gt gr nv`.
+- Callout: `<blockquote>\s*<p>\[!([A-Za-z]+)\]\s*(.*?)</blockquote>` (dot matches newline) →
+  `<div class="callout callout-{kind}"><p class="callout-title">{Title}</p>{body}</div>`; kind
+  upper-cased before lookup; a leading empty `<p></p>` in the body is removed.
+- Wide: longest visible line (tags removed, entities decoded) `> 72` → `xwide`, else `> 56` →
+  `wide`.
+- Chapter head: `<header class="chapter-head"><p class="chapter-number">{label}</p><h1>{title}</h1></header>`.
+- Plain text: tags → one space, entities decoded, runs of spaces/tabs → one space.
+
+### Licence paragraph default (REF §6)
+
+`This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0
+International License (CC BY-NC-ND 4.0). https://creativecommons.org/licenses/by-nc-nd/4.0/`
+
+### `my-sans` font files (REF §7)
+
+`NotoSansMyanmar-Regular.ttf`, `NotoSansMyanmar-SemiBold.ttf`, `NotoSansMyanmar-Bold.ttf`,
+`NotoSansMyanmar-Italic.ttf`, `NotoSansMyanmar-BoldItalic.ttf`, `NotoSansMono-Regular.ttf`,
+`NotoSansMono-Bold.ttf`, plus `LICENSE-OFL.txt`.
