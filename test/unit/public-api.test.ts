@@ -17,7 +17,7 @@ const INTERNAL = [
 describe("public API", () => {
   it("exports only the functions that mirror CLI commands", () => {
     const names = Object.keys(api);
-    expect(names.every((name) => PUBLIC.includes(name))).toBe(true);
+    expect(names.sort()).toEqual([...PUBLIC].sort());
     expect(names.filter((name) => INTERNAL.includes(name))).toEqual([]);
   });
 });

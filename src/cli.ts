@@ -1,12 +1,16 @@
 import { Command, CommanderError } from "commander";
 import { BookError } from "./errors.ts";
 import { runFonts } from "./fonts/command.ts";
+import { runInit } from "./init/init.ts";
+import { promptMissing, type InitAnswers } from "./init/prompts.ts";
 
 export interface CliDeps {
   stdout?: (text: string) => void;
   stderr?: (text: string) => void;
   /** Test-only: font manifest to use instead of the shipped one. Not a flag or env var. */
   manifestPath?: string;
+  /** Defaults to process.stdin; prompts only when it is a TTY. */
+  stdin?: { isTTY?: boolean } & Partial<NodeJS.ReadableStream>;
 }
 
 const RESERVED = ["pdf", "epub", "qa", "all", "web", "serve", "cover"] as const;
@@ -20,6 +24,39 @@ export async function runCli(argv: string[], deps: CliDeps = {}): Promise<number
     .description("Build books from Markdown manuscripts.")
     .exitOverride()
     .configureOutput({ writeOut: stdout, writeErr: stderr });
+
+  program
+    .command("init")
+    .description("Create a new book project: book.json and chapters/chapter-01.md.")
+    .argument("[dir]", "target directory", ".")
+    .option("--lang <lang>", "book language: my (Myanmar; mm accepted) or en (English)")
+    .option("--font <set>", "font set: sans (default) or serif")
+    .option("--title <text>", "book title")
+    .option("--author <text>", "book author")
+    .action(async (dir: string, flags: InitAnswers) => {
+      const stdin = deps.stdin ?? process.stdin;
+      let answers = flags;
+      if (stdin.isTTY) {
+        answers = await promptMissing(flags, {
+          input: stdin as NodeJS.ReadableStream,
+          output: process.stdout,
+        });
+      } else {
+        for (const key of ["lang", "title", "author"] as const) {
+          if (!flags[key])
+            throw new BookError(`--${key}`, "required when not running in a terminal");
+        }
+      }
+      const { files } = await runInit({
+        dir,
+        lang: answers.lang!,
+        font: answers.font,
+        title: answers.title!,
+        author: answers.author!,
+      });
+      stdout(`${files.map((file) => `created ${file}`).join("\n")}\n`);
+      stdout(`Add a cover image, then fetch the fonts:\n  book-build fonts --config ${files[0]}\n`);
+    });
 
   program
     .command("fonts")
