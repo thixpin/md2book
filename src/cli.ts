@@ -3,6 +3,7 @@ import { BookError } from "./errors.ts";
 import { runFonts } from "./fonts/command.ts";
 import { runInit } from "./init/init.ts";
 import { promptMissing, type InitAnswers } from "./init/prompts.ts";
+import { runWeb } from "./web/command.ts";
 
 export interface CliDeps {
   stdout?: (text: string) => void;
@@ -13,7 +14,7 @@ export interface CliDeps {
   stdin?: { isTTY?: boolean } & Partial<NodeJS.ReadableStream>;
 }
 
-const RESERVED = ["pdf", "epub", "qa", "all", "web", "serve", "cover"] as const;
+const RESERVED = ["pdf", "epub", "qa", "all", "serve", "cover"] as const;
 
 /** Runs `book-build` with user arguments (no node/script prefix); resolves to the exit code. */
 export async function runCli(argv: string[], deps: CliDeps = {}): Promise<number> {
@@ -70,6 +71,16 @@ export async function runCli(argv: string[], deps: CliDeps = {}): Promise<number
         deps.manifestPath,
       );
       stdout(`${dir}\n`);
+    });
+
+  program
+    .command("web")
+    .description("Build the static web edition of the published chapters.")
+    .requiredOption("--config <path>", "book config")
+    .option("--out <dir>", "output directory (default dist/<config name>/)")
+    .action(async (options: { config: string; out?: string }) => {
+      const { dir, chapters } = await runWeb(options, deps.manifestPath);
+      stdout(`Web edition written: ${dir} (${chapters} published chapters)\n`);
     });
 
   for (const name of RESERVED) {

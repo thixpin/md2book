@@ -49,23 +49,27 @@ server only.
 
 ### Tests ⚠️
 
-- [ ] T008 [P] [US1] Write `test/unit/web/assets.test.ts`: stylesheet = `common.css + "\n" + web.css`; for `my-sans` identical to that concatenation (so its hash equals the reference); for `en-serif` every `Noto Sans Myanmar` → `Noto Serif`, `Noto Sans Mono` stays, `@font-face` URLs point at the set's body-regular, body-bold and mono-regular files; names `style.<12 hex>.css` and `reader.<12 hex>.js` from content hashes
-- [ ] T009 [P] [US1] Write `test/unit/web/reader-dom.test.ts`: reader DOM for a two-chapter book matches the structure and every `data-*` hook of `contracts/web-output.md` (parse with a DOM/XML parser, compare the element/attribute skeleton to a checked-in expected skeleton); contents heading from `strings.contents_heading`; `data-folio-digits` / `data-name-*` absent for Myanmar defaults, present for an English book; book key `{prefix}:{out dir name}:{10 hex}` changes when chapter text changes
-- [ ] T010 [P] [US1] Write `test/unit/web/reader-script.test.ts`: the carried `assets/web-reader.js` differs from the reference only in the three reads of FR-021 (defaults `myanmar`, `Cover`, `Contents`, `Back cover`), checked by a text diff against the recorded reference SHA-256 plus the known edited lines
-- [ ] T011 [P] [US1] Write `test/integration/web.test.ts`: `buildWeb` on `book-mm` writes exactly the contract tree (cover, generated back cover skipped via a stub — see T021 — fonts of the set + licence); `web/` emptied on rebuild (a stray file disappears); two builds give identical file names and bytes (except generated PNGs); `DRAFT-MARKER-3` appears in no output file (SC-005); fixture sources byte-identical after the build; missing fonts → one-line error with the `book-build fonts` command
+- [X] T008 [P] [US1] Write `test/unit/web/assets.test.ts`: stylesheet = `common.css + "\n" + web.css`; for `my-sans` identical to that concatenation (so its hash equals the reference); for `en-serif` every `Noto Sans Myanmar` → `Noto Serif`, `Noto Sans Mono` stays, `@font-face` URLs point at the set's body-regular, body-bold and mono-regular files; names `style.<12 hex>.css` and `reader.<12 hex>.js` from content hashes
+- [X] T009 [P] [US1] Write `test/unit/web/reader-dom.test.ts`: reader DOM for a two-chapter book matches the structure and every `data-*` hook of `contracts/web-output.md` (parse with a DOM/XML parser, compare the element/attribute skeleton to a checked-in expected skeleton); contents heading from `strings.contents_heading`; `data-folio-digits` / `data-name-*` absent for Myanmar defaults, present for an English book; book key `{prefix}:{out dir name}:{10 hex}` changes when chapter text changes
+- [X] T010 [P] [US1] Write `test/unit/web/reader-script.test.ts`: the carried `assets/web-reader.js` differs from the reference only in the three reads of FR-021 (defaults `myanmar`, `Cover`, `Contents`, `Back cover`), checked by a text diff against the recorded reference SHA-256 plus the known edited lines
+- [X] T011 [P] [US1] Write `test/integration/web.test.ts`: `buildWeb` on `book-mm` writes exactly the contract tree (cover, generated back cover skipped via a stub — see T021 — fonts of the set + licence); `web/` emptied on rebuild (a stray file disappears); two builds give identical file names and bytes (except generated PNGs); `DRAFT-MARKER-3` appears in no output file (SC-005); fixture sources byte-identical after the build; missing fonts → one-line error with the `book-build fonts` command
 
 ### Implementation
 
-- [ ] T012 [P] [US1] Implement `src/web/assets.ts` (stylesheet with font-set substitution per research R-02; hashed names; copy set fonts + licence into `fonts/`) to pass T008
-- [ ] T013 [US1] Edit `assets/web-reader.js` minimally (FR-021): folio digits from `reader.dataset.folioDigits` (ASCII when `ascii`, Myanmar otherwise) and page names from `reader.dataset.nameCover/nameContents/nameBackCover` with the reference defaults; record the change in `docs/decision-log.md`; pass T010
-- [ ] T014 [US1] Implement `src/web/reader-dom.ts` (front/back sections, chapter sections, controls, panels, icons from `src/web/icons.ts`, book key) porting web.py `reader()` exactly; pass T009
-- [ ] T015 [US1] Implement `src/web/page.ts` minimal shell (html lang, head with title, stylesheet, header, main, footer, deferred script) — social tags come in US3
-- [ ] T016 [US1] Implement `src/web/build.ts` `buildWeb(config, { out, backCover })`: load published chapters, parts, snippets, render; empty and recreate `web/`; assets; cover copy; `index.html`, `chapters/chNN.html`, `404.html`; pass T011
-- [ ] T017 [US1] Wire `book-build web --config [--out]` in `src/cli.ts` (via `src/web/command.ts`) and export `web()` from `src/index.ts`; update `test/unit/public-api.test.ts` to exactly `fonts`, `init`, `serve`, `web` (serve added in US4)
+- [X] T012 [P] [US1] Implement `src/web/assets.ts` (stylesheet with font-set substitution per research R-02; hashed names; copy set fonts + licence into `fonts/`) to pass T008
+- [X] T013 [US1] Edit `assets/web-reader.js` minimally (FR-021): folio digits from `reader.dataset.folioDigits` (ASCII when `ascii`, Myanmar otherwise) and page names from `reader.dataset.nameCover/nameContents/nameBackCover` with the reference defaults; record the change in `docs/decision-log.md`; pass T010
+- [X] T014 [US1] Implement `src/web/reader-dom.ts` (front/back sections, chapter sections, controls, panels, icons from `src/web/icons.ts`, book key) porting web.py `reader()` exactly; pass T009
+- [X] T015 [US1] Implement `src/web/page.ts` minimal shell (html lang, head with title, stylesheet, header, main, footer, deferred script) — social tags come in US3
+- [X] T016 [US1] Implement `src/web/build.ts` `buildWeb(config, { out, backCover })`: load published chapters, parts, snippets, render; empty and recreate `web/`; assets; cover copy; `index.html`, `chapters/chNN.html`, `404.html`; pass T011
+- [X] T017 [US1] Wire `book-build web --config [--out]` in `src/cli.ts` (via `src/web/command.ts`) and export `web()` from `src/index.ts`; update `test/unit/public-api.test.ts` to exactly `fonts`, `init`, `serve`, `web` (serve added in US4)
 
 **Checkpoint**: site builds; reader opens in a browser.
 
 ---
+
+> **Order note (implementation)**: the reader DOM needs cover facts and a back cover, so the cover-facts
+> part of T024 (`test/unit/web/cover-facts.test.ts`) and all of T025/T029 (back cover) were done in
+> US1, test-first; `test/unit/web/back-cover-no-browser.test.ts` covers the missing-Chromium case.
 
 ## Phase 4: User Story 2 - Read it like a book (P1)
 
@@ -94,14 +98,14 @@ server only.
 - [ ] T022 [P] [US3] Write `test/unit/web/description.test.ts` porting REF §11 cases 4–5: cut at a space, ends with `…`, ≤ 156 code points, prefix of the paragraph, never from `<h2>`; markup stripped (`Use <code>a &amp; b</code>.` → `Use a & b.`); fallback without `<p>`
 - [ ] T023 [P] [US3] Write `test/unit/web/page.test.ts`: titles (index, chapter, 404); description meta; og:type `book`/`article`; og site_name/title/description/image(+width 1200, height 630, alt `{title} cover`); twitter card; canonical + og:url only with `web_url` (warning without); 404 `noindex`, no canonical, no script; favicon links only with favicon
 - [ ] T024 [P] [US3] Write `test/unit/web/images.test.ts` porting REF §11 cases 6–9: cover facts on a two-colour test PNG (ratio 5 decimals, edge average); `og-image.png` IHDR is 1200 × 630; no favicon → nothing written, returns false; non-SVG or missing favicon → error mentioning `svg`; SVG favicon → square 32 px and 180 px PNGs + `favicon.svg`
-- [ ] T025 [P] [US3] Write `test/unit/web/back-cover.test.ts`: configured back cover copied as `back-cover{ext}`; configured but missing → error naming it; generated (Chromium) → `back-cover.png` of 850 × round(850/ratio) px whose corner pixel equals the edge colour; Chromium missing → one-line error with `npx playwright install chromium` (simulated)
+- [X] T025 [P] [US3] Write `test/unit/web/back-cover.test.ts`: configured back cover copied as `back-cover{ext}`; configured but missing → error naming it; generated (Chromium) → `back-cover.png` of 850 × round(850/ratio) px whose corner pixel equals the edge colour; Chromium missing → one-line error with `npx playwright install chromium` (simulated)
 
 ### Implementation
 
 - [ ] T026 [P] [US3] Implement `src/web/description.ts` to pass T022
 - [ ] T027 [US3] Complete `src/web/page.ts` social tags and 404 to pass T023
 - [ ] T028 [P] [US3] Implement `src/web/images.ts` with `sharp` (cover facts, OG image, favicons) to pass T024
-- [ ] T029 [US3] Implement `src/web/back-cover.ts` (copy or Playwright render with the set's bold/regular faces) to pass T025; wire into `buildWeb`
+- [X] T029 [US3] Implement `src/web/back-cover.ts` (copy or Playwright render with the set's bold/regular faces) to pass T025; wire into `buildWeb`
 
 ---
 

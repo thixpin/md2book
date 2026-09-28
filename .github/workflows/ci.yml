@@ -15,6 +15,8 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
+      # The web build renders generated back covers with Chromium (spec 002).
+      - run: npx playwright install --with-deps chromium
       - run: npm run check
 
   browser:

@@ -1,0 +1,31 @@
+import { readFileSync } from "node:fs";
+import { describe, expect, it } from "vitest";
+import { hashedName, readerScript, stylesheet } from "../../../src/web/assets.ts";
+import { loadManifest } from "../../../src/fonts/manifest.ts";
+import { FIXTURE_MANIFEST } from "../../helpers/fonts.ts";
+
+const asset = (path: string) =>
+  readFileSync(new URL(`../../../assets/${path}`, import.meta.url), "utf8");
+
+describe("web assets", () => {
+  it("uses common.css + web.css unchanged for my-sans (same hash as the reference)", async () => {
+    const { sets } = await loadManifest(FIXTURE_MANIFEST);
+    expect(stylesheet(sets["my-sans"])).toBe(`${asset("css/common.css")}\n${asset("css/web.css")}`);
+  });
+
+  it("substitutes the font families and files for another set", async () => {
+    const { sets } = await loadManifest(FIXTURE_MANIFEST);
+    const css = stylesheet(sets["en-serif"]);
+    expect(css).not.toContain('"Noto Sans Myanmar"');
+    expect(css).toContain('font-family: "Noto Serif"');
+    expect(css).toContain('url("fonts/NotoSans-Regular.ttf")');
+    expect(css).toContain('url("fonts/NotoSans-Bold.ttf")');
+    expect(css).toContain('url("fonts/NotoSansMono-Regular.ttf")');
+    expect(css).toContain('"Noto Sans Mono"');
+  });
+
+  it("names assets by the first 12 hex digits of their content hash", () => {
+    expect(hashedName("style", "css", "a")).toBe("style.ca978112ca1b.css");
+    expect(hashedName("reader", "js", readerScript())).toMatch(/^reader\.[0-9a-f]{12}\.js$/);
+  });
+});

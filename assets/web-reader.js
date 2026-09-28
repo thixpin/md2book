@@ -128,9 +128,13 @@
     distance >= DIP_REACH ? 0 : DIP * (1 - distance / DIP_REACH) ** 2;
   const easeInOut = (t) => 0.5 - Math.cos(Math.PI * t) / 2;
   const radians = (degrees) => (degrees * Math.PI) / 180;
-  // Folios are printed with Myanmar digits (U+1040–U+1049), like the book.
+  // Folios are printed with Myanmar digits (U+1040–U+1049), like the book,
+  // unless the page asks for ASCII digits (data-folio-digits="ascii").
+  const asciiFolios = reader.dataset.folioDigits === "ascii";
   const burmeseDigits = (number) =>
-    `${number}`.replace(/\d/g, (digit) => String.fromCharCode(0x1040 + +digit));
+    asciiFolios
+      ? `${number}`
+      : `${number}`.replace(/\d/g, (digit) => String.fromCharCode(0x1040 + +digit));
 
   // Window-relative geometry: the spine is the centre of a spread, or the
   // left edge when a single page is shown.
@@ -489,9 +493,9 @@
 
   // What an unnumbered page is called, or "" for a blank page.
   function pageName(page) {
-    if (page === coverPage()) return "Cover";
-    if (page === contentsPage) return "Contents";
-    if (page === backCoverPage) return "Back cover";
+    if (page === coverPage()) return reader.dataset.nameCover || "Cover";
+    if (page === contentsPage) return reader.dataset.nameContents || "Contents";
+    if (page === backCoverPage) return reader.dataset.nameBackCover || "Back cover";
     return "";
   }
 

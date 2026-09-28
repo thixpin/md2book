@@ -2,8 +2,9 @@
 // `fonts`. Internal modules are never re-exported from here.
 import { runFonts, type FontsOptions } from "./fonts/command.ts";
 import { runInit, type InitOptions } from "./init/init.ts";
+import { runWeb, type WebOptions } from "./web/command.ts";
 
-export type { FontsOptions, InitOptions };
+export type { FontsOptions, InitOptions, WebOptions };
 
 /** `book-build init`: create book.json and chapters/chapter-01.md; resolves to the files written. */
 export function init(options: InitOptions): Promise<{ files: string[] }> {
@@ -13,4 +14,9 @@ export function init(options: InitOptions): Promise<{ files: string[] }> {
 /** `book-build fonts`: fetch and verify a font set; resolves to the cache dir and files. */
 export function fonts(options: FontsOptions): Promise<{ dir: string; files: string[] }> {
   return runFonts(options);
+}
+
+/** `book-build web`: build the static web edition; resolves to the site dir and chapter count. */
+export function web(options: WebOptions): Promise<{ dir: string; chapters: number }> {
+  return runWeb(options);
 }
