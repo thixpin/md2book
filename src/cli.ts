@@ -1,5 +1,6 @@
 import { Command, CommanderError } from "commander";
 import { BookError } from "./errors.ts";
+import { runFonts } from "./fonts/command.ts";
 
 export interface CliDeps {
   stdout?: (text: string) => void;
@@ -19,6 +20,20 @@ export async function runCli(argv: string[], deps: CliDeps = {}): Promise<number
     .description("Build books from Markdown manuscripts.")
     .exitOverride()
     .configureOutput({ writeOut: stdout, writeErr: stderr });
+
+  program
+    .command("fonts")
+    .description("Fetch and verify the book's font set into the local cache.")
+    .option("--config <path>", "book config; its language and font_set pick the set")
+    .option("--set <id>", "font set id: my-sans, my-serif, en-sans, en-serif")
+    .option("--fonts <dir>", "font cache root (overrides MD2BOOK_FONTS)")
+    .action(async (options: { config?: string; set?: string; fonts?: string }) => {
+      const { dir } = await runFonts(
+        { config: options.config, set: options.set, fontsDir: options.fonts },
+        deps.manifestPath,
+      );
+      stdout(`${dir}\n`);
+    });
 
   for (const name of RESERVED) {
     program.command(name).action(() => {

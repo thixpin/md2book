@@ -71,8 +71,9 @@ Versions checked with `npm view` on 2026-09-28. Source behaviour checked in
   - `my-sans`: exactly the seven files of REF §7 (current behaviour).
   - `my-serif`: Noto Serif Myanmar merged with Noto Serif (Latin scaled 0.93, Myanmar oblique
     12° for italics), mono shared with `my-sans`.
-  - `en-sans` / `en-serif`: stock Noto Sans / Noto Serif faces and stock Noto Sans Mono; no
-    merge needed.
+  - `en-sans` / `en-serif`: stock Noto Sans / Noto Serif body faces; no merge needed. All four
+    sets share the merged `NotoSansMono-*.ttf` files of `my-sans` (Latin + Myanmar), because a
+    flat release cannot hold two different files with the REF §7 mono names (decision log).
   - Which exact upstream faces exist (e.g. a SemiBold cut in each release) is confirmed when the
     script is run; the manifest records what was built.
 - **Build**: `scripts/build-fonts.py` = `publish/fonts.py` extended with per-set face tables.

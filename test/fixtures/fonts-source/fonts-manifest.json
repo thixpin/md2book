@@ -1,0 +1,251 @@
+{
+  "version": 1,
+  "release": "fixture",
+  "base_url": "fixture/",
+  "sets": {
+    "my-sans": {
+      "language": "my",
+      "style": "sans",
+      "body_family": "Noto Sans Myanmar",
+      "mono_family": "Noto Sans Mono",
+      "faces": [
+        {
+          "role": "body-regular",
+          "file": "NotoSansMyanmar-Regular.ttf",
+          "weight": 400,
+          "italic": false,
+          "sha256": "f4ce48894fad8fb81258b270e0582eb871077be31fb61f5e119b463d2d91ba39"
+        },
+        {
+          "role": "body-semibold",
+          "file": "NotoSansMyanmar-SemiBold.ttf",
+          "weight": 600,
+          "italic": false,
+          "sha256": "baeae8d0a1afd739294278481e02074ca73c21c5c4691c93503fcacbe64843ab"
+        },
+        {
+          "role": "body-bold",
+          "file": "NotoSansMyanmar-Bold.ttf",
+          "weight": 700,
+          "italic": false,
+          "sha256": "6ca3c80aa87bed697e719281430958135ea1a43b98fcce85cb5ddfd9c6936859"
+        },
+        {
+          "role": "body-italic",
+          "file": "NotoSansMyanmar-Italic.ttf",
+          "weight": 400,
+          "italic": true,
+          "sha256": "68dec6a255381060734ce28a491f0475a567f4f497344aca45a5b7502b948868"
+        },
+        {
+          "role": "body-bolditalic",
+          "file": "NotoSansMyanmar-BoldItalic.ttf",
+          "weight": 700,
+          "italic": true,
+          "sha256": "33406ea5b0c2c196aae2eece218dc2dfde5a8a44343f86bcba5a80c81eb04b58"
+        },
+        {
+          "role": "mono-regular",
+          "file": "NotoSansMono-Regular.ttf",
+          "weight": 400,
+          "italic": false,
+          "sha256": "2511f4130a61c423f2c2d197be201db22f1699bc91aa96f10b470e6b0b90dfef"
+        },
+        {
+          "role": "mono-bold",
+          "file": "NotoSansMono-Bold.ttf",
+          "weight": 700,
+          "italic": false,
+          "sha256": "4e2740d6311d3e3322b237a1d728af2f07e9cfd7b604436a6e94ee5c42ddc439"
+        }
+      ],
+      "licence": {
+        "file": "LICENSE-OFL.txt",
+        "sha256": "246a75859267af7da466823969d2e2b407ed8455ee5f74f4c8d63d8783be9b57"
+      }
+    },
+    "my-serif": {
+      "language": "my",
+      "style": "serif",
+      "body_family": "Noto Serif Myanmar",
+      "mono_family": "Noto Sans Mono",
+      "faces": [
+        {
+          "role": "body-regular",
+          "file": "NotoSansMyanmar-Regular.ttf",
+          "weight": 400,
+          "italic": false,
+          "sha256": "f4ce48894fad8fb81258b270e0582eb871077be31fb61f5e119b463d2d91ba39"
+        },
+        {
+          "role": "body-semibold",
+          "file": "NotoSansMyanmar-SemiBold.ttf",
+          "weight": 600,
+          "italic": false,
+          "sha256": "baeae8d0a1afd739294278481e02074ca73c21c5c4691c93503fcacbe64843ab"
+        },
+        {
+          "role": "body-bold",
+          "file": "NotoSansMyanmar-Bold.ttf",
+          "weight": 700,
+          "italic": false,
+          "sha256": "6ca3c80aa87bed697e719281430958135ea1a43b98fcce85cb5ddfd9c6936859"
+        },
+        {
+          "role": "body-italic",
+          "file": "NotoSansMyanmar-Italic.ttf",
+          "weight": 400,
+          "italic": true,
+          "sha256": "68dec6a255381060734ce28a491f0475a567f4f497344aca45a5b7502b948868"
+        },
+        {
+          "role": "body-bolditalic",
+          "file": "NotoSansMyanmar-BoldItalic.ttf",
+          "weight": 700,
+          "italic": true,
+          "sha256": "33406ea5b0c2c196aae2eece218dc2dfde5a8a44343f86bcba5a80c81eb04b58"
+        },
+        {
+          "role": "mono-regular",
+          "file": "NotoSansMono-Regular.ttf",
+          "weight": 400,
+          "italic": false,
+          "sha256": "2511f4130a61c423f2c2d197be201db22f1699bc91aa96f10b470e6b0b90dfef"
+        },
+        {
+          "role": "mono-bold",
+          "file": "NotoSansMono-Bold.ttf",
+          "weight": 700,
+          "italic": false,
+          "sha256": "4e2740d6311d3e3322b237a1d728af2f07e9cfd7b604436a6e94ee5c42ddc439"
+        }
+      ],
+      "licence": {
+        "file": "LICENSE-OFL.txt",
+        "sha256": "246a75859267af7da466823969d2e2b407ed8455ee5f74f4c8d63d8783be9b57"
+      }
+    },
+    "en-sans": {
+      "language": "en",
+      "style": "sans",
+      "body_family": "Noto Sans",
+      "mono_family": "Noto Sans Mono",
+      "faces": [
+        {
+          "role": "body-regular",
+          "file": "NotoSans-Regular.ttf",
+          "weight": 400,
+          "italic": false,
+          "sha256": "28726acd012b3b0838ead5f17060da6f6b476776cf01d3cc5d2a196dbe8c7f36"
+        },
+        {
+          "role": "body-semibold",
+          "file": "NotoSans-SemiBold.ttf",
+          "weight": 600,
+          "italic": false,
+          "sha256": "38eacab286e470eef8747ac7b09257dcfd97c80a073be045f4fc787cbf21f3f8"
+        },
+        {
+          "role": "body-bold",
+          "file": "NotoSans-Bold.ttf",
+          "weight": 700,
+          "italic": false,
+          "sha256": "a09b2396b4881e71a2f3402e0492eb5c813822804fdd441e9387b7d8bf455d53"
+        },
+        {
+          "role": "body-italic",
+          "file": "NotoSans-Italic.ttf",
+          "weight": 400,
+          "italic": true,
+          "sha256": "ae46b85f9a44d5b0202e54d7b186c3837684deaafc5ad03288f34c7332b4cb07"
+        },
+        {
+          "role": "body-bolditalic",
+          "file": "NotoSans-BoldItalic.ttf",
+          "weight": 700,
+          "italic": true,
+          "sha256": "b40a496d0c8f5d914b7c5681b718096065d66fe44892003a539189f41525a6b9"
+        },
+        {
+          "role": "mono-regular",
+          "file": "NotoSansMono-Regular.ttf",
+          "weight": 400,
+          "italic": false,
+          "sha256": "2511f4130a61c423f2c2d197be201db22f1699bc91aa96f10b470e6b0b90dfef"
+        },
+        {
+          "role": "mono-bold",
+          "file": "NotoSansMono-Bold.ttf",
+          "weight": 700,
+          "italic": false,
+          "sha256": "4e2740d6311d3e3322b237a1d728af2f07e9cfd7b604436a6e94ee5c42ddc439"
+        }
+      ],
+      "licence": {
+        "file": "LICENSE-OFL.txt",
+        "sha256": "246a75859267af7da466823969d2e2b407ed8455ee5f74f4c8d63d8783be9b57"
+      }
+    },
+    "en-serif": {
+      "language": "en",
+      "style": "serif",
+      "body_family": "Noto Serif",
+      "mono_family": "Noto Sans Mono",
+      "faces": [
+        {
+          "role": "body-regular",
+          "file": "NotoSans-Regular.ttf",
+          "weight": 400,
+          "italic": false,
+          "sha256": "28726acd012b3b0838ead5f17060da6f6b476776cf01d3cc5d2a196dbe8c7f36"
+        },
+        {
+          "role": "body-semibold",
+          "file": "NotoSans-SemiBold.ttf",
+          "weight": 600,
+          "italic": false,
+          "sha256": "38eacab286e470eef8747ac7b09257dcfd97c80a073be045f4fc787cbf21f3f8"
+        },
+        {
+          "role": "body-bold",
+          "file": "NotoSans-Bold.ttf",
+          "weight": 700,
+          "italic": false,
+          "sha256": "a09b2396b4881e71a2f3402e0492eb5c813822804fdd441e9387b7d8bf455d53"
+        },
+        {
+          "role": "body-italic",
+          "file": "NotoSans-Italic.ttf",
+          "weight": 400,
+          "italic": true,
+          "sha256": "ae46b85f9a44d5b0202e54d7b186c3837684deaafc5ad03288f34c7332b4cb07"
+        },
+        {
+          "role": "body-bolditalic",
+          "file": "NotoSans-BoldItalic.ttf",
+          "weight": 700,
+          "italic": true,
+          "sha256": "b40a496d0c8f5d914b7c5681b718096065d66fe44892003a539189f41525a6b9"
+        },
+        {
+          "role": "mono-regular",
+          "file": "NotoSansMono-Regular.ttf",
+          "weight": 400,
+          "italic": false,
+          "sha256": "2511f4130a61c423f2c2d197be201db22f1699bc91aa96f10b470e6b0b90dfef"
+        },
+        {
+          "role": "mono-bold",
+          "file": "NotoSansMono-Bold.ttf",
+          "weight": 700,
+          "italic": false,
+          "sha256": "4e2740d6311d3e3322b237a1d728af2f07e9cfd7b604436a6e94ee5c42ddc439"
+        }
+      ],
+      "licence": {
+        "file": "LICENSE-OFL.txt",
+        "sha256": "246a75859267af7da466823969d2e2b407ed8455ee5f74f4c8d63d8783be9b57"
+      }
+    }
+  }
+}
