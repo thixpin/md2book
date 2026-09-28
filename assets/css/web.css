@@ -1,0 +1,303 @@
+@font-face { font-family: "Noto Sans Myanmar"; font-weight: 400;
+  src: url("fonts/NotoSansMyanmar-Regular.ttf") format("truetype"); }
+@font-face { font-family: "Noto Sans Myanmar"; font-weight: 700;
+  src: url("fonts/NotoSansMyanmar-Bold.ttf") format("truetype"); }
+@font-face { font-family: "Noto Sans Mono"; font-weight: 400;
+  src: url("fonts/NotoSansMono-Regular.ttf") format("truetype"); }
+
+:root { color-scheme: light; --ink: #202a35; --muted: #52606d;
+  --rule: #d9e2ec; --accent: #0b6670; --paper: #fbfbf9; --wash: #e7e8e7;
+  --page-gap: 1.6rem; --page-pad: 1.8rem; }
+* { box-sizing: border-box; }
+html { background: var(--wash); }
+body { min-width: 20rem; margin: 0; color: var(--ink); background: var(--wash);
+  font-family: "Noto Sans Myanmar", sans-serif; font-size: 1.03rem;
+  line-height: 1.62; }
+a { color: var(--accent); }
+button { font: inherit; }
+/* Header and footer stay quiet so the book, not the site, holds attention. */
+.site-header { display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  max-width: 78rem; margin: 0 auto; padding: .3rem 1.25rem;
+  color: var(--muted); font-size: .8rem; line-height: 1.4; }
+.site-header a { min-width: 0; overflow: hidden; color: inherit; text-decoration: none;
+  text-overflow: ellipsis; white-space: nowrap; }
+.site-title { font-weight: 600; }
+.site-subtitle { margin-left: .6rem; opacity: .8; }
+main { min-height: calc(100vh - 8rem); padding: 1.2rem 1rem 2.5rem; }
+.footer { max-width: 78rem; margin: 0 auto; padding: .5rem 1.25rem .75rem;
+  color: var(--muted); font-size: .75rem; opacity: .8; }
+main:has(.reader-shell) { min-height: 0; padding: .25rem 1rem .5rem; }
+/* When the book reaches its width limit, it sits centred in the space. */
+.reader-shell { min-height: calc(100svh - var(--reader-top)); justify-content: center; }
+
+/* The manuscript stays one semantic article inside .reader-window; JavaScript
+   changes only its column geometry and transform. The paper is drawn around
+   it: an SVG of sheets fanned from the spine, a gutter shading layer, and a
+   turn layer that animates only the sheet being turned. The same gutter
+   gradients shade the static pages and the turning sheet, so a turn starts
+   and ends on exactly the static picture. */
+.reader-shell { position: relative; display: flex; flex-direction: column;
+  align-items: center; width: 100%; overflow-x: clip; }
+/* The book's soft shadow never changes while reading, so it stays out of the
+   stack drawing that updates on every turn. A box-shadow is never drawn under
+   its own box, so the box sits inside the book: past the book's edge there
+   must be only shadow, not an unshadowed strip. */
+.book::before { content: ""; position: absolute; inset: 8px 6px 6px;
+  box-shadow: 0 10px 18px rgb(32 42 53 / 24%); pointer-events: none; }
+.book { position: relative; margin: .7rem 0 .35rem;
+  --spine-shade: rgb(58 44 28 / 26%) 0, rgb(58 44 28 / 15%) 4px,
+    rgb(58 44 28 / 8%) 14px, rgb(58 44 28 / 3.5%) 32px,
+    rgb(255 255 255 / 10%) 50px, transparent 80px;
+  --shade-right: linear-gradient(to right, var(--spine-shade), transparent 95%,
+    rgb(88 70 48 / 6%));
+  --shade-left: linear-gradient(to left, var(--spine-shade), transparent 95%,
+    rgb(88 70 48 / 6%)); }
+/* Own GPU layer: redrawing the stacks during a turn must not repaint the page. */
+.book-paper { position: absolute; z-index: 0; top: 0; left: 0; overflow: visible;
+  pointer-events: none; will-change: transform; }
+.book-paper .sheet { stroke: rgb(96 80 58 / 26%); stroke-width: .5; }
+.book-paper .top-page { fill: var(--paper); stroke: rgb(96 80 58 / 22%);
+  stroke-width: .5; }
+/* Layouts: a two-page spread on wide, landscape screens and on foldables
+   spanning their fold; one page elsewhere. On tablets and unfolded
+   foldables that page keeps the printed page's 170:240 proportions, as tall
+   as the screen allows and no wider than a comfortable line; phones use
+   the whole screen. --reader-chrome is the height the header, stack edges
+   and controls need; touch screens get larger controls. */
+/* --reader-top is the header plus the page's own padding above and below the reader. */
+:root { --reader-chrome: 6.4rem; --reader-top: 3.4rem; --page-ratio: 0.7083; }
+.reader-shell { --page-height: max(24rem, min(100svh - var(--reader-chrome),
+  min(94vw, 44rem) / var(--page-ratio))); }
+.reader-window { width: calc(var(--page-height) * var(--page-ratio)); height: var(--page-height);
+  position: relative; z-index: 1; overflow: hidden; background: transparent;
+  touch-action: pan-y pinch-zoom; }
+.book-gutter, .turn-layer, .book-crease { position: absolute; top: 0; left: 0;
+  width: 100%; height: 100%; pointer-events: none; }
+.book-gutter { z-index: 2; }
+.book-gutter::before, .book-gutter::after { content: ""; position: absolute;
+  top: 0; bottom: 0; width: 50%; }
+.book-gutter::before { left: 0; background: var(--shade-left); }
+.book-gutter::after { right: 0; background: var(--shade-right); }
+.book.is-single .book-gutter::before { display: none; }
+.book.is-single .book-gutter::after { width: 100%; }
+.book-crease { z-index: 4; }
+.book-crease::before { content: ""; position: absolute; top: 4px; bottom: 4px;
+  left: calc(50% - 5px); width: 10px; background: linear-gradient(to right,
+  transparent, rgb(40 30 18 / 12%) 30%, rgb(34 25 14 / 50%) 50%,
+  rgb(40 30 18 / 12%) 70%, transparent); }
+.book.is-single .book-crease::before { left: 0; width: 5px; background:
+  linear-gradient(to right, rgb(34 25 14 / 40%), rgb(40 30 18 / 10%) 40%,
+  transparent); }
+.reader-flow { height: auto; column-fill: auto;
+  column-gap: calc(var(--page-gap) + (2 * var(--page-pad)));
+  padding: 2.5rem var(--page-pad); background: transparent; }
+.reader-flow.is-measuring { visibility: hidden; }
+.turn-layer { z-index: 3; visibility: hidden; perspective: 4800px; }
+.turn-layer.is-active { visibility: visible; }
+.turn-under, .turn-cast { position: absolute; top: 0; height: 100%; overflow: hidden; }
+.turn-under { background-color: var(--paper); background-repeat: no-repeat; }
+.turn-cast { left: 0; width: 100%; }
+.turn-cast-band { position: absolute; top: 0; left: 0; width: 100px; height: 100%;
+  transform-origin: left center; opacity: 0; will-change: transform, opacity;
+  background: linear-gradient(to right, rgb(40 30 18 / 20%), transparent); }
+.turn-sheet { position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  transform-style: preserve-3d; }
+/* The turn changes only these transforms and opacities every frame. Declaring
+   them keeps each in its own GPU layer at a fixed raster scale; otherwise the
+   sheet's text layers are re-rasterized every frame, which on 2x screens
+   saturates the GPU and shows half-drawn frames. */
+.turn-strip { position: absolute; top: 0; height: 100%;
+  transform-origin: left center; transform-style: preserve-3d; will-change: transform; }
+.turn-face { position: absolute; top: 0; left: 0; width: calc(100% + 1px);
+  height: 100%; overflow: hidden; backface-visibility: hidden;
+  background-color: var(--paper); background-repeat: no-repeat; }
+.turn-face.back { transform: rotateY(180deg); }
+.turn-shade { position: absolute; inset: 0; background: rgb(46 36 22); opacity: 0;
+  will-change: opacity; }
+/* The copies on the turning sheet never scroll. A scrollable code block or
+   table would become its own GPU layer, and in a multi-column copy the
+   layers stacked above it span every column (~11000px wide per face),
+   exhausting GPU tile memory so the book flashes half-drawn on 2x screens. */
+.turn-copy { position: absolute; top: 0; left: 0; }
+.turn-copy pre, .turn-copy table { overflow: hidden; }
+.chapter-head { margin: 0 0 2.4rem; padding: 1rem 0 1.7rem;
+  border-bottom: 1px solid var(--rule); text-align: center; break-inside: avoid; }
+.book-name { margin: 0 0 2.25rem; color: var(--muted); font-size: .9rem; }
+.chapter-number { margin: 0; color: var(--accent); font-size: .9rem; font-weight: 700; }
+.chapter-head h1 { margin: .35rem 0 0; font-size: clamp(1.75rem, 3vw, 2.5rem); line-height: 1.3; }
+.chapter-body p { margin: 0 0 .8rem; text-indent: 1.4em; }
+.chapter-body h2 { break-after: avoid; }
+.chapter-body .callout, .chapter-body table, .chapter-body pre,
+.chapter-body .terminal { break-inside: avoid; }
+pre { overflow-x: auto; white-space: pre; }
+/* A page is narrower than a 72-column line: keep the font size, give both
+   sides equal room, and let a genuinely long line scroll. */
+.chapter-body pre { padding-inline: 1em; }
+table { display: block; overflow-x: auto; }
+/* Reader controls are quiet line icons: muted until pointed at or focused.
+   The toolbar sits in the header row; page navigation sits under the book
+   with the page indicator centred between previous and next. */
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip-path: inset(50%); white-space: nowrap; }
+.icon { width: 1.15rem; height: 1.15rem; flex: none; fill: none; stroke: currentColor;
+  stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+.reader-bar { display: flex; flex: none; gap: .15rem; }
+.reader-tool, .page-turn { display: inline-flex; align-items: center; justify-content: center;
+  gap: .3rem; min-width: 2rem; min-height: 2rem; padding: .25rem .4rem; color: var(--muted);
+  background: transparent; border: 0; border-radius: 6px; font: inherit; cursor: pointer; }
+.reader-tool:hover, .page-turn:hover { color: var(--ink); }
+.reader-tool:focus-visible, .page-turn:focus-visible { color: var(--ink);
+  outline: 2px solid var(--accent); outline-offset: 1px; }
+.reader-tool[aria-pressed="true"] { color: var(--accent); }
+.reader-tool[hidden] { display: none; }
+.reader-tool .icon-bookmark-check, .reader-tool[aria-pressed="true"] .icon-bookmark,
+.reader-tool .icon-minimize-2, :root.is-fullscreen .reader-tool .icon-maximize-2 { display: none; }
+.reader-tool[aria-pressed="true"] .icon-bookmark-check,
+:root.is-fullscreen .reader-tool .icon-minimize-2 { display: block; }
+.reader-controls { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
+  width: calc(var(--page-height) * var(--page-ratio)); gap: 1rem; color: var(--muted);
+  font-size: .8rem; line-height: 1.4; }
+.reader-controls [data-page-previous] { justify-self: start; }
+.reader-controls [data-page-next] { justify-self: end; }
+.page-turn:disabled { visibility: hidden; }
+.page-status { font-variant-numeric: tabular-nums; letter-spacing: .02em; white-space: nowrap; }
+
+/* Fullscreen: the whole page goes fullscreen, the site title steps aside and
+   only the toolbar, the book and page navigation remain. On devices with a
+   mouse the controls fade after a pause and return when it moves. */
+:root.is-fullscreen .site-header > a { visibility: hidden; }
+:root.is-fullscreen .footer { display: none; }
+.site-header, .reader-controls { transition: opacity .25s ease; }
+:root.controls-hidden .site-header, :root.controls-hidden .reader-controls {
+  opacity: 0; pointer-events: none; }
+:root.controls-hidden .book { cursor: none; }
+@media (prefers-reduced-motion: reduce) {
+  .site-header, .reader-controls { transition: none; }
+}
+/* Folios sit in the bottom padding of each page, where text never flows,
+   aligned with the text block's outer edge. JavaScript places them. */
+.page-number { position: absolute; z-index: 2; top: 0; left: 0; color: var(--muted);
+  font-size: .72rem; line-height: 1; letter-spacing: .03em; opacity: .85;
+  font-variant-numeric: tabular-nums; pointer-events: none; }
+.page-number[hidden] { display: none; }
+.turn-face .page-number, .turn-under .page-number { z-index: auto; }
+.reader-panel { width: min(90vw, 24rem); max-height: min(70vh, 32rem); overflow: auto;
+  margin: auto; padding: 1.1rem 1.3rem; color: var(--ink); background: var(--paper);
+  border: 1px solid var(--rule); box-shadow: 0 12px 32px rgb(32 42 53 / 18%); }
+.reader-panel h2 { margin: 0 0 .6rem; font-size: 1rem; }
+.reader-panel h2.panel-section { margin-top: 1.2rem; }
+.reader-panel input[type="search"] { width: 100%; margin: 0 0 .6rem; padding: .4rem .55rem;
+  color: var(--ink); background: #fff; border: 1px solid var(--rule); border-radius: 4px;
+  font: inherit; }
+.reader-panel input[type="search"]:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.reader-panel .search-page { flex: none; color: var(--muted); font-size: .8rem;
+  font-variant-numeric: tabular-nums; }
+.reader-panel mark { color: inherit; background: rgb(242 165 65 / 35%); }
+.reader-panel ol { margin: 0; padding: 0; list-style: none; }
+.reader-panel li { display: flex; align-items: baseline; gap: .5rem;
+  padding: .35rem 0; border-top: 1px solid var(--rule); }
+.reader-panel li:first-child { border-top: 0; }
+.reader-panel a, .reader-panel li button { flex: 1; padding: 0; color: var(--accent);
+  text-align: left; text-decoration: none; background: none; border: 0; cursor: pointer; }
+.reader-panel a:hover, .reader-panel li button:hover { text-decoration: underline; }
+.reader-panel li .bookmark-remove { flex: none; color: var(--muted); }
+.reader-panel [aria-current="page"] { font-weight: 700; }
+.reader-panel .empty { margin: 0; color: var(--muted); font-size: .9rem; }
+/* Front matter of the one continuous book: the cover, its endpaper (the inside
+   of the cover, two-page spreads only) and the contents each take a page, and
+   every chapter starts on a new page. The cover and endpaper pages are empty
+   placeholders a hair shorter than the page: a section exactly as tall as the
+   column makes WebKit treat the next forced break as leaving an empty page. */
+.endpaper-page, .contents-page, .book-chapter, .back-matter { break-before: column; }
+.cover-page, .endpaper-page, .back-matter { height: calc(var(--column-height, 100%) - 2px); }
+.is-single .endpaper-page, .back-filler { display: none; }
+.book.needs-filler:not(.is-single) .back-filler { display: block; }
+
+/* The closed book: before it is opened only the cover shows, filling the
+   right-hand page edge to edge with the page block's edges around it, and
+   nothing lies on the left. The cover is painted from the cover image over
+   the whole page, the same way the turning sheet paints it. */
+.book-cover { position: absolute; z-index: 2; top: 0; display: none;
+  background-repeat: no-repeat; border-radius: 2px 5px 5px 2px; pointer-events: none;
+  box-shadow: inset 7px 0 9px -6px rgb(0 0 0 / 45%), inset -1px 0 0 rgb(255 255 255 / 8%); }
+.book.show-cover .book-cover:not(.book-back-cover),
+.book.show-back-cover .book-back-cover { display: block; }
+/* Seen from the back, the spine is on the right. */
+.book:not(.is-single) .book-back-cover { border-radius: 5px 2px 2px 5px;
+  box-shadow: inset -7px 0 9px -6px rgb(0 0 0 / 45%), inset 1px 0 0 rgb(255 255 255 / 8%); }
+.book.is-closed .book-crease, .book.is-closed .book-gutter::before,
+.book.is-closed-back .book-crease, .book.is-closed-back .book-gutter::after { display: none; }
+.book.is-centred:not(.is-single)::before { left: calc(50% + 6px); }
+.book.is-closed-back:not(.is-single)::before { right: calc(50% + 6px); }
+
+/* Opening the book (two-page spreads only). Closed, the book rests centred:
+   the frame shifts left by a quarter so the cover sits in the middle, and
+   the left half is clipped so nothing shows there. Opening turns the cover
+   about the spine while the book glides back until the spread is centred, so
+   the page block moves right as the cover swings left; the shadow widens
+   with it. CSS transitions run it; the script only switches the states
+   closed -> opening -> open (and back when the book is closed again). */
+:root { --open-ms: 820ms; --open-ease: cubic-bezier(.33, .08, .2, 1); }
+.book.is-centred:not(.is-single) { transform: translateX(-25%); }
+.book.is-centred:not(.is-single) .reader-window { cursor: pointer; }
+.book.is-closed:not(.is-single) .reader-window { clip-path: inset(0 0 0 50%); }
+.book.is-closed:not(.is-single) > [data-page-number="left"] { display: none; }
+.book.is-moving { transition: transform var(--open-ms) var(--open-ease); }
+/* The shadow follows the paper: while opening it widens only as the cover
+   comes down on the left; while closing it narrows as the cover lifts. */
+.book.is-moving::before { transition: left calc(var(--open-ms) * .4) var(--open-ease); }
+.book.is-moving.is-opening::before { transition-delay: calc(var(--open-ms) * .6); }
+.book.is-moving .book-cover { transition: transform var(--open-ms) var(--open-ease); }
+.book-cover[data-book-cover] { transform-origin: left center; transform-style: preserve-3d;
+  background: none; box-shadow: none; }
+.book-cover.is-turned { transform: perspective(2600px) rotateY(-180deg); }
+.cover-face { position: absolute; inset: 0; backface-visibility: hidden; background-repeat: no-repeat;
+  border-radius: 2px 5px 5px 2px;
+  box-shadow: inset 7px 0 9px -6px rgb(0 0 0 / 45%), inset -1px 0 0 rgb(255 255 255 / 8%); }
+/* The inside of the cover, which lands on the left as the endpaper. */
+.cover-back { transform: rotateY(180deg); background: var(--shade-left), var(--paper);
+  border-radius: 5px 2px 2px 5px; box-shadow: none; }
+@media (prefers-reduced-motion: reduce) {
+  .book.is-moving, .book.is-moving::before, .book.is-moving .book-cover { transition: none; }
+}
+.contents-page h2 { margin: 1.5rem 0 1.6rem; text-align: center; }
+/* Entries already carry their own labels (Part I, အခန်း (၁)); no list numbers. */
+.contents-page ol { margin: 0; padding-left: 1.4rem; list-style: none; }
+.contents-page > ol { padding-left: 0; }
+.contents-page li { margin: .35rem 0; }
+.contents-page a { color: var(--ink); text-decoration: none; }
+.contents-page a:hover, .contents-page a:focus-visible { color: var(--accent); text-decoration: underline; }
+.toc-part { margin-top: 1rem; }
+.toc-part-title { font-weight: 700; }
+.flow-end { display: block; height: 0; }
+
+@media (pointer: coarse) {
+  :root { --reader-chrome: 8.2rem; --reader-top: 4.5rem; }
+  .reader-tool, .page-turn { min-width: 44px; min-height: 44px; }
+}
+/* Keep in step with the two-page query in web-reader.js. A foldable spanning
+   its vertical fold shows the spread centred, so the spine lies on the fold. */
+@media (min-width: 60rem) and (min-aspect-ratio: 6/5), (horizontal-viewport-segments: 2) {
+  /* The spread keeps its 1.4167 proportions and takes the viewport height
+     left after the header, the stack edges and the controls. */
+  .reader-shell { --book-height: max(24rem, min(100svh - var(--reader-chrome), min(94vw, 76rem) / 1.4167)); }
+  .reader-window { width: calc(var(--book-height) * 1.4167); height: var(--book-height);
+    min-height: 0; }
+  .reader-controls { width: calc(var(--book-height) * 1.4167); }
+  .reader-flow { --page-gap: 2rem; --page-pad: 2.6rem; }
+}
+@media (max-width: 40rem) {
+  body { font-size: 1rem; }
+  main { padding-top: .4rem; }
+  .site-header { padding-inline: 1rem; gap: .5rem; }
+  .site-subtitle { display: none; }
+  .reader-tool { min-width: 44px; min-height: 44px; }
+  .reader-window { width: calc(100vw - 2.5rem); height: calc(100svh - var(--reader-chrome));
+    min-height: 25rem; }
+  .reader-flow { padding: 2rem 1.35rem; }
+  /* Phones: icons only, with full-size tap targets. */
+  .reader-controls { width: calc(100vw - 2.5rem); gap: .25rem; }
+  .page-turn { min-width: 44px; min-height: 44px; }
+  .page-turn .icon { width: 1.5rem; height: 1.5rem; }
+  .nav-label { display: none; }
+}

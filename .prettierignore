@@ -6,3 +6,5 @@ specs/
 .claude/
 test/fixtures/
 package-lock.json
+assets/css/
+assets/web-reader.js

@@ -29,14 +29,18 @@
     "test": "vitest run",
     "test:release": "vitest run --config vitest.release.config.ts",
     "check": "npm run typecheck && npm run lint && npm run format:check && npm run test",
-    "equivalence": "node scripts/equivalence.ts"
+    "equivalence": "node scripts/equivalence.ts",
+    "test:e2e": "vitest run --config vitest.e2e.config.ts",
+    "equivalence:web": "node scripts/equivalence-web.ts"
   },
   "dependencies": {
     "commander": "^15.0.0",
     "entities": "^8.1.0",
     "fontkit": "^2.0.4",
     "markdown-it": "^15.0.2",
+    "playwright": "^1.63.0",
     "prismjs": "^1.30.0",
+    "sharp": "^0.35.5",
     "zod": "^4.6.5"
   },
   "devDependencies": {

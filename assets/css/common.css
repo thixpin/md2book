@@ -1,0 +1,187 @@
+/* Shared typography for PDF and EPUB.
+   Body and headings: Noto Sans Myanmar. Code: Noto Sans Mono.
+   Each family file also carries the other script (see fonts.py). */
+
+body {
+  font-family: "Noto Sans Myanmar", sans-serif;
+  font-weight: 400;
+}
+
+h1, h2, h3, .chapter-number, .book-title {
+  font-family: "Noto Sans Myanmar", sans-serif;
+}
+
+p {
+  margin: 0;
+  text-indent: 6mm;
+  orphans: 2;
+  widows: 2;
+}
+
+/* No indent on the first paragraph of a block or after a break. */
+.chapter-head + p, h2 + p, blockquote + p, pre + p, .terminal + p, hr + p,
+table + p, .callout + p, .noindent, blockquote p, .callout p, td p, th p {
+  text-indent: 0;
+}
+
+h2 {
+  font-weight: 600;
+  font-size: 1.05em;
+  line-height: 1.35;
+  margin: 1.5em 0 0.6em 0;
+  text-indent: 0;
+  page-break-after: avoid;
+  break-after: avoid;
+}
+
+blockquote {
+  margin: 0.9em 0 0.9em 6mm;
+  padding: 0 0 0 3mm;
+  border-left: 0.5pt solid #666;
+  font-size: 0.95em;
+}
+blockquote p + p { margin-top: 0.4em; }
+/* AURA system headers such as [AURA: SYSTEM_ADVISORY] */
+blockquote code {
+  font-weight: 700;
+  font-size: 0.8em;
+}
+
+/* Terminal commands, logs and code: monospace, smaller than body. */
+pre, code {
+  font-family: "Noto Sans Mono", monospace;
+}
+code {
+  font-size: 0.82em;
+}
+pre {
+  font-size: 0.72em;
+  line-height: 1.4;
+  margin: 0.9em 0;
+  padding: 0.6em 0.8em;
+  border: 0.4pt solid #999;
+  background: #f6f6f6;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+pre code {
+  font-size: inherit;
+}
+
+hr {
+  border: none;
+  margin: 1.4em 0;
+  text-align: center;
+  page-break-after: avoid;
+  break-after: avoid;
+}
+hr::after {
+  content: "*  *  *";
+  white-space: pre;
+  color: #444;
+}
+
+em { font-style: italic; }
+strong { font-weight: 700; }
+
+/* Syntax highlighting (Pygments token classes, build.py). Keywords are bold so they
+   stay distinct in grayscale print; there is no mono italic, so comments use colour only. */
+.code .k, .code .kc, .code .kd, .code .kn, .code .kp, .code .kr, .code .kt, .code .ow {
+  color: #8a1f8e;
+  font-weight: 700;
+}
+.code .s, .code .s1, .code .s2, .code .sa, .code .sb, .code .sc, .code .dl, .code .sd,
+.code .se, .code .sh, .code .si, .code .sx, .code .sr, .code .ss {
+  color: #a3261c;
+}
+.code .m, .code .mb, .code .mf, .code .mh, .code .mi, .code .mo, .code .il {
+  color: #1c4bb0;
+}
+.code .c, .code .ch, .code .cm, .code .c1, .code .cs, .code .cpf {
+  color: #6a737d;
+}
+.code .nc, .code .nf, .code .fm, .code .nb, .code .bp {
+  color: #0b6670;
+}
+.code .cp, .code .nd { color: #7a4b1e; }
+.code .err { color: #c00; }
+
+/* Terminal window for ```console blocks: title bar with three dots, dark screen,
+   prompt and command bright, output dimmed. */
+.terminal {
+  margin: 0.9em 0;
+  border-radius: 5px;
+  background: #1e1e1e;
+  overflow: hidden;
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+.terminal-bar {
+  background: #3a3a3c;
+  padding: 0.45em 0.7em;
+  line-height: 0;
+}
+.terminal-dot {
+  display: inline-block;
+  width: 0.65em;
+  height: 0.65em;
+  margin-right: 0.4em;
+  border-radius: 50%;
+  background: #ff5f57;
+}
+.terminal-dot + .terminal-dot { background: #febc2e; }
+.terminal-dot + .terminal-dot + .terminal-dot { background: #28c840; }
+.terminal pre {
+  margin: 0;
+  padding: 0.7em 0.8em;
+  border: none;
+  background: #1e1e1e;
+  color: #f0f0f0;
+}
+.terminal .gp { color: #4ec98f; font-weight: 700; }
+.terminal .go { color: #a8b0bc; }
+.terminal .gt, .terminal .gr, .terminal .err { color: #f48771; }
+.terminal .nv { color: #9cdcfe; }
+.terminal .s, .terminal .s1, .terminal .s2 { color: #ce9178; }
+.terminal .c, .terminal .c1 { color: #7f8793; }
+
+/* Tables (Markdown pipe tables). Header row shaded; kept on one page when short. */
+table {
+  border-collapse: collapse;
+  margin: 0.9em 0;
+  font-size: 0.9em;
+  line-height: 1.4;
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+th, td {
+  border: 0.4pt solid #999;
+  padding: 0.3em 0.6em;
+  text-align: left;
+  vertical-align: top;
+}
+th {
+  font-weight: 600;
+  background: #eeeeee;
+}
+
+/* Callouts (> [!NOTE], > [!WARNING], > [!TRY]; build.py): a boxed aside with a
+   titled first line and a coloured left rule. */
+.callout {
+  margin: 0.9em 0;
+  padding: 0.6em 0.9em;
+  border-left: 1.2mm solid #999;
+  background: #f4f4f4;
+  font-size: 0.95em;
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+.callout-title {
+  font-weight: 600;
+  margin-bottom: 0.3em;
+}
+.callout p + p, .callout p + ol, .callout p + ul { margin-top: 0.4em; }
+.callout ol, .callout ul { margin: 0.3em 0 0 0; padding-left: 1.4em; }
+.callout-note { border-left-color: #1c4bb0; background: #eef3fb; }
+.callout-warning { border-left-color: #b8860b; background: #fdf6e3; }
+.callout-try { border-left-color: #0b6670; background: #eaf6f5; }

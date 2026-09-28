@@ -24,10 +24,10 @@ server only.
 
 ## Phase 1: Setup
 
-- [ ] T001 Add dependencies `sharp@^0.35` and `playwright@^1.63` to `package.json`; add scripts `test:e2e` (`vitest run --config vitest.e2e.config.ts`) and `equivalence:web` (`node scripts/equivalence-web.ts`)
-- [ ] T002 [P] Create `vitest.e2e.config.ts` (includes only `test/e2e/**`, setup `test/setup/no-network.ts`, test timeout 60 s) and exclude `test/e2e/**` from `vitest.config.ts`
-- [ ] T003 [P] Carry over reference assets byte-for-byte: `publish/css/common.css` → `assets/css/common.css`; `WEB_CSS` (web.py lines 28–332, the string content) → `assets/css/web.css`; `publish/web-reader.js` → `assets/web-reader.js`; `ICON_PATHS` → `src/web/icons.ts` with the Lucide ISC notice; record SHA-256 of each copied original in `docs/decision-log.md`
-- [ ] T004 [P] Add a CI job to `.github/workflows/ci.yml`: `npm ci`, `npx playwright install --with-deps chromium`, `npm run test:e2e`
+- [X] T001 Add dependencies `sharp@^0.35` and `playwright@^1.63` to `package.json`; add scripts `test:e2e` (`vitest run --config vitest.e2e.config.ts`) and `equivalence:web` (`node scripts/equivalence-web.ts`)
+- [X] T002 [P] Create `vitest.e2e.config.ts` (includes only `test/e2e/**`, setup `test/setup/no-network.ts`, test timeout 60 s) and exclude `test/e2e/**` from `vitest.config.ts`
+- [X] T003 [P] Carry over reference assets byte-for-byte: `publish/css/common.css` → `assets/css/common.css`; `WEB_CSS` (web.py lines 28–332, the string content) → `assets/css/web.css`; `publish/web-reader.js` → `assets/web-reader.js`; `ICON_PATHS` → `src/web/icons.ts` with the Lucide ISC notice; record SHA-256 of each copied original in `docs/decision-log.md`
+- [X] T004 [P] Add a CI job to `.github/workflows/ci.yml`: `npm ci`, `npx playwright install --with-deps chromium`, `npm run test:e2e`
 
 ---
 
