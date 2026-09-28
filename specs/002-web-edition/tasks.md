@@ -33,9 +33,9 @@ server only.
 
 ## Phase 2: Foundational
 
-- [ ] T005 [P] Write `test/unit/web/published.test.ts`: `loadPublishedChapters` loads only listed files; slug from chapter number (`ch07` for a lone chapter 7); errors (each one line naming key or entry): missing/empty/non-string list, path or non-`.md` entry, missing file, duplicate entry, duplicate chapter number; an unlisted file is never opened (spy on `readFile`)
-- [ ] T006 Refactor `src/manuscript/chapters.ts` to share one `parseChapter(sourcePath, index, config)` between `loadChapters` and a new `loadPublishedChapters(config)`; keep all feature 001 tests green; pass T005
-- [ ] T007 [P] Extend fixtures: `test/fixtures/book-mm/book.json` gets `web_published_chapters: ["chapter-01.md", "chapter-02.md"]`, `description`; add `test/fixtures/book-mm/chapters/chapter-03.md` (NOT listed, contains `DRAFT-MARKER-3`); `test/fixtures/book-en/book.json` gets `web_published_chapters: ["chapter-02.md"]` and `favicon: "cover/favicon.svg"` (add a small square SVG) and `back_cover: "cover/back.png"` (1×1 PNG); keep feature 001 tests green (update expected chapter counts where the new chapter appears)
+- [X] T005 [P] Write `test/unit/web/published.test.ts`: `loadPublishedChapters` loads only listed files; slug from chapter number (`ch07` for a lone chapter 7); errors (each one line naming key or entry): missing/empty/non-string list, path or non-`.md` entry, missing file, duplicate entry, duplicate chapter number; an unlisted file is never opened (spy on `readFile`)
+- [X] T006 Refactor `src/manuscript/chapters.ts` to share one `parseChapter(sourcePath, index, config)` between `loadChapters` and a new `loadPublishedChapters(config)`; keep all feature 001 tests green; pass T005
+- [X] T007 [P] Extend fixtures: `test/fixtures/book-mm/book.json` gets `web_published_chapters: ["chapter-01.md", "chapter-02.md"]`, `description`; `test/fixtures/book-en/book.json` gets `web_published_chapters: ["chapter-01.md", "chapter-02.md"]` plus an unlisted `chapters/chapter-03.md` containing `DRAFT-MARKER-3` (in book-en because book-mm's part covers only chapters 1–2) and `favicon: "cover/favicon.svg"` (add a small square SVG) and `back_cover: "cover/back.png"` (1×1 PNG); keep feature 001 tests green (update expected chapter counts where the new chapter appears)
 
 **Checkpoint**: published-chapter loading ready.
 

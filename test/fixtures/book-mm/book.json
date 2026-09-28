@@ -8,5 +8,10 @@
   "cover": "cover/cover.png",
   "chapter_glob": "chapters/chapter-*.md",
   "part_glob": "chapters/part-*.md",
-  "code_root": "../code"
+  "code_root": "../code",
+  "web_published_chapters": [
+    "chapter-01.md",
+    "chapter-02.md"
+  ],
+  "description": "မြန်မာ စမ်းသပ်စာအုပ်၏ ဖော်ပြချက်။"
 }

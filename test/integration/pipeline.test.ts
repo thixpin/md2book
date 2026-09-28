@@ -41,7 +41,7 @@ describe("core pipeline", () => {
     expect(mm.chapters[0]?.html).toContain('<div class="terminal">');
 
     const en = await runPipeline((await loadConfig(fixture("book-en", "book.json"))).config);
-    expect(en.chapters.map((c) => c.label)).toEqual(["Chapter 1", "Chapter 2"]);
+    expect(en.chapters.map((c) => c.label)).toEqual(["Chapter 1", "Chapter 2", "Chapter 3"]);
     expect(en.uncovered.length).toBeGreaterThan(0);
 
     expect(hashTree(fixture())).toEqual(before);
