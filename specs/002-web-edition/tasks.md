@@ -113,12 +113,12 @@ server only.
 
 ### Tests ⚠️
 
-- [ ] T030 [P] [US4] Write `test/unit/web/serve.test.ts`: serves `index.html` for `/`, files with content types, `404.html` with status 404 for unknown paths, refuses `/../` escapes, one-line error naming a busy port, `close()` stops the server
+- [X] T030 [P] [US4] Write `test/unit/web/serve.test.ts`: serves `index.html` for `/`, files with content types, `404.html` with status 404 for unknown paths, refuses `/../` escapes, one-line error naming a busy port, `close()` stops the server
 
 ### Implementation
 
-- [ ] T031 [US4] Implement `src/web/serve.ts` with `node:http` to pass T030
-- [ ] T032 [US4] Wire `book-build serve --config [--out] [--port]` in `src/cli.ts` (build, serve, print URL, stop on SIGINT) and export `serve()` from `src/index.ts`; public API test = exactly `fonts`, `init`, `serve`, `web`
+- [X] T031 [US4] Implement `src/web/serve.ts` with `node:http` to pass T030
+- [X] T032 [US4] Wire `book-build serve --config [--out] [--port]` in `src/cli.ts` (build, serve, print URL, stop on SIGINT) and export `serve()` from `src/index.ts`; public API test = exactly `fonts`, `init`, `serve`, `web`
 
 ---
 

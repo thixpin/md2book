@@ -12,7 +12,7 @@ function capture() {
 }
 
 describe("runCli", () => {
-  it.each(["pdf", "epub", "qa", "all", "serve", "cover"])(
+  it.each(["pdf", "epub", "qa", "all", "cover"])(
     "reserved command %s prints 'not available yet' and exits 1",
     async (command) => {
       const io = capture();
@@ -21,6 +21,13 @@ describe("runCli", () => {
       expect(io.err.join("")).toBe(`book-build: ${command}: not available yet\n`);
     },
   );
+
+  it("says 'not available yet' even when options are passed to a reserved command", async () => {
+    const io = capture();
+    const code = await runCli(["pdf", "--config", "book.json", "--printed"], io.deps);
+    expect(code).toBe(1);
+    expect(io.err.join("")).toBe("book-build: pdf: not available yet\n");
+  });
 
   it("maps a thrown BookError to exit code 1 with a one-line message", async () => {
     const io = capture();

@@ -1,6 +1,7 @@
 import { basename, extname, resolve } from "node:path";
 import { loadConfig } from "../config/load.ts";
 import { buildWeb } from "./build.ts";
+import { serveDir, type Served } from "./serve.ts";
 
 export interface WebOptions {
   /** Book config path. */
@@ -23,4 +24,15 @@ export async function runWeb(
     out: resolve(options.out ?? defaultOut(options.config)),
     manifestPath,
   });
+}
+
+export interface ServeOptions extends WebOptions {
+  /** Port on 127.0.0.1 (default 8000). */
+  port?: number;
+}
+
+/** `book-build serve`: build, then serve `<out>/web/` locally until closed. */
+export async function runServe(options: ServeOptions, manifestPath?: string): Promise<Served> {
+  const { dir } = await runWeb(options, manifestPath);
+  return serveDir(dir, options.port ?? 8000);
 }

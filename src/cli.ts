@@ -3,7 +3,7 @@ import { BookError } from "./errors.ts";
 import { runFonts } from "./fonts/command.ts";
 import { runInit } from "./init/init.ts";
 import { promptMissing, type InitAnswers } from "./init/prompts.ts";
-import { runWeb } from "./web/command.ts";
+import { runServe, runWeb } from "./web/command.ts";
 
 export interface CliDeps {
   stdout?: (text: string) => void;
@@ -14,7 +14,7 @@ export interface CliDeps {
   stdin?: { isTTY?: boolean } & Partial<NodeJS.ReadableStream>;
 }
 
-const RESERVED = ["pdf", "epub", "qa", "all", "serve", "cover"] as const;
+const RESERVED = ["pdf", "epub", "qa", "all", "cover"] as const;
 
 /** Runs `book-build` with user arguments (no node/script prefix); resolves to the exit code. */
 export async function runCli(argv: string[], deps: CliDeps = {}): Promise<number> {
@@ -83,10 +83,32 @@ export async function runCli(argv: string[], deps: CliDeps = {}): Promise<number
       stdout(`Web edition written: ${dir} (${chapters} published chapters)\n`);
     });
 
-  for (const name of RESERVED) {
-    program.command(name).action(() => {
-      throw new BookError(name, "not available yet");
+  program
+    .command("serve")
+    .description("Build the web edition and preview it at http://127.0.0.1:<port>/.")
+    .requiredOption("--config <path>", "book config")
+    .option("--out <dir>", "output directory (default dist/<config name>/)")
+    .option("--port <n>", "port on 127.0.0.1", "8000")
+    .action(async (options: { config: string; out?: string; port: string }) => {
+      const port = Number(options.port);
+      if (!Number.isInteger(port) || port < 0 || port > 65535) {
+        throw new BookError("--port", `not a valid port: ${options.port}`);
+      }
+      const served = await runServe({ ...options, port }, deps.manifestPath);
+      stdout(`Serving ${served.url} (Ctrl+C to stop)\n`);
+      await new Promise<void>((done) =>
+        process.once("SIGINT", () => void served.close().then(done)),
+      );
     });
+
+  for (const name of RESERVED) {
+    program
+      .command(name)
+      .allowUnknownOption()
+      .allowExcessArguments()
+      .action(() => {
+        throw new BookError(name, "not available yet");
+      });
   }
 
   try {
