@@ -34,6 +34,10 @@ into `data-model.md` → Reference constants during planning.
   (`strings.chapter_digits`) number pages and contents entries in Myanmar digits (FR-022).
 - Author request (during implementation): the printed dots show the macOS window-control icons
   ×, −, + (replacing dot, minus, diagonal); the PDF contents entries get more line spacing.
+- Q: With `running_headers: false`, what disappears? → A: The running header only; the footer
+  keeps the book title and page number.
+- Q: Which editions get the ×/−/+ terminal-dot icons? → A: The printed PDF only; the screen PDF,
+  web and EPUB keep plain coloured dots.
 - Planning finding: ±2% of `book-01`'s 12 pages is less than one page, so SC-001 allows at least
   ±1 page and adds a 20-chapter book (research R-06).
 
