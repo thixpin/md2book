@@ -75,8 +75,10 @@ implementation. Offline; epubcheck assertions skip (with a note) when `epubcheck
 
 ## Phase 5: User Story 3 - Gated end image (P2)
 
-- [ ] T026 [P] [US3] Write `test/unit/epub/end-image.test.ts`: gate present → `text/end.xhtml` backmatter after the chapters, `images/end.png` in the manifest, log `End image: included`; gate absent or `end_image` unset → nothing copied, listed or referenced, log `End image: withheld (chapter-02.md not in chapters/)`
-- [ ] T027 [US3] Implement the gate in `src/epub/build.ts` (and the log line in the epub/all commands) to pass T026
+> **Order note**: the gate (`endImage`) was needed by `buildEpub` in US1, so T027 landed there; T026's tests pin its behaviour.
+
+- [X] T026 [P] [US3] Write `test/unit/epub/end-image.test.ts`: gate present → `text/end.xhtml` backmatter after the chapters, `images/end.png` in the manifest, log `End image: included`; gate absent or `end_image` unset → nothing copied, listed or referenced, log `End image: withheld (chapter-02.md not in chapters/)`
+- [X] T027 [US3] Implement the gate in `src/epub/build.ts` (and the log line in the epub/all commands) to pass T026
 
 ---
 
