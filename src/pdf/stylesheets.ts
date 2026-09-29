@@ -18,34 +18,35 @@ function cssString(text: string): string {
 }
 
 /**
- * Per-book rules, last in the cascade: the book title as the left running header (Paged.js
- * ignores `string-set` from `attr()` on body), or no running headers at all.
+ * Per-book rules, last in the cascade: running heads and feet (author request). Outside = the edge
+ * away from the spine. Header: author outside, current chapter title inside; footer: page number
+ * outside, book title inside; all four in the folio's style. Chapter one is page 1 (the front
+ * matter is not numbered) and Myanmar books use Myanmar digits, as in the web reader. The book
+ * title and author are written as strings (Paged.js ignores `string-set` from `attr()`).
  */
 function bookCss(config: BookConfig): string {
-  const headers = config.running_headers
-    ? `@page :left { @top-left { content: ${cssString(config.title)}; } }\n`
-    : "@page :left{@top-left{content:none}} @page :right{@top-right{content:none}}\n";
-  return headers + folioCss(config);
-}
-
-/**
- * Page numbers as in the web reader (author request): chapter one is page 1 (the front matter is
- * not numbered), folios sit in the outside corner (left pages bottom left, right pages bottom
- * right), and books with Myanmar digits number pages and contents entries in Myanmar digits.
- */
-function folioCss(config: BookConfig): string {
   const style = config.strings.chapter_digits === "myanmar" ? ", myanmar" : "";
+  const type = "font-size: 9pt; color: #333;";
+  const head = config.running_headers
+    ? (content: string) =>
+        `content: ${content}; ${type} vertical-align: bottom; padding-bottom: 3mm;`
+    : () => "content: none;";
   // assets/paged-handler.js writes each page's number as --md2book-folio.
-  const folio =
-    "content: var(--md2book-folio); font-size: 9pt; color: #333; vertical-align: top; padding-top: 4mm;";
-  const none = "@bottom-left { content: none; } @bottom-right { content: none; }";
+  const foot = (content: string) =>
+    `content: ${content}; ${type} vertical-align: top; padding-top: 4mm;`;
+  const author = cssString(config.author);
+  const title = cssString(config.title);
+  const chapter = "string(chaptertitle)";
+  const folio = "var(--md2book-folio)";
+  const none = "content: none;";
+  const noMargins = `@top-left { ${none} } @top-right { ${none} } @bottom-left { ${none} } @bottom-right { ${none} }`;
   return [
-    "@page { @bottom-center { content: none; } }",
-    `@page :left { @bottom-left { ${folio} } }`,
-    `@page :right { @bottom-right { ${folio} } }`,
-    `@page :blank { ${none} }`,
-    `@page front { ${none} }`,
-    `@page cover { ${none} }`,
+    `@page { @bottom-center { ${none} } }`,
+    `@page :left { @top-left { ${head(author)} } @top-right { ${head(chapter)} } @bottom-left { ${foot(folio)} } @bottom-right { ${foot(title)} } }`,
+    `@page :right { @top-left { ${head(chapter)} } @top-right { ${head(author)} } @bottom-left { ${foot(title)} } @bottom-right { ${foot(folio)} } }`,
+    `@page :blank { ${noMargins} }`,
+    `@page front { ${noMargins} }`,
+    `@page cover { ${noMargins} }`,
     "#ch01 { counter-reset: page 1; }",
     `.toc-page li a::after { content: target-counter(attr(href url), page${style}); }`,
     "",

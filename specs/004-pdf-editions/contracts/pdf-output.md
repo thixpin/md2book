@@ -57,10 +57,11 @@ next block (or the whole of an unbreakable block), otherwise it starts the next 
 | title, copyright, contents, end image | none | none |
 | chapter opening | none | none |
 | blank (recto padding) | none | none |
-| other left page | book title, top left, 8.5 pt | bottom left, 9 pt |
-| other right page | current chapter title, top right, 8.5 pt | bottom right, 9 pt |
+| other left page | author top left, chapter title top right | page number bottom left, book title bottom right |
+| other right page | chapter title top left, author top right | book title bottom left, page number bottom right |
 
-`running_headers: false` removes both headers; folios stay.
+All four in 9 pt, #333 (author request: author and page number outside, chapter and book title
+inside). `running_headers: false` removes the header line; the footer stays.
 
 Numbering (FR-022): page 1 is chapter one's first page; the front matter has no numbers; digits
 follow `strings.chapter_digits`. `book.css` sets `#ch01 { counter-reset: page 1; }` (for the

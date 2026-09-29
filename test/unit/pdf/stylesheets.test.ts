@@ -100,40 +100,53 @@ describe("printStylesheets", () => {
     );
   });
 
-  it("writes the book title into the left running header as a CSS string", async () => {
-    const book = (await sheets(false, { title: 'Say "hi" \\ now\nplease' })).at(-1)!;
+  it("runs author and chapter title in the header, page number and book title in the footer", async () => {
+    const book = (
+      await sheets(false, { title: 'Say "hi" \\ now\nplease', author: "A. Author" })
+    ).at(-1)!;
     expect(book.name).toBe("book.css");
-    expect(book.css.split("\n")[0]).toBe(
-      '@page :left { @top-left { content: "Say \\"hi\\" \\\\ now\\a please"; } }',
+    const css = book.css;
+    const head = (content: string) =>
+      `content: ${content}; font-size: 9pt; color: #333; vertical-align: bottom; padding-bottom: 3mm;`;
+    const foot = (content: string) =>
+      `content: ${content}; font-size: 9pt; color: #333; vertical-align: top; padding-top: 4mm;`;
+    const title = '"Say \\"hi\\" \\\\ now\\a please"';
+    // Outside: left edge of a left page, right edge of a right page.
+    expect(css).toContain(
+      `@page :left { @top-left { ${head('"A. Author"')} } @top-right { ${head("string(chaptertitle)")} } ` +
+        `@bottom-left { ${foot("var(--md2book-folio)")} } @bottom-right { ${foot(title)} } }`,
     );
+    expect(css).toContain(
+      `@page :right { @top-left { ${head("string(chaptertitle)")} } @top-right { ${head('"A. Author"')} } ` +
+        `@bottom-left { ${foot(title)} } @bottom-right { ${foot("var(--md2book-folio)")} } }`,
+    );
+    expect(css).toContain("@page { @bottom-center { content: none; } }");
+    const none =
+      "@top-left { content: none; } @top-right { content: none; } @bottom-left { content: none; } @bottom-right { content: none; }";
+    for (const page of [":blank", "front", "cover"])
+      expect(css).toContain(`@page ${page} { ${none} }`);
   });
 
-  it("numbers pages from chapter one in the outside corners, in the book's digits", async () => {
+  it("numbers pages from chapter one, in the book's digits", async () => {
     const mm = (await sheets(false)).at(-1)!.css;
-    expect(mm).toContain("@page { @bottom-center { content: none; } }");
-    expect(mm).toContain("@page :left { @bottom-left { content: var(--md2book-folio);");
-    expect(mm).toContain("@page :right { @bottom-right { content: var(--md2book-folio);");
-    for (const page of [":blank", "front", "cover"]) {
-      expect(mm).toContain(
-        `@page ${page} { @bottom-left { content: none; } @bottom-right { content: none; } }`,
-      );
-    }
     expect(mm).toContain("#ch01 { counter-reset: page 1; }");
     expect(mm).toContain(
       ".toc-page li a::after { content: target-counter(attr(href url), page, myanmar); }",
     );
-    const en = (
-      await sheets(false, { strings: { ...(await bookMm()).strings, chapter_digits: "ascii" } })
-    ).at(-1)!.css;
+    const strings = { ...(await bookMm()).strings, chapter_digits: "ascii" as const };
+    const en = (await sheets(false, { strings })).at(-1)!.css;
     expect(en).toContain(
       ".toc-page li a::after { content: target-counter(attr(href url), page); }",
     );
   });
 
-  it("removes both running headers when running_headers is false", async () => {
-    const book = (await sheets(false, { running_headers: false })).at(-1)!.css;
-    expect(book).toContain(
-      "@page :left{@top-left{content:none}} @page :right{@top-right{content:none}}",
+  it("drops the header line, keeping the footer, when running_headers is false", async () => {
+    const css = (await sheets(false, { running_headers: false })).at(-1)!.css;
+    expect(css).toContain(
+      "@page :left { @top-left { content: none; } @top-right { content: none; } @bottom-left { content: var(--md2book-folio);",
+    );
+    expect(css).toContain(
+      '@page :right { @top-left { content: none; } @top-right { content: none; } @bottom-left { content: "',
     );
   });
 });

@@ -32,9 +32,9 @@ describe("PDF: headings stay with their content", { timeout: 180_000 }, () => {
       let atTop = 0;
       let atFoot = 0;
       for (const [index, page] of pages.entries()) {
-        // The running header and the folio are not content.
+        // The running header and footer are not content.
         const body = page.filter(
-          (line, i) => !(i === 0 && !line.includes("HEADING")) && !/^\d+$/.test(line.trim()),
+          (line, i) => !(i === 0 && line.includes(config.author)) && !line.includes(config.title),
         );
         for (const [at, line] of body.entries()) {
           if (!line.includes("HEADING-")) continue;

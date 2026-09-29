@@ -55,6 +55,9 @@ async function patched(name: string, patch: Record<string, unknown>): Promise<Bo
 }
 
 const isFolio = (line: string | undefined) => /^[0-9\u1040-\u1049]+$/.test(line?.trim() ?? "");
+/** A footer line: page number and book title, in either order. */
+const isFooter = (line: string | undefined, title: string) =>
+  line !== undefined && isFolio(line.replace(title, ""));
 /** A page number as the book prints it (Myanmar digits for book-mm). */
 const myanmar = (n: number) =>
   String(n).replace(/[0-9]/g, (d) => String.fromCharCode(0x1040 + Number(d)));
@@ -116,30 +119,48 @@ describe("buildPdf (screen edition)", { timeout: 120_000 }, () => {
       expect(isFolio(opening.at(-1))).toBe(false); // no folio
     }
 
+    // Header: author outside, chapter title inside; footer: page number outside, book title
+    // inside (outside = left on left pages, right on right pages).
+    let checked = 0;
     for (const [index, lines] of pages.entries()) {
       const n = index + 1;
       const chapter = [...opens.keys()].filter((i) => opens[i]! <= n).at(-1);
       if (lines.length === 0 || n <= 4 || opens.includes(n) || chapter === undefined) continue;
-      if (lines.length === 1 && !isFolio(lines[0])) continue; // the end image page has no text
-      expect(lines.at(-1)!.trim(), `folio on page ${n}`).toBe(myanmar(number(n)));
-      const header = n % 2 === 0 ? config.title : book.chapters[chapter]!.title;
-      expect(lines[0]!.trim(), `header on page ${n}`).toBe(header);
+      const left = n % 2 === 0;
+      const heading = book.chapters[chapter]!.title;
+      const folio = myanmar(number(n));
+      // pdfjs may put a space between the two boxes of a line.
+      const squeeze = (text: string | undefined) => text?.replace(/\s+/g, "");
+      expect(squeeze(lines[0]), `header on page ${n}`).toBe(
+        squeeze(left ? config.author + heading : heading + config.author),
+      );
+      expect(squeeze(lines.at(-1)), `footer on page ${n}`).toBe(
+        squeeze(left ? folio + config.title : config.title + folio),
+      );
+      checked++;
     }
+    expect(checked).toBeGreaterThan(0);
   });
 
   it("puts the folio in the outside corner: bottom left on left pages, bottom right on right", async () => {
-    const { file, facts } = await build(await bookHeadings());
+    const config = await bookHeadings();
+    const { file, facts } = await build(config);
     const doc = await getDocument({ data: new Uint8Array(readFileSync(file)), verbosity: 0 })
       .promise;
     let checked = 0;
     for (const [index, lines] of facts.lines.entries()) {
-      if (!isFolio(lines.at(-1))) continue;
+      if (!isFooter(lines.at(-1), config.title)) continue;
       const items = (await (await doc.getPage(index + 1)).getTextContent()).items;
-      // The folio is the lowest text on the page.
-      const [x] = items
-        .flatMap((item) => ("transform" in item ? [item.transform as number[]] : []))
-        .map((t) => [t[4]!, t[5]!] as const)
-        .sort((a, b) => a[1] - b[1])[0]!;
+      // The folio: the page-number text in the footer (the lowest line).
+      const bottom = items
+        .flatMap((item) => ("transform" in item && "str" in item ? [item] : []))
+        .map((item) => ({
+          str: item.str,
+          x: item.transform[4] as number,
+          y: item.transform[5] as number,
+        }));
+      const lowest = Math.min(...bottom.map((item) => item.y));
+      const { x } = bottom.find((item) => item.y < lowest + 2 && isFolio(item.str))!;
       const left = (index + 1) % 2 === 0;
       // Outside margin 18 mm (51 pt) on a 481.89 pt page.
       if (left) expect(x, `page ${index + 1}`).toBeLessThan(80);
@@ -153,13 +174,12 @@ describe("buildPdf (screen edition)", { timeout: 120_000 }, () => {
     const config = await patched("book-mm", { running_headers: false });
     const book = await loadBook(config);
     const { facts } = await build(config);
-    const titles = new Set([config.title, ...book.chapters.map((ch) => ch.title)]);
     const opens = openings(facts, book);
     for (const [index, lines] of facts.lines.entries()) {
       if (index < 4 || opens.includes(index + 1) || lines.length === 0) continue;
-      expect(titles.has(lines[0]!.trim()), `header on page ${index + 1}`).toBe(false);
+      expect(lines[0], `header on page ${index + 1}`).not.toContain(config.author);
     }
-    expect(facts.lines.some((lines) => isFolio(lines.at(-1)))).toBe(true);
+    expect(facts.lines.some((lines) => isFooter(lines.at(-1), config.title))).toBe(true);
   });
 
   it("extracts clean text in both languages", async () => {

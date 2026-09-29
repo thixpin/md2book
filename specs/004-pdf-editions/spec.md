@@ -275,6 +275,10 @@ starts the next page.
   MUST be carried over, with every deliberate change recorded in `docs/decision-log.md`.
 - **FR-018**: Code and terminal blocks in both PDF editions MUST use line height 1.7, as the EPUB
   and web editions do (a recorded difference from the reference's 1.4).
+- **FR-023**: Running heads and feet MUST follow the author's layout in the PDF and the web reader:
+  header with the author at the outside and the current chapter title at the inside, footer with
+  the page number at the outside and the book title at the inside, all in the page number's type
+  (9 pt in the PDF); `running_headers: false` removes the header line only.
 - **FR-022**: Page numbers (folios and contents entries) MUST count from 1 on chapter one's first
   page, leave the front matter unnumbered, sit at the bottom outside corner (left pages left, right
   pages right), and use the digits of `strings.chapter_digits` (Myanmar or ASCII), as the web
