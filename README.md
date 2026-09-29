@@ -5,11 +5,11 @@ web edition and a QA report, with first-class support for Myanmar
 (Burmese) script. The CLI is `book-build`.
 
 > **Status: early development.** This release contains the core
-> manuscript pipeline, the `init` and `fonts` commands, and the web
-> edition (`web`, `serve`). The `pdf`, `epub`, `qa`, `all` and `cover`
-> commands are reserved and print "not available yet". The package is
-> not on npm yet, and the font download needs the `fonts-v1` release to
-> be published.
+> manuscript pipeline, `init` and `fonts`, the web edition (`web`,
+> `serve`), the EPUB (`epub`) and the QA report (`qa`, `all`). The `pdf`
+> and `cover` commands are reserved and print "not available yet". The
+> package is not on npm yet, and the font download needs the `fonts-v1`
+> release to be published.
 
 ## Requirements
 
@@ -45,6 +45,25 @@ Add a cover image at `cover/cover.png`, then fetch the fonts:
 ```console
 $ book-build fonts --config my-book/book.json
 ```
+
+## EPUB and QA report
+
+```console
+$ book-build epub --config my-book/book.json
+$ book-build qa --config my-book/book.json
+$ book-build all --config my-book/book.json
+```
+
+`epub` writes a reflowable EPUB 3 of every chapter to
+`dist/<config name>/<output_name>.epub` (the unpacked files stay in
+`src/epub/`). `qa` writes `QA-REPORT.md`: manuscript counts, Unicode and
+Burmese text checks, typeface coverage, and EPUB checks when the EPUB
+exists. It reports problems and never changes your files. With
+[epubcheck](https://www.w3.org/publishing/epubcheck/) on your PATH, the
+report includes its result. `all` runs `epub`, then `qa`.
+
+An `end_image` shows after the last chapter only once the chapter named
+by `end_image_after` exists.
 
 ## Web edition
 
@@ -137,28 +156,32 @@ warning; wrong types stop the run. Paths are relative to the config
 file. The full schema is in
 [`specs/001-core-manuscript-pipeline/contracts/book-config.schema.json`](specs/001-core-manuscript-pipeline/contracts/book-config.schema.json).
 
-| Key                         | Required | Notes                                      |
-| --------------------------- | -------- | ------------------------------------------ |
-| `title`, `author`, `year`   | yes      |                                            |
-| `identifier`, `output_name` | yes      | `init` fills both                          |
-| `cover`                     | yes      | PNG or JPEG; must exist                    |
-| `chapter_glob`              | yes      | e.g. `chapters/chapter-*.md`               |
-| `language`                  | no       | `my` (default) or `en`                     |
-| `font_set`                  | no       | `sans` (default) or `serif`                |
-| `part_glob`                 | no       | part files                                 |
-| `code_root`                 | no       | default: nearest folder with `.git`        |
-| `strings`                   | no       | series strings; defaults follow `language` |
+| Key                                               | Required | Notes                                      |
+| ------------------------------------------------- | -------- | ------------------------------------------ |
+| `title`, `author`, `year`                         | yes      |                                            |
+| `identifier`, `output_name`                       | yes      | `init` fills both                          |
+| `cover`                                           | yes      | PNG or JPEG; must exist                    |
+| `chapter_glob`                                    | yes      | e.g. `chapters/chapter-*.md`               |
+| `language`                                        | no       | `my` (default) or `en`                     |
+| `font_set`                                        | no       | `sans` (default) or `serif`                |
+| `part_glob`                                       | no       | part files                                 |
+| `code_root`                                       | no       | default: nearest folder with `.git`        |
+| `strings`                                         | no       | series strings; defaults follow `language` |
+| `web_published_chapters`                          | for web  | chapter file names to publish              |
+| `web_url`, `favicon`, `back_cover`, `description` | no       | web edition                                |
+| `end_image`, `end_image_after`                    | no       | closing image and its gate chapter         |
 
 ## Programmatic API
 
 The API mirrors the CLI:
 
 ```ts
-import { init, fonts, web } from "@thixpin/md2book";
+import { all, fonts, init, web } from "@thixpin/md2book";
 
 await init({ dir: "my-book", lang: "en", title: "T", author: "A" });
 await fonts({ config: "my-book/book.json" });
 const { dir } = await web({ config: "my-book/book.json" });
+const { epub, report } = await all({ config: "my-book/book.json" });
 ```
 
 ## Development

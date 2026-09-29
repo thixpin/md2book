@@ -84,9 +84,9 @@ implementation. Offline; epubcheck assertions skip (with a note) when `epubcheck
 
 ## Phase 6: Polish
 
-- [ ] T028 [P] Write `scripts/equivalence-epub-qa.ts` (SC-001–003): build `book-01` with Python `build.py epub` + `qa` in a temp copy and with ours; compare document order, nav/NCX structure, manifest file set, per-chapter text, and the report's manuscript counts, Unicode issue list and coverage numbers
-- [ ] T029 [P] Write `test/integration/epub-perf.test.ts`: EPUB + QA of a 20-chapter book < 60 s without epubcheck (SC-005)
-- [ ] T030 Update `README.md` (epub, qa, all) and `docs/decision-log.md` (removed em dash check, generic report prose, configured-set coverage, strings in front matter)
+- [X] T028 [P] Write `scripts/equivalence-epub-qa.ts` (SC-001–003): build `book-01` with Python `build.py epub` + `qa` in a temp copy and with ours; compare document order, nav/NCX structure, manifest file set, per-chapter text, and the report's manuscript counts, Unicode issue list and coverage numbers
+- [X] T029 [P] Write `test/integration/epub-perf.test.ts`: EPUB + QA of a 20-chapter book < 60 s without epubcheck (SC-005)
+- [X] T030 Update `README.md` (epub, qa, all) and `docs/decision-log.md` (removed em dash check, generic report prose, configured-set coverage, strings in front matter)
 - [ ] T031 Run `npm run check`, `npm run test:e2e`, the equivalence script and the quickstart; build the demo book's EPUB and QA report
 
 ## Dependencies

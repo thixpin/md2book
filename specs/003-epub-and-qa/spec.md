@@ -26,6 +26,11 @@ into `data-model.md` → Reference constants during planning.
 - Q: What happens to the repository-specific sentences and the Noto-Sans-Myanmar-only typeface
   paragraph in the report? → A: Drop the repository-specific sentences and describe the configured
   font set; all counts and checks stay identical to the reference.
+- Q: The whitespace-dependent counts ("Character count (incl. spaces)", "Approximate word count")
+  differ from the Python report because the rendered HTML's whitespace differs (mainly
+  syntax-highlight spans, plus one nested-list newline). How should SC-003 treat them? → A: Record
+  them as a known, deliberate difference; every other count, the Unicode issues and coverage must
+  match exactly.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -204,7 +209,8 @@ gate file.
 - **SC-002**: For `book-01`, every chapter's EPUB text equals the rendered manuscript (whitespace
   ignored).
 - **SC-003**: For `book-01`, the QA report's manuscript counts, Unicode issue list and coverage
-  numbers are identical to the Python toolchain's report.
+  numbers are identical to the Python toolchain's report, except the two whitespace-dependent
+  counts (characters incl. spaces, approximate word count), which are a recorded difference.
 - **SC-004**: A fixture seeded with one instance of each Unicode issue produces exactly one report
   entry per issue.
 - **SC-005**: EPUB + QA for a 20-chapter book complete in under 60 seconds on the Linux CI runner
