@@ -5,54 +5,33 @@ const css = readFileSync(new URL("../../../assets/css/epub.css", import.meta.url
   /\/\*[\s\S]*?\*\//g,
   "",
 );
-const THEME = ":root[__ibooks_internal_theme]";
 
-/** Declarations of the rule whose selector list contains `selector`. */
+/** Declarations of the rule whose selector list contains `selector` (last match wins). */
 function rule(selector: string): string {
-  const blocks = [...css.matchAll(/([^{}]+)\{([^}]*)\}/g)];
-  const block = blocks.find(([, selectors]) =>
+  const blocks = [...css.matchAll(/([^{}]+)\{([^}]*)\}/g)].filter(([, selectors]) =>
     selectors!.split(",").some((s) => s.trim() === selector),
   );
-  return block?.[2] ?? "";
+  return blocks.map(([, , body]) => body).join(";");
 }
 
-describe("Apple Books theme styles for the terminal", () => {
-  it.each([
-    [`${THEME} .terminal`, "background-color: #1e1e1e !important"],
-    [`${THEME} .terminal pre`, "background-color: #1e1e1e !important"],
-    [`${THEME} .terminal pre`, "color: #f0f0f0 !important"],
-    [`${THEME} .terminal-bar`, "background-color: #3a3a3c !important"],
-    [`${THEME} .terminal-dot`, "background-color: #ff5f57 !important"],
-    [`${THEME} .terminal-dot + .terminal-dot`, "background-color: #febc2e !important"],
-    [
-      `${THEME} .terminal-dot + .terminal-dot + .terminal-dot`,
-      "background-color: #28c840 !important",
-    ],
-    [`${THEME} .terminal .gp`, "color: #4ec98f !important"],
-    [`${THEME} .terminal .go`, "color: #a8b0bc !important"],
-    [`${THEME} .terminal .nv`, "color: #9cdcfe !important"],
-  ])("%s keeps %s", (selector, declaration) => {
-    expect(rule(selector)).toContain(declaration);
+// Apple Books dark themes replace background and text colours but keep borders (spec 003 FR-008),
+// so the EPUB draws the terminal window with borders.
+describe("terminal window survives reader themes", () => {
+  it("outlines the window and separates the title bar with borders", () => {
+    expect(rule(".terminal")).toMatch(/border: 1px solid #3a3a3c/);
+    expect(rule(".terminal-bar")).toMatch(/border-bottom: 1px solid #3a3a3c/);
   });
 
-  it("never paints a background on terminal spans (the dots are spans)", () => {
-    expect(rule(`${THEME} .terminal span`)).toContain("color: #f0f0f0 !important");
-    expect(rule(`${THEME} .terminal span`)).not.toContain("background");
+  it("draws the three dots with coloured borders instead of backgrounds", () => {
+    expect(rule(".terminal-dot")).toMatch(/border: 0\.325em solid #ff5f57/);
+    expect(rule(".terminal-dot")).toMatch(/width: 0/);
+    expect(rule(".terminal-dot")).toMatch(/height: 0/);
+    expect(rule(".terminal-dot + .terminal-dot")).toMatch(/border-color: #febc2e/);
+    expect(rule(".terminal-dot + .terminal-dot + .terminal-dot")).toMatch(/border-color: #28c840/);
   });
 
-  it("uses the same colours as the terminal design in common.css", () => {
-    const common = readFileSync(new URL("../../../assets/css/common.css", import.meta.url), "utf8");
-    for (const colour of [
-      "#1e1e1e",
-      "#3a3a3c",
-      "#ff5f57",
-      "#febc2e",
-      "#28c840",
-      "#f0f0f0",
-      "#4ec98f",
-      "#a8b0bc",
-    ]) {
-      expect(common).toContain(colour);
-    }
+  it("paints no background on inline elements inside the terminal (it clipped descenders)", () => {
+    expect(css).not.toMatch(/\.terminal (code|span)[^{]*\{[^}]*background/);
+    expect(css).not.toContain("__ibooks_internal_theme");
   });
 });

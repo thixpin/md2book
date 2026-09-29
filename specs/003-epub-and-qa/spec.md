@@ -169,10 +169,12 @@ gate file.
 - **FR-004**: The zip MUST store `mimetype` first and uncompressed and deflate all other entries;
   the unpacked tree MUST be rebuilt (not patched) in `<out>/src/epub/`.
 - **FR-005**: The EPUB MUST embed the configured font set and the shared and EPUB stylesheets; for
-  `my-sans` the stylesheets MUST equal the reference's, except the Apple Books theme rules
+  `my-sans` the stylesheets MUST equal the reference's, except the terminal border rules
   appended to `epub.css` (FR-008).
-- **FR-008**: In Apple Books themes that replace colours (Night, Gray), terminal blocks MUST keep
-  their dark window, coloured title-bar dots and prompt/output colours (added 2026-09-29).
+- **FR-008**: In reader themes that replace background and text colours (e.g. Apple Books Night
+  and Gray), a terminal block MUST stay recognisable as a window: outlined, with a title-bar
+  separator and red/yellow/green dots, drawn with borders because those themes keep borders; in
+  light themes it looks unchanged and text is never clipped (added 2026-09-29).
 - **FR-006**: The only timestamp in the EPUB MUST be `dcterms:modified` (Constitution VII).
 - **FR-007**: The end image MUST be included as backmatter only when its gate file exists
   (User Story 3).
