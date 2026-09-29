@@ -4,26 +4,47 @@ Turn a Markdown book manuscript into a print-ready PDF, an EPUB 3, a
 web edition and a QA report, with first-class support for Myanmar
 (Burmese) script. The CLI is `md2book`.
 
-> **Status: early development.** This release contains the core
-> manuscript pipeline, `init` and `fonts`, the PDF (`build pdf`), the
-> EPUB (`build epub`), the web edition (`build web`, `serve`) and the QA
-> report (`qa`, `build all`). The `cover` command is reserved and prints
-> "not available yet". The package is not on npm yet.
+> **Status: early development (0.1.0).** `init`, `fonts`, the PDF
+> (`build pdf`), the EPUB (`build epub`), the web edition (`build web`,
+> `serve`), the QA report (`qa`, `build all`) and `cover`.
+
+A complete example book that uses every manuscript format is in
+[`examples/demo-book`](examples/demo-book).
 
 ## Requirements
 
-- Node.js 26 or newer (`.nvmrc` says `26`).
-- For the PDF and the web edition's generated images: Chromium, installed
-  once with `npx playwright install chromium`.
+- Node.js 26 or newer.
+- Chromium for the PDF, `cover` and the web edition's generated images.
+  It is installed once in the setup step below.
 
-## Install from a clone
+## Install via npm
+
+Install the CLI globally:
 
 ```console
-$ nvm use
-$ npm install
-$ npm run build
-$ npm link
+$ npm install -g @thixpin/md2book
+$ npx playwright install chromium
+$ md2book --help
 ```
+
+Or run it without installing:
+
+```console
+$ npx @thixpin/md2book --help
+```
+
+Or add it to a project and use the API:
+
+```console
+$ npm install @thixpin/md2book
+$ npx playwright install chromium
+```
+
+`npx playwright install chromium` downloads the browser md2book renders
+with (about 150 MB, once per machine). On Linux, use
+`npx playwright install --with-deps chromium` to also install the system
+libraries. Then fetch a book's fonts once with `md2book fonts` (see
+[Fonts](#fonts)).
 
 ## Start a book
 
@@ -120,6 +141,25 @@ and share links. `favicon` (an SVG) and `back_cover` are optional; without
 $ npx playwright install chromium
 ```
 
+## Cover
+
+Design the cover as a one-page HTML file with CSS and render it to PNG
+with the book's fonts, so Burmese text on the cover shapes like the
+book:
+
+```console
+$ md2book cover cover/cover.html --config my-book/book.json
+$ md2book cover cover/end.html -o cover/end.png --dpi 150 --set my-sans
+```
+
+The page size comes from the HTML's `@page { size: … }` rule; at the
+default 300 dpi a 170 × 240 mm page is 2008 × 2835 px. The PNG goes next
+to the HTML as `cover.png` unless `-o` says otherwise. Images and styles
+next to the HTML load; nothing loads from the network. More or fewer
+than one page stops the command. The font set comes from `--config` (the
+book's language and font set) or `--set` (default `my-sans`) and must
+have been fetched with `md2book fonts`.
+
 ## Fonts
 
 Four curated font sets, each with regular, semibold, bold, italic and
@@ -207,23 +247,36 @@ file. The full schema is in
 The API mirrors the CLI:
 
 ```ts
-import { all, fonts, init, pdf, web } from "@thixpin/md2book";
+import { all, cover, fonts, init, pdf, web } from "@thixpin/md2book";
 
 await init({ dir: "my-book", lang: "en", title: "T", author: "A" });
 await fonts({ config: "my-book/book.json" });
 const { dir } = await web({ config: "my-book/book.json" });
 const { file } = await pdf({ config: "my-book/book.json", printed: true });
 const { report } = await all({ config: "my-book/book.json" });
+await cover({ html: "my-book/cover/cover.html", config: "my-book/book.json" });
 ```
 
 ## Development
 
+To work on md2book itself, install it from a clone:
+
 ```console
+$ git clone https://github.com/thixpin/md2book.git
+$ cd md2book
+$ nvm use
+$ npm install
+$ npx playwright install chromium
+$ npm run build
+$ npm link
 $ npm run check
 ```
 
 `check` runs the type checker, ESLint, Prettier and the tests. Tests
-never use the network. Design notes live in `specs/` and deliberate
+never use the network. `npm run coverage` runs the tests with coverage
+thresholds, `npm run test:e2e` the browser tests and
+`npm run package:check` installs the packed tarball into an empty
+project and runs the CLI from it. Design notes live in `specs/` and deliberate
 differences from the original Python toolchain in
 [`docs/decision-log.md`](docs/decision-log.md).
 

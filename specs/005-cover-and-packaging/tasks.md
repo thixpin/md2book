@@ -49,7 +49,7 @@ implementation. Rendering tests are offline and use the print font fixture.
 - [X] T009 [P] [US2] Write `test/unit/package-files.test.ts`: `npm pack --dry-run --json` lists exactly the allow-list of data-model.md (no `test/`, `specs/`, `scripts/`, `examples/`, `reference/`, `build/`)
 - [X] T010 [US2] Update `package.json`: version `0.1.0`, keywords, `publishConfig: { access: "public", provenance: true }`, scripts `prepublishOnly` (`npm run check && npm run build`) and `package:check`; pass T009
 - [X] T011 [US2] Write `scripts/package-check.ts`: build, pack to a temp dir, install the tarball into an empty project, then with the fixture font source: `md2book --help` lists every command, `md2book init` succeeds, `md2book build epub` builds a copy of `examples/demo-book`; exits 1 on any failure
-- [ ] T012 [US2] Update `README.md`: install from npm (`npm install -g @thixpin/md2book` or `npx`), the Chromium step, `md2book cover`, the demo book link, remove "not on npm yet"
+- [X] T012 [US2] Update `README.md`: install from npm (`npm install -g @thixpin/md2book` or `npx`), the Chromium step, `md2book cover`, the demo book link, remove "not on npm yet"
 
 ---
 
