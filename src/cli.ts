@@ -97,19 +97,21 @@ export async function runCli(argv: string[], deps: CliDeps = {}): Promise<number
 
   program
     .command("qa")
-    .description("Write QA-REPORT.md: manuscript, Unicode, typeface and EPUB checks.")
+    .description("Write QA-REPORT.md: manuscript, Unicode, typeface, PDF and EPUB checks.")
     .requiredOption("--config <path>", "book config")
     .option("--out <dir>", "output directory (default dist/<config name>/)")
-    .action(async (options: { config: string; out?: string }) => {
+    .option("--printed", "check the printed edition's PDF")
+    .action(async (options: { config: string; out?: string; printed?: boolean }) => {
       await runQa(options, deps.manifestPath, (line) => stdout(`${line}\n`));
     });
 
   build
     .command("all")
-    .description("Build the EPUB and the web edition, then write the QA report.")
+    .description("Build the PDF, the EPUB and the web edition, then write the QA report.")
     .requiredOption("--config <path>", "book config")
     .option("--out <dir>", "output directory (default dist/<config name>/)")
-    .action(async (options: { config: string; out?: string }) => {
+    .option("--printed", "build and check the printed edition's PDF")
+    .action(async (options: { config: string; out?: string; printed?: boolean }) => {
       await runAll(options, deps.manifestPath, (line) => stdout(`${line}\n`));
     });
 

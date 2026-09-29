@@ -61,14 +61,15 @@ describe("md2book qa", { timeout: 60_000 }, () => {
     expect(hashTree(fixture())).toEqual(before);
   });
 
-  it("md2book build all writes the EPUB, the web edition and the report", async () => {
+  it("md2book build all writes the PDF, the EPUB, the web edition and the report", async () => {
     const configPath = fixture("book-en", "book.json");
     vi.stubEnv("MD2BOOK_FONTS", await fixtureFontCache((await loadConfig(configPath)).config));
     const out = join(tempDir(), "all");
     const result = await cli(["build", "all", "--config", configPath, "--out", out]);
     expect(result.code).toBe(0);
     expect(result.out).toBe(
-      `EPUB written: ${join(out, "book-en.epub")}\n` +
+      `PDF written: ${join(out, "book-en-170x240.pdf")}\n` +
+        `EPUB written: ${join(out, "book-en.epub")}\n` +
         `Web edition written: ${join(out, "web")} (2 published chapters)\n` +
         `QA report written: ${join(out, "QA-REPORT.md")}\n`,
     );

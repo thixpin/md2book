@@ -11,7 +11,7 @@ import { fixture } from "../../helpers/temp.ts";
 // loaded by the time Paged.js measures text (it also loads them itself, after the stylesheets).
 const PROBE =
   "class Probe extends Paged.Handler { afterPageLayout(page) { if (window.probed) return; window.probed = true;" +
-  " const note = document.createElement('p'); note.textContent = 'fonts ' + document.fonts.status;" +
+  " const note = document.createElement('p'); note.textContent = 'fonts ' + document.fonts.status + ' ' + [...document.fonts].map((f) => f.family + ':' + f.status + ':' + f.display).join(',');" +
   " page.querySelector('.pagedjs_area').appendChild(note); } } Paged.registerHandlers(Probe);";
 const HEAD =
   "<script>window.PagedConfig = { auto: false };</script>" +

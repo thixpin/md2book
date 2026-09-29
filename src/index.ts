@@ -54,7 +54,9 @@ export function qa(options: QaOptions): Promise<{ file: string }> {
   return runQa(options);
 }
 
-/** `md2book build all`: EPUB, web edition (when chapters are published), then QA. */
-export function all(options: QaOptions): Promise<{ epub: string; web?: string; report: string }> {
+/** `md2book build all`: PDF, EPUB, web edition (when chapters are published), then QA. */
+export function all(
+  options: QaOptions,
+): Promise<{ pdf: string; epub: string; web?: string; report: string }> {
   return runAll(options);
 }
