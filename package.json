@@ -1,7 +1,20 @@
 {
   "name": "@thixpin/md2book",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Build print PDF, EPUB and web editions of Markdown books, with first-class Myanmar script support.",
+  "keywords": [
+    "book",
+    "markdown",
+    "pdf",
+    "epub",
+    "ebook",
+    "publishing",
+    "myanmar",
+    "burmese",
+    "unicode",
+    "paged-media",
+    "cli"
+  ],
   "type": "module",
   "license": "MIT",
   "author": "thixpin",
@@ -12,6 +25,10 @@
   "homepage": "https://github.com/thixpin/md2book#readme",
   "bugs": {
     "url": "https://github.com/thixpin/md2book/issues"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
   },
   "engines": {
     "node": ">=26"
@@ -41,7 +58,9 @@
     "test:e2e": "vitest run --config vitest.e2e.config.ts",
     "equivalence:web": "node scripts/equivalence-web.ts",
     "equivalence:epub-qa": "node scripts/equivalence-epub-qa.ts",
-    "equivalence:pdf": "node scripts/equivalence-pdf.ts"
+    "equivalence:pdf": "node scripts/equivalence-pdf.ts",
+    "package:check": "node scripts/package-check.ts",
+    "prepublishOnly": "npm run check && npm run build"
   },
   "dependencies": {
     "@napi-rs/canvas": "^1.0.9",
