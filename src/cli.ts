@@ -4,6 +4,7 @@ import { runFonts } from "./fonts/command.ts";
 import { runInit } from "./init/init.ts";
 import { promptMissing, type InitAnswers } from "./init/prompts.ts";
 import { runServe, runWeb } from "./web/command.ts";
+import { runEpub } from "./epub/command.ts";
 
 export interface CliDeps {
   stdout?: (text: string) => void;
@@ -14,7 +15,7 @@ export interface CliDeps {
   stdin?: { isTTY?: boolean } & Partial<NodeJS.ReadableStream>;
 }
 
-const RESERVED = ["pdf", "epub", "qa", "all", "cover"] as const;
+const RESERVED = ["pdf", "qa", "all", "cover"] as const;
 
 /** Runs `book-build` with user arguments (no node/script prefix); resolves to the exit code. */
 export async function runCli(argv: string[], deps: CliDeps = {}): Promise<number> {
@@ -71,6 +72,15 @@ export async function runCli(argv: string[], deps: CliDeps = {}): Promise<number
         deps.manifestPath,
       );
       stdout(`${dir}\n`);
+    });
+
+  program
+    .command("epub")
+    .description("Build the reflowable EPUB 3 of the whole book.")
+    .requiredOption("--config <path>", "book config")
+    .option("--out <dir>", "output directory (default dist/<config name>/)")
+    .action(async (options: { config: string; out?: string }) => {
+      await runEpub(options, deps.manifestPath, (line) => stdout(`${line}\n`));
     });
 
   program

@@ -12,7 +12,7 @@ function capture() {
 }
 
 describe("runCli", () => {
-  it.each(["pdf", "epub", "qa", "all", "cover"])(
+  it.each(["pdf", "qa", "all", "cover"])(
     "reserved command %s prints 'not available yet' and exits 1",
     async (command) => {
       const io = capture();

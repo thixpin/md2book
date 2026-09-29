@@ -40,16 +40,16 @@ implementation. Offline; epubcheck assertions skip (with a note) when `epubcheck
 
 ### Tests ⚠️
 
-- [ ] T009 [P] [US1] Write `test/unit/epub/documents.test.ts`: `xhtmlDoc` equals the template in data-model.md exactly; title and copyright pages (subtitle/publisher/ISBN only when set; licence and typeface lines from `strings`); cover, nav (contents heading from strings, landmarks, first chapter), chapter and end bodies; every document well-formed XML
-- [ ] T010 [P] [US1] Write `test/unit/epub/package.test.ts`: NCX without parts (depth 1, playOrder 1…N) and with parts (depth 2, part playOrder = first chapter's, empty parts omitted, `nppart{index}` ids); OPF metadata lines, publisher only when set, `dcterms:modified` format, manifest order and media types, fonts sorted, `properties="nav"`, spine with `linear="no"` cover; container.xml exact
-- [ ] T011 [P] [US1] Write `test/integration/epub.test.ts`: `buildEpub` on `book-mm` writes `<out>/<output_name>.epub` and `<out>/src/epub/`; zip entry 0 is `mimetype`, stored, content `application/epub+zip`; all others deflated, sorted; the set's fonts and both stylesheets present; `src/epub` rebuilt (a stray file disappears); only timestamp is `dcterms:modified`; sources unchanged; epubcheck (when on PATH) exits 0 for `book-mm` and `book-en`; missing fonts → one-line error with the fonts command
+- [X] T009 [P] [US1] Write `test/unit/epub/documents.test.ts`: `xhtmlDoc` equals the template in data-model.md exactly; title and copyright pages (subtitle/publisher/ISBN only when set; licence and typeface lines from `strings`); cover, nav (contents heading from strings, landmarks, first chapter), chapter and end bodies; every document well-formed XML
+- [X] T010 [P] [US1] Write `test/unit/epub/package.test.ts`: NCX without parts (depth 1, playOrder 1…N) and with parts (depth 2, part playOrder = first chapter's, empty parts omitted, `nppart{index}` ids); OPF metadata lines, publisher only when set, `dcterms:modified` format, manifest order and media types, fonts sorted, `properties="nav"`, spine with `linear="no"` cover; container.xml exact
+- [X] T011 [P] [US1] Write `test/integration/epub.test.ts`: `buildEpub` on `book-mm` writes `<out>/<output_name>.epub` and `<out>/src/epub/`; zip entry 0 is `mimetype`, stored, content `application/epub+zip`; all others deflated, sorted; the set's fonts and both stylesheets present; `src/epub` rebuilt (a stray file disappears); only timestamp is `dcterms:modified`; sources unchanged; epubcheck (when on PATH) exits 0 for `book-mm` and `book-en`; missing fonts → one-line error with the fonts command
 
 ### Implementation
 
-- [ ] T012 [P] [US1] Implement `src/epub/front-matter.ts` and `src/epub/documents.ts` to pass T009
-- [ ] T013 [P] [US1] Implement `src/epub/package.ts` (NCX, OPF, container) to pass T010
-- [ ] T014 [US1] Implement `src/epub/build.ts` `buildEpub(book, {out, fontsDir?, manifestPath?, now?})`: write `src/epub/` tree, zip with yazl (mimetype first stored, rest deflated sorted); pass T011
-- [ ] T015 [US1] Wire `book-build epub` in `src/cli.ts` via `src/epub/command.ts`; export `epub()` from `src/index.ts`; public-API test adds `epub`
+- [X] T012 [P] [US1] Implement `src/epub/front-matter.ts` and `src/epub/documents.ts` to pass T009
+- [X] T013 [P] [US1] Implement `src/epub/package.ts` (NCX, OPF, container) to pass T010
+- [X] T014 [US1] Implement `src/epub/build.ts` `buildEpub(book, {out, fontsDir?, manifestPath?, now?})`: write `src/epub/` tree, zip with yazl (mimetype first stored, rest deflated sorted); pass T011
+- [X] T015 [US1] Wire `book-build epub` in `src/cli.ts` via `src/epub/command.ts`; export `epub()` from `src/index.ts`; public-API test adds `epub`
 
 ---
 
