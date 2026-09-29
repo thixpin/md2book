@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
-// SHA-256 of development-book/publish/web-reader.js at d235dbd (docs/decision-log.md).
+// SHA-256 of development-book/publish/web-reader.js at d235dbd (specs/decision-log.md).
 const REFERENCE_SHA256 = "bb980615d4c6973b16cc0d9c6005054dbb81c149b3e7f816c90275b57dbedb1c";
 
 // The only edits allowed by spec 002 FR-021 (incl. the text-size feature, FR-024–FR-026):

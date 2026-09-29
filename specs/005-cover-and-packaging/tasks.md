@@ -66,8 +66,8 @@ implementation. Rendering tests are offline and use the print font fixture.
 
 ## Phase 6: Polish
 
-- [X] T014 [P] Visual review (SC-002): render `book-01`'s cover with md2book and compare with the reference PNG side by side; pixel size equal (SC-001); record in `docs/decision-log.md`
-- [X] T015 Update `docs/decision-log.md` (cover command decisions, CI on pull requests and tags with tag-only publishing, 0.1.0, demo book) and the constitution note if needed; run `npm run check`, `npm run test:e2e`, `npm run package:check`
+- [X] T014 [P] Visual review (SC-002): render `book-01`'s cover with md2book and compare with the reference PNG side by side; pixel size equal (SC-001); record in `specs/decision-log.md`
+- [X] T015 Update `specs/decision-log.md` (cover command decisions, CI on pull requests and tags with tag-only publishing, 0.1.0, demo book) and the constitution note if needed; run `npm run check`, `npm run test:e2e`, `npm run package:check`
 
 ## Dependencies
 

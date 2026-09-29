@@ -279,7 +279,7 @@ starts the next page.
 - **FR-016**: Two builds of the same input MUST produce byte-identical PDFs; the PDF carries no
   creation or modification date (Constitution VII).
 - **FR-017**: The build MUST NOT access the network; the reference's `print.css` and `printed.css`
-  MUST be carried over, with every deliberate change recorded in `docs/decision-log.md`.
+  MUST be carried over, with every deliberate change recorded in `specs/decision-log.md`.
 - **FR-018**: Code and terminal blocks in both PDF editions MUST use line height 1.7, as the EPUB
   and web editions do (a recorded difference from the reference's 1.4).
 - **FR-019**: In both PDF editions, every section heading (levels 2–6 in the chapter body) MUST

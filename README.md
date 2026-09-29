@@ -109,7 +109,7 @@ thresholds, `npm run test:e2e` the browser tests and
 `npm run package:check` installs the packed tarball into an empty
 project and runs the CLI from it. Design notes live in `specs/` and deliberate
 differences from the original Python toolchain in
-[`docs/decision-log.md`](docs/decision-log.md).
+[`specs/decision-log.md`](specs/decision-log.md).
 
 ## Contributing and security
 

@@ -27,7 +27,7 @@ Node.js 26 or newer is required. The EPUB tests use
    they use the small fonts in `test/fixtures/`.
 2. Keep changes small and focused; follow the style of the code around them.
 3. Do not change the output of an existing edition without a reason. Deliberate differences from
-   the original Python toolchain are recorded in [`docs/decision-log.md`](docs/decision-log.md).
+   the original Python toolchain are recorded in [`specs/decision-log.md`](specs/decision-log.md).
 4. Run the checks:
 
    ```console

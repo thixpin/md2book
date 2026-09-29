@@ -27,7 +27,7 @@ is currently reserved and becomes real in US1.
 ## Phase 1: Setup
 
 - [X] T001 Add `pagedjs` `0.4.3` (exact), `pdf-lib@^1.17`, `pdfjs-dist@^6.3`, `@napi-rs/canvas@^1.0` to dependencies in `package.json`; add script `equivalence:pdf` (`node scripts/equivalence-pdf.ts`)
-- [X] T002 [P] Carry over `development-book/publish/css/print.css` and `css/printed.css` byte-for-byte to `assets/css/print.css` and `assets/css/printed.css`; record both SHA-256 values in `docs/decision-log.md`
+- [X] T002 [P] Carry over `development-book/publish/css/print.css` and `css/printed.css` byte-for-byte to `assets/css/print.css` and `assets/css/printed.css`; record both SHA-256 values in `specs/decision-log.md`
 - [X] T003 [P] Create `test/fixtures/book-headings/` (Burmese config with `web_published_chapters` for all chapters, 1×1 cover, one part): chapters whose `##`/`###`/`####` headings fall at every offset near a page foot (filler paragraphs of 1–12 lines before each heading), each heading followed in turn by a paragraph, a code block, a list, a table, a terminal and a callout; add a unit test that the fixture loads and renders
 
 ---
@@ -117,7 +117,7 @@ is currently reserved and becomes real in US1.
 
 - [X] T034 [US5] Add to `assets/css/web.css` (md2book additions) `.chapter-body h3, .chapter-body h4, .chapter-body h5, .chapter-body h6 { break-after: avoid; }` and `.keep-with-next { break-before: column; -webkit-column-break-before: always; }`
 - [X] T035 [US5] Add to `assets/web-reader.js`, at the end of `measure()`: remove every `keep-with-next`; then, in document order, for each `h2`–`h6` in the flow, count the distinct line tops of its next element's client rects that share the heading's page column (pages counted from the heading's own column: WebKit's column positions drift from the computed pitch far into a book); when fewer than 2 (and the next element has lines), add `keep-with-next` and re-measure the page count; update the READER_EDITS guard; pass T032 and T033
-- [X] T036 [US5] Confirm T031 passes with the `print.css` addition from T009 (no further PDF change expected per research R-11); if it fails, fix in `assets/css/print.css` and record why in `docs/decision-log.md`
+- [X] T036 [US5] Confirm T031 passes with the `print.css` addition from T009 (no further PDF change expected per research R-11); if it fails, fix in `assets/css/print.css` and record why in `specs/decision-log.md`
 
 ---
 
@@ -139,8 +139,8 @@ is currently reserved and becomes real in US1.
 
 - [X] T039 [P] Write `scripts/equivalence-pdf.ts` (SC-001): copy `development-book` to a temp dir; generate a 20-chapter book there from `book-01`'s chapter (4 parts, `recto_chapter_start: true`); build `book-01` and it with Python `build.py pdf` and with ours (with an internal extra stylesheet `pre { line-height: 1.4; }` for the page-count comparison, and again without it to report FR-018's extra pages); compare page size, page count within ±2% but at least ±1 page, N of N chapter openings on right-hand pages, 0 U+FFFD, stray characters only from the manuscript
 - [X] T040 [P] Write `test/integration/pdf-perf.test.ts`: `build all` (PDF + EPUB + web + QA) of a 20-chapter synthetic book (in a temp dir) < 120 s without epubcheck (SC-005)
-- [X] T041 Update `README.md` (`build pdf`, `--printed`, `qa --printed`, `build all`, Chromium requirement) and `docs/decision-log.md`: Paged.js engine and its four CSS workarounds and two bundle patches, code line height 1.7 in PDF, terminal-dot icons, logical-order extraction and zero-width-space sentences, font names, closed border on split code blocks, no em dash line, samples path relative to the report, heading rule (PDF addition and reader pass), `book-01` page-count drift
-- [X] T042 Run `npm run check`, `npm run test:e2e`, `npm run equivalence:pdf` (with `DEVBOOK`) and the quickstart; build the demo book's PDFs and render its QA samples; SC-006 visual review of Python vs md2book samples (cover, title page, first chapter opening, a terminal page) recorded in `docs/decision-log.md`
+- [X] T041 Update `README.md` (`build pdf`, `--printed`, `qa --printed`, `build all`, Chromium requirement) and `specs/decision-log.md`: Paged.js engine and its four CSS workarounds and two bundle patches, code line height 1.7 in PDF, terminal-dot icons, logical-order extraction and zero-width-space sentences, font names, closed border on split code blocks, no em dash line, samples path relative to the report, heading rule (PDF addition and reader pass), `book-01` page-count drift
+- [X] T042 Run `npm run check`, `npm run test:e2e`, `npm run equivalence:pdf` (with `DEVBOOK`) and the quickstart; build the demo book's PDFs and render its QA samples; SC-006 visual review of Python vs md2book samples (cover, title page, first chapter opening, a terminal page) recorded in `specs/decision-log.md`
 
 ## Dependencies
 

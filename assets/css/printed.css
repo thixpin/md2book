@@ -39,7 +39,7 @@ th { background: none; }
   border-left-color: #000;
 }
 
-/* md2book addition (docs/decision-log.md): without colour the three dots look alike, so they
+/* md2book addition (specs/decision-log.md): without colour the three dots look alike, so they
    carry the window-control icons, as on macOS: close (×), minimise (−) and zoom (+), dark on a
    grey dot. Drawn as centred vector images (spec 004 FR-008, author request). */
 .terminal-dot,

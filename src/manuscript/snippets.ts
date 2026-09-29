@@ -4,7 +4,7 @@ import { BookError } from "../errors.ts";
 import type { Chapter, SnippetInclude } from "./chapters.ts";
 import { dedent } from "./dedent.ts";
 
-// Python's `[\w-]` becomes ASCII `[A-Za-z0-9_-]` (see docs/decision-log.md).
+// Python's `[\w-]` becomes ASCII `[A-Za-z0-9_-]` (see specs/decision-log.md).
 const MARKER_RE = /^<!--\s*include:\s*([^#\s]+)(?:#([A-Za-z0-9_-]+))?\s*-->\s*$/u;
 const REGION_RE = /^\s*(?:\/\/|#)\s*#(end)?region\b\s*([A-Za-z0-9_-]*)\s*$/u;
 const FENCE_RE = /^\s*(```|~~~)/u;

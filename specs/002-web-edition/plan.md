@@ -54,7 +54,7 @@ No NEEDS CLARIFICATION items remain; see [research.md](./research.md).
 
 | Principle | Gate for this feature | Status |
 |---|---|---|
-| I. Equivalence | SC-001 compares the file tree (modulo hashes) and the DOM of `index.html` and `ch01.html` with the Python build of `book-01`; `my-sans` + default strings produce a byte-identical stylesheet and the reference DOM. Deviations (parameterised reader/CSS, English folios, no web end image, Vitest + Playwright library instead of Playwright Test) go into `docs/decision-log.md`. | Pass |
+| I. Equivalence | SC-001 compares the file tree (modulo hashes) and the DOM of `index.html` and `ch01.html` with the Python build of `book-01`; `my-sans` + default strings produce a byte-identical stylesheet and the reference DOM. Deviations (parameterised reader/CSS, English folios, no web end image, Vitest + Playwright library instead of Playwright Test) go into `specs/decision-log.md`. | Pass |
 | II. Read-only manuscript | The build reads chapters and writes only under `<out>/web/`; a test hashes fixture sources before/after. | Pass |
 | III. Complex scripts | Back cover text is laid out by a real browser engine; the reader and CSS are unchanged for Myanmar; Burmese fixture book in browser tests. | Pass |
 | IV. Fail loudly | Allow-list, favicon, back cover, missing fonts and missing browser each stop with one line (spec FR-040). | Pass |

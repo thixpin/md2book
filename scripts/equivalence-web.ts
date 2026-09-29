@@ -5,7 +5,7 @@
 // config (the configured font set must be in the font cache: `md2book fonts`). Compares file
 // trees with hash segments masked, and the DOM skeleton (tags, classes, attribute names) of
 // index.html and chapters/ch01.html. Highlighted code inside <pre> is compared as one opaque
-// element: token spans differ by design (Prism vs Pygments, docs/decision-log.md). Exits 1 on differences not listed in docs/decision-log.md.
+// element: token spans differ by design (Prism vs Pygments, specs/decision-log.md). Exits 1 on differences not listed in specs/decision-log.md.
 import { execFileSync } from "node:child_process";
 import { cpSync, existsSync, mkdtempSync, readFileSync, readdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -15,7 +15,7 @@ import { loadConfig } from "../src/config/load.ts";
 import { buildWeb } from "../src/web/build.ts";
 import { skeleton } from "../test/helpers/html.ts";
 
-// Deliberate differences recorded in docs/decision-log.md.
+// Deliberate differences recorded in specs/decision-log.md.
 /** Removes the recorded additions (text-size button and panel, spec 002 FR-024) from our page. */
 function withoutAdditions(html: string): string {
   return (

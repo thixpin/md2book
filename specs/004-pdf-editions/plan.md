@@ -56,7 +56,7 @@ No NEEDS CLARIFICATION items remain.
 
 | Principle | Gate | Status |
 |---|---|---|
-| I. Equivalence | Carried `print.css`/`printed.css`; ported `fit_pre_blocks`, `add_syllable_breaks`, page order and QA formulas; SC-001 equivalence script (page size, page count ±2% / ±1 page, N of N chapter openings). Deviations recorded in `docs/decision-log.md`: Paged.js workarounds, code line height 1.7, terminal-dot icons, logical-order extraction line, font names, closed split-block border, no em dash line. | Pass |
+| I. Equivalence | Carried `print.css`/`printed.css`; ported `fit_pre_blocks`, `add_syllable_breaks`, page order and QA formulas; SC-001 equivalence script (page size, page count ±2% / ±1 page, N of N chapter openings). Deviations recorded in `specs/decision-log.md`: Paged.js workarounds, code line height 1.7, terminal-dot icons, logical-order extraction line, font names, closed split-block border, no em dash line. | Pass |
 | II. Read-only manuscript | Breaks and sizes exist only in `src/book-print*.html`; tests hash sources before/after. | Pass |
 | III. Complex scripts | Syllable breaks measured and kept; Burmese fixture checked for 0 U+FFFD, logical-order text, chapter-start detection; samples reviewed (SC-006). | Pass |
 | IV. Fail loudly | Missing fonts/cover/Chromium, unknown served path, Paged.js timeout or non-Flate content stream stop with one line; no partial PDF left (write to temp, then rename). | Pass |

@@ -13,7 +13,7 @@ profile `my`/`en` and curated `font_set`), load chapters and parts, expand code 
 Markdown to XHTML with the Python toolchain's class vocabulary, fetch and verify prebuilt font
 sets, and scaffold new projects with `md2book init`. No book outputs yet; later slices (EPUB,
 PDF, QA, web) consume this pipeline. Behaviour is pinned to `development-book/publish/` at
-`d235dbd`; every deliberate difference goes into `docs/decision-log.md`.
+`d235dbd`; every deliberate difference goes into `specs/decision-log.md`.
 
 ## Technical Context
 
@@ -52,7 +52,7 @@ prompt mechanism, cmap reader, glob/sort) are resolved in [research.md](./resear
 
 | Principle | Gate for this slice | Status |
 |---|---|---|
-| I. Behavioural equivalence | SC-001–003 compare chapter data, plain text and structure counts with the Python toolchain on `book-01`. Decision log lives at `docs/decision-log.md`. Initial entries: `--config`/`--out` replace `--book`; `code_root` replaces the fixed repo root; `en` heading shape; Prism tokens instead of Pygments (same class names, token boundaries may differ); console prompt detection limited to `$ `. | Pass |
+| I. Behavioural equivalence | SC-001–003 compare chapter data, plain text and structure counts with the Python toolchain on `book-01`. Decision log lives at `specs/decision-log.md`. Initial entries: `--config`/`--out` replace `--book`; `code_root` replaces the fixed repo root; `en` heading shape; Prism tokens instead of Pygments (same class names, token boundaries may differ); console prompt detection limited to `$ `. | Pass |
 | II. Manuscript read-only | Loader only reads; SC-005 byte-compares fixture sources before/after. `init` refuses to overwrite (FR-064). | Pass |
 | III. Complex scripts | Burmese fixture (`book-mm`) covers heading digits, NFC, stacked consonants in text; Myanmar font sets checked for U+1000 + `a`; `my-sans` is exactly the current 7 files. | Pass |
 | IV. Fail loudly | Every error in spec FR-050/SC-004 is a typed error with a one-line message and a test. FR-046 is a deliberate warning (clarified with the user), not a silent skip. | Pass |

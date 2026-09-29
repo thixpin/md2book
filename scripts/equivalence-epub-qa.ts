@@ -4,7 +4,7 @@
 // ours from the same config (the font set must be cached: `md2book fonts`). Compares the
 // spine order, nav and NCX documents, the manifest file set, per-chapter text, and the report's
 // manuscript counts, Unicode issues and coverage numbers. Exits 1 on differences not recorded in
-// docs/decision-log.md.
+// specs/decision-log.md.
 import { execFileSync } from "node:child_process";
 import { cpSync, existsSync, mkdtempSync, readFileSync, readdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -41,7 +41,7 @@ function reportFacts(report: string): string[] {
     ...section("Manuscript").filter((l) => l.startsWith("- ") || l.startsWith("| ")),
     ...section("Unicode / Burmese text checks")
       .filter((l) => l.startsWith("- "))
-      // Recorded wording change (docs/decision-log.md, spec 003 clarification).
+      // Recorded wording change (specs/decision-log.md, spec 003 clarification).
       .map((l) =>
         l.replace(
           "(author's convention after Latin words; not changed)",
@@ -96,7 +96,7 @@ try {
   }
   const refFacts = reportFacts(read(join(refDist, "QA-REPORT.md")));
   const ourFacts = reportFacts(read(join(ourDist, "QA-REPORT.md")));
-  // Recorded difference (docs/decision-log.md, spec 003 SC-003): whitespace-dependent counts.
+  // Recorded difference (specs/decision-log.md, spec 003 SC-003): whitespace-dependent counts.
   const KNOWN = [/^- Approximate word count/, /^- Character count \(incl\. spaces\)/];
   const known: string[] = [];
   const max = Math.max(refFacts.length, ourFacts.length);

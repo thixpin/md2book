@@ -39,4 +39,4 @@ $ DEVBOOK=/path/to/development-book npm run equivalence:pdf
 
 Visual review (SC-006): compare the Python and md2book sample renders of
 the cover, title page, first chapter opening and a page with a terminal
-block; record the result in `docs/decision-log.md`.
+block; record the result in `specs/decision-log.md`.

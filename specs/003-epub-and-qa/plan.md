@@ -45,7 +45,7 @@ No NEEDS CLARIFICATION items remain; see [research.md](./research.md).
 
 | Principle | Gate | Status |
 |---|---|---|
-| I. Equivalence | SC-001–003 compare document order, nav/NCX, manifest set, chapter text and QA counts with the Python build of `book-01`; `my-sans` stylesheets equal the reference. Deviations (no em dash check; generic report prose; coverage uses the configured set; configurable licence/typeface/contents strings) go to `docs/decision-log.md`. | Pass |
+| I. Equivalence | SC-001–003 compare document order, nav/NCX, manifest set, chapter text and QA counts with the Python build of `book-01`; `my-sans` stylesheets equal the reference. Deviations (no em dash check; generic report prose; coverage uses the configured set; configurable licence/typeface/contents strings) go to `specs/decision-log.md`. | Pass |
 | II. Read-only manuscript | QA reports and never fixes; tests hash sources before/after. | Pass |
 | III. Complex scripts | Burmese checks ported one-to-one; Burmese fixture seeded with each issue; epubcheck on the Burmese EPUB. | Pass |
 | IV. Fail loudly | Load/snippet/font errors stop with one line; content issues are reported (QA's job), not fatal. | Pass |

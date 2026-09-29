@@ -26,7 +26,7 @@ server only.
 
 - [X] T001 Add dependencies `sharp@^0.35` and `playwright@^1.63` to `package.json`; add scripts `test:e2e` (`vitest run --config vitest.e2e.config.ts`) and `equivalence:web` (`node scripts/equivalence-web.ts`)
 - [X] T002 [P] Create `vitest.e2e.config.ts` (includes only `test/e2e/**`, setup `test/setup/no-network.ts`, test timeout 60 s) and exclude `test/e2e/**` from `vitest.config.ts`
-- [X] T003 [P] Carry over reference assets byte-for-byte: `publish/css/common.css` → `assets/css/common.css`; `WEB_CSS` (web.py lines 28–332, the string content) → `assets/css/web.css`; `publish/web-reader.js` → `assets/web-reader.js`; `ICON_PATHS` → `src/web/icons.ts` with the Lucide ISC notice; record SHA-256 of each copied original in `docs/decision-log.md`
+- [X] T003 [P] Carry over reference assets byte-for-byte: `publish/css/common.css` → `assets/css/common.css`; `WEB_CSS` (web.py lines 28–332, the string content) → `assets/css/web.css`; `publish/web-reader.js` → `assets/web-reader.js`; `ICON_PATHS` → `src/web/icons.ts` with the Lucide ISC notice; record SHA-256 of each copied original in `specs/decision-log.md`
 - [X] T004 [P] Add a CI job to `.github/workflows/ci.yml`: `npm ci`, `npx playwright install --with-deps chromium`, `npm run test:e2e`
 
 ---
@@ -57,7 +57,7 @@ server only.
 ### Implementation
 
 - [X] T012 [P] [US1] Implement `src/web/assets.ts` (stylesheet with font-set substitution per research R-02; hashed names; copy set fonts + licence into `fonts/`) to pass T008
-- [X] T013 [US1] Edit `assets/web-reader.js` minimally (FR-021): folio digits from `reader.dataset.folioDigits` (ASCII when `ascii`, Myanmar otherwise) and page names from `reader.dataset.nameCover/nameContents/nameBackCover` with the reference defaults; record the change in `docs/decision-log.md`; pass T010
+- [X] T013 [US1] Edit `assets/web-reader.js` minimally (FR-021): folio digits from `reader.dataset.folioDigits` (ASCII when `ascii`, Myanmar otherwise) and page names from `reader.dataset.nameCover/nameContents/nameBackCover` with the reference defaults; record the change in `specs/decision-log.md`; pass T010
 - [X] T014 [US1] Implement `src/web/reader-dom.ts` (front/back sections, chapter sections, controls, panels, icons from `src/web/icons.ts`, book key) porting web.py `reader()` exactly; pass T009
 - [X] T015 [US1] Implement `src/web/page.ts` minimal shell (html lang, head with title, stylesheet, header, main, footer, deferred script) — social tags come in US3
 - [X] T016 [US1] Implement `src/web/build.ts` `buildWeb(config, { out, backCover })`: load published chapters, parts, snippets, render; empty and recreate `web/`; assets; cover copy; `index.html`, `chapters/chNN.html`, `404.html`; pass T011
@@ -85,7 +85,7 @@ server only.
 
 ### Implementation
 
-- [X] T021 [US2] Fix any failing reader behaviour only by correcting the build output (DOM/CSS/asset paths) — never by changing reader constants or fixes (FR-022); if a reference behaviour cannot be reproduced, stop and record it in `docs/decision-log.md`
+- [X] T021 [US2] Fix any failing reader behaviour only by correcting the build output (DOM/CSS/asset paths) — never by changing reader constants or fixes (FR-022); if a reference behaviour cannot be reproduced, stop and record it in `specs/decision-log.md`
 
 **Checkpoint**: reader parity verified on the matrix.
 
@@ -126,7 +126,7 @@ server only.
 
 - [X] T033 [P] Write `scripts/equivalence-web.ts` (SC-001): build `book-01` with the Python `web.py` in a temporary copy of `development-book/publish` (the checkout untouched) and with ours; compare file trees ignoring hash segments and the element/attribute skeleton of `index.html` and `chapters/ch01.html`; exit 1 on differences
 - [X] T034 [P] Write `test/integration/web-perf.test.ts`: 20-chapter synthetic book builds in < 30 s with a copied back cover (SC-006)
-- [X] T035 Update `README.md` (web and serve commands, Chromium install note, `web_published_chapters`) and `docs/decision-log.md` (all FR-021 edits, no web end image, English folios, Vitest + Playwright library)
+- [X] T035 Update `README.md` (web and serve commands, Chromium install note, `web_published_chapters`) and `specs/decision-log.md` (all FR-021 edits, no web end image, English folios, Vitest + Playwright library)
 - [X] T036 Run `npm run check`, `npm run test:e2e`, `npm run equivalence:web`, and the quickstart; rebuild the demo book in the scratch folder with `md2book build web` and open it
 
 ---
@@ -166,6 +166,6 @@ and US2 (reader parity tests), then US3 (sharing polish), then Polish (equivalen
 - [X] T041 [US5] Add the toolbar button and `#reader-text` panel in `src/web/reader-dom.ts` and the icon in `src/web/icons.ts`
 - [X] T042 [US5] Add the text-size rules to `assets/css/web.css`
 - [X] T043 [US5] Add the text-size logic to `assets/web-reader.js` (steps, `--text-scale` on the reader root, `measure()` re-pagination, storage, keys, announcement)
-- [X] T044 [US5] Update `scripts/equivalence-web.ts` to treat the text-size button and panel as a recorded addition; update `docs/decision-log.md` and `README.md`
+- [X] T044 [US5] Update `scripts/equivalence-web.ts` to treat the text-size button and panel as a recorded addition; update `specs/decision-log.md` and `README.md`
 - [X] T045 [US5] Run `npm run check`, `npm run test:e2e`, `npm run equivalence:web`; rebuild the demo
 

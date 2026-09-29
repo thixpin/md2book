@@ -51,7 +51,7 @@ nav#toc li.toc-part ol { padding-left: 1.2em; }
 pre { font-size: 0.78em; }
 pre.wide, pre.xwide { font-size: 0.7em; }
 
-/* md2book addition (docs/decision-log.md): reader themes such as Apple Books' Night and Gray
+/* md2book addition (specs/decision-log.md): reader themes such as Apple Books' Night and Gray
    replace background and text colours but keep borders, so the terminal window is also drawn
    with borders: an outline, a line under the title bar, and dots made of coloured borders. In
    light themes it looks the same as the background design. */
@@ -66,6 +66,6 @@ pre.wide, pre.xwide { font-size: 0.7em; }
 .terminal-dot + .terminal-dot { border-color: #febc2e; background: transparent; }
 .terminal-dot + .terminal-dot + .terminal-dot { border-color: #28c840; background: transparent; }
 
-/* md2book addition (docs/decision-log.md): more leading in code and terminal blocks than the
+/* md2book addition (specs/decision-log.md): more leading in code and terminal blocks than the
    shared 1.4, so lines read comfortably and Burmese stacks in code have headroom. */
 pre { line-height: 1.7; }
