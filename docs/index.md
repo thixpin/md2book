@@ -37,6 +37,22 @@ features:
     link: /fonts
 ---
 
+## See it in action
+
+See how md2book turns a Markdown manuscript into a real Burmese tech book.
+
+<div style="position: relative; aspect-ratio: 16 / 9; margin-top: 16px; border-radius: 12px; overflow: hidden; background: var(--vp-c-bg-soft);">
+  <iframe
+    src="https://www.youtube-nocookie.com/embed/UpmgagatMpc"
+    title="md2book: see it in action"
+    style="position: absolute; inset: 0; width: 100%; height: 100%; border: 0;"
+    loading="lazy"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    referrerpolicy="strict-origin-when-cross-origin"
+    allowfullscreen
+  ></iframe>
+</div>
+
 ## Quick start
 
 ```console
