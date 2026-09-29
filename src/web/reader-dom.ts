@@ -104,7 +104,8 @@ export function readerHtml(book: WebBook, openChapter: string): string {
     `data-book-title="${title}" data-author="${esc(config.author)}" data-open-chapter="${openChapter}" ` +
     `data-cover-src="/${book.coverName}" data-back-cover-src="/${book.backCoverName}" ` +
     `data-cover-ratio="${facts.ratio.toFixed(5)}" ` +
-    `data-cover-edge="${edgeCss(facts.edge)}"${readerOptions(config)}>` +
+    `data-cover-edge="${edgeCss(facts.edge)}" style="--cover-edge: ${edgeCss(facts.edge)}"` +
+    `${readerOptions(config)}>` +
     '<div class="book" data-book>' +
     '<svg class="book-paper" data-book-paper aria-hidden="true"></svg>' +
     '<div class="reader-window" role="region" aria-label="Book page">' +

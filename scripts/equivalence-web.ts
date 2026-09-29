@@ -25,6 +25,8 @@ function withoutAdditions(html: string): string {
       // Running heads (spec 004 FR-023).
       .replace(/<span class="page-head"[^>]*><\/span>/g, "")
       .replace(/ data-author="[^"]*"/, "")
+      // The cover edge colour as a CSS variable (the realistic book in web.css).
+      .replace(/ style="--cover-edge: [^"]*"/, "")
   );
 }
 const ALLOWED_EXTRA = new Set(["fonts/LICENSE-OFL.txt"]);

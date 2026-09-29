@@ -102,6 +102,14 @@ describe("reader DOM", () => {
     }
   });
 
+  it("gives CSS the cover's edge colour for the hardcover case", async () => {
+    const [shell] = find(readerHtml(await webBook(await bookMm()), ""), (el) =>
+      matches(el, "div[data-reader]"),
+    );
+    expect(attr(shell!, "data-cover-edge")).toBe("rgb(12 34 57)");
+    expect(attr(shell!, "style")).toBe("--cover-edge: rgb(12 34 57)");
+  });
+
   it("lays out the flow: front matter, chapters, back matter, end", async () => {
     const html = readerHtml(await webBook(await bookMm()), "");
     const flow = find(html, (el) => el.tagName === "section" || matches(el, "span.flow-end")).map(
