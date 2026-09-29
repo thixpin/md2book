@@ -76,7 +76,7 @@ Every command reads `book.json` from the current folder (or
 ## Documentation
 
 The full documentation is on the website,
-**[thixpin.github.io/md2book](https://thixpin.github.io/md2book/)**, and
+**[md2book.thixpin.me](https://md2book.thixpin.me/)**, and
 in [`docs/`](docs/README.md):
 
 - [Getting started](docs/getting-started.md)

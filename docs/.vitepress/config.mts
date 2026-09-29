@@ -6,8 +6,9 @@ export default defineConfig({
   title: "md2book",
   description:
     "Turn a Markdown book manuscript into a print-ready PDF, an EPUB 3, a web edition and a QA report, with first-class Myanmar (Burmese) support.",
-  // Served from GitHub Pages at https://thixpin.github.io/md2book/.
-  base: "/md2book/",
+  // Served from GitHub Pages on its own domain, https://md2book.thixpin.me/ (the account's
+  // github.io project paths redirect to thixpin.me, which is not on GitHub Pages).
+  base: "/",
   cleanUrls: true,
   // docs/README.md is the index when browsing docs/ on GitHub; index.md is the site's home.
   srcExclude: ["README.md"],
