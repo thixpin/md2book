@@ -52,8 +52,8 @@ Measured 2026-09-29 on `development-book/book-01-dsa/cover/cover.html` (referenc
 - **Decision**: trigger `.github/workflows/ci.yml` on `pull_request` and `push: tags: ["v*"]`; jobs:
   `check` (npm ci, Chromium, epubcheck, `npm run check`), `browser` (Chromium + WebKit,
   `npm run test:e2e`), `release` (tags only, needs both; version check `v$(node -p
-  "require('./package.json').version")` = tag; `npm run package:check`; `npm publish --provenance
-  --access public` with `NODE_AUTH_TOKEN` from `secrets.NPM_TOKEN`; `permissions: id-token: write,
+  "require('./package.json').version")` = tag; `npm run package:check`; `npm publish --access
+  public` with npm trusted publishing (OIDC, no token; provenance automatic); `permissions: id-token: write,
   contents: read`).
 - **Rationale**: author decision (tests on pull requests and tags, publish on tags only).
 

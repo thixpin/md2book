@@ -9,7 +9,7 @@ $ npm run package:check
 Expected: the demo cover PNG shows the Burmese title in the book font; the package check lists
 the allowed files only and builds the demo book's EPUB from the installed tarball.
 
-Release (maintainer, after adding `NPM_TOKEN` to the repository secrets):
+Release (maintainer, after adding this repository's `ci.yml` workflow as the package's trusted publisher on npmjs.com):
 
 ```console
 $ git tag v0.1.0 && git push origin v0.1.0

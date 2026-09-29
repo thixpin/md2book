@@ -23,4 +23,4 @@ API: `cover({ html, output?, dpi?, config?, set? }) → { file, width, height }`
 - Package `@thixpin/md2book@0.1.0`, public, files per data-model.md allow-list.
 - `npm run package:check` passes before publishing (`prepublishOnly`: check + build).
 - CI runs on pull requests and `v*` tags: check → browser; on tags only, then release (version equals tag; package check;
-  `npm publish --provenance --access public` with the `NPM_TOKEN` secret).
+  `npm publish --access public` with npm trusted publishing (OIDC, no token); provenance is automatic).
