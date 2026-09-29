@@ -61,7 +61,7 @@ describe("printStylesheets", () => {
     // each icon is a centred vector image.
     const icon = (path: string) =>
       "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E" +
-      `%3Cpath d='${path}' stroke='%232b2b2b' stroke-width='1.3' stroke-linecap='round' fill='none'/%3E%3C/svg%3E\")`;
+      `%3Cpath d='${path}' stroke='%232b2b2b' stroke-width='1.3' stroke-linecap='round' fill='none'/%3E%3C/svg%3E")`;
     expect(added).toBe(
       ".terminal-dot, .terminal-dot + .terminal-dot, .terminal-dot + .terminal-dot + .terminal-dot { " +
         "width: 10px; height: 10px; background-color: #d4d4d4; border-color: #6e6e6e; " +

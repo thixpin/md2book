@@ -403,6 +403,32 @@
     return Math.max(0, Math.floor((rect.left - start + 1) / (pageWidth + pageGap))) + pageShift;
   }
 
+  // md2book: a section heading never ends a page with fewer than two lines of what follows it
+  // (spec 004 FR-020). WebKit ignores break-after: avoid in columns, so a heading left too low
+  // starts the next page instead (Chromium already keeps them together). In document order, as
+  // each move shifts the pages after it; a heading that already starts its page stays.
+  function keepHeadingsWithContent(layOut) {
+    for (const heading of flow.querySelectorAll(".chapter-body :is(h2, h3, h4, h5, h6)")) {
+      const next = heading.nextElementSibling;
+      const before = heading.previousElementSibling?.getClientRects();
+      if (!next || !before?.length) continue;
+      // Pages counted from the heading's own column (0 = its page): absolute page numbers drift in
+      // WebKit, which rounds column widths, far into a long book.
+      const origin = heading.getClientRects()[0].left;
+      const pageFrom = (rect) => Math.floor((rect.left - origin + 1) / (pageWidth + pageGap));
+      const lineKeys = (rects) => new Set(rects.map((rect) => `${pageFrom(rect)}:${Math.round(rect.top)}`));
+      if (pageFrom(before[before.length - 1]) !== 0) continue;
+      const range = document.createRange();
+      range.selectNodeContents(next);
+      const lines = [...range.getClientRects()].filter((rect) => rect.width > 0);
+      const here = lineKeys(lines.filter((rect) => pageFrom(rect) === 0)).size;
+      if (here < Math.min(2, lineKeys(lines).size)) {
+        heading.classList.add("keep-with-next");
+        layOut();
+      }
+    }
+  }
+
   const chapterAt = (page) =>
     (page < bodyEnd && chapterStarts.findLast((start) => start.page <= page)) || null;
 
@@ -649,7 +675,9 @@
       pageCount = pageOf(rects[rects.length - 1]) + 1;
     };
     book.classList.remove("needs-filler");
+    for (const heading of flow.querySelectorAll(".keep-with-next")) heading.classList.remove("keep-with-next");
     layOut();
+    keepHeadingsWithContent(layOut);
     // Like a printed book, the inside of the back cover is a right-hand page
     // (odd index); a blank page before it keeps it there.
     if (pagesPerView === 2 && pageOf(backEndpaper.getClientRects()[0]) % 2 === 0) {

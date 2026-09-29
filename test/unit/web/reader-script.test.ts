@@ -44,6 +44,14 @@ export const READER_EDITS: [string, string][] = [
     '    } else if (event.key === "+" || event.key === "=") {\n      event.preventDefault();\n      stepTextScale(1);\n    } else if (event.key === "-") {\n      event.preventDefault();\n      stepTextScale(-1);\n    } else if (event.key === "ArrowLeft") {',
     '    } else if (event.key === "ArrowLeft") {',
   ],
+  [
+    '    return Math.max(0, Math.floor((rect.left - start + 1) / (pageWidth + pageGap))) + pageShift;\n  }\n\n  // md2book: a section heading never ends a page with fewer than two lines of what follows it\n  // (spec 004 FR-020). WebKit ignores break-after: avoid in columns, so a heading left too low\n  // starts the next page instead (Chromium already keeps them together). In document order, as\n  // each move shifts the pages after it; a heading that already starts its page stays.\n  function keepHeadingsWithContent(layOut) {\n    for (const heading of flow.querySelectorAll(".chapter-body :is(h2, h3, h4, h5, h6)")) {\n      const next = heading.nextElementSibling;\n      const before = heading.previousElementSibling?.getClientRects();\n      if (!next || !before?.length) continue;\n      // Pages counted from the heading\'s own column (0 = its page): absolute page numbers drift in\n      // WebKit, which rounds column widths, far into a long book.\n      const origin = heading.getClientRects()[0].left;\n      const pageFrom = (rect) => Math.floor((rect.left - origin + 1) / (pageWidth + pageGap));\n      const lineKeys = (rects) => new Set(rects.map((rect) => `${pageFrom(rect)}:${Math.round(rect.top)}`));\n      if (pageFrom(before[before.length - 1]) !== 0) continue;\n      const range = document.createRange();\n      range.selectNodeContents(next);\n      const lines = [...range.getClientRects()].filter((rect) => rect.width > 0);\n      const here = lineKeys(lines.filter((rect) => pageFrom(rect) === 0)).size;\n      if (here < Math.min(2, lineKeys(lines).size)) {\n        heading.classList.add("keep-with-next");\n        layOut();\n      }\n    }\n  }\n',
+    "    return Math.max(0, Math.floor((rect.left - start + 1) / (pageWidth + pageGap))) + pageShift;\n  }\n",
+  ],
+  [
+    '    book.classList.remove("needs-filler");\n    for (const heading of flow.querySelectorAll(".keep-with-next")) heading.classList.remove("keep-with-next");\n    layOut();\n    keepHeadingsWithContent(layOut);\n',
+    '    book.classList.remove("needs-filler");\n    layOut();\n',
+  ],
 ];
 
 describe("carried reader script", () => {

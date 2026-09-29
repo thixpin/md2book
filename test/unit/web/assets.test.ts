@@ -44,7 +44,7 @@ describe("web assets", () => {
     expect(css).toContain(".reader-flow { font-size: calc(1em * var(--text-scale, 1)); }");
     expect(css).toContain(".reader-flow pre { font-size: calc(.72em / var(--text-scale, 1)); }");
     expect(css).toContain(
-      ".chapter-head h1 { font-size: calc(clamp(1.75rem, 3vw, 2.5rem) * var(--text-scale, 1)); }",
+      ".chapter-head h1 { font-size: calc(clamp(1.4rem, 2.2vw, 1.75rem) * var(--text-scale, 1)); }",
     );
     expect(css).toContain(
       ".book-name, .chapter-number { font-size: calc(.9rem * var(--text-scale, 1)); }",
@@ -57,5 +57,16 @@ describe("web assets", () => {
     const rules = [...css.matchAll(/\.site-header a \{([^}]*)\}/g)].map((m) => m[1]);
     expect(rules.join(" ")).toContain("overflow: hidden");
     expect(rules.at(-1)).toContain("line-height: 2;");
+  });
+
+  it("keeps every section heading with its content (spec 004 FR-020)", async () => {
+    const { sets } = await loadManifest(FIXTURE_MANIFEST);
+    const css = stylesheet(sets["my-sans"]).replace(/\s+/g, " ");
+    expect(css).toContain(
+      ".chapter-body h3, .chapter-body h4, .chapter-body h5, .chapter-body h6 { break-after: avoid; }",
+    );
+    expect(css).toContain(
+      ".keep-with-next { break-before: column; -webkit-column-break-before: always; }",
+    );
   });
 });

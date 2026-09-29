@@ -314,7 +314,9 @@ pre { line-height: 1.7; }
    size, and the turning-page copies (also .reader-flow) inherit the same value. */
 .reader-flow { font-size: calc(1em * var(--text-scale, 1)); }
 .reader-flow pre { font-size: calc(.72em / var(--text-scale, 1)); }
-.chapter-head h1 { font-size: calc(clamp(1.75rem, 3vw, 2.5rem) * var(--text-scale, 1)); }
+/* md2book: a smaller chapter title than the reference's up to 2.5rem (author request), about
+   1.7 times the body text like the printed book. */
+.chapter-head h1 { font-size: calc(clamp(1.4rem, 2.2vw, 1.75rem) * var(--text-scale, 1)); }
 .book-name, .chapter-number { font-size: calc(.9rem * var(--text-scale, 1)); }
 .text-size { display: flex; align-items: center; justify-content: space-between; gap: .75rem; }
 .text-size output { flex: 1; text-align: center; font-variant-numeric: tabular-nums; }
@@ -322,3 +324,9 @@ pre { line-height: 1.7; }
 .text-size .reader-tool:disabled { opacity: .4; cursor: default; }
 .text-step-small { font-size: .85rem; font-weight: 700; }
 .text-step-large { font-size: 1.35rem; font-weight: 700; }
+
+/* md2book addition (docs/decision-log.md): every section heading keeps at least two lines of what
+   follows on its page (spec 004 FR-020). h2 already has the rule above; the reader moves a heading
+   that WebKit leaves too low to the next page with keep-with-next. */
+.chapter-body h3, .chapter-body h4, .chapter-body h5, .chapter-body h6 { break-after: avoid; }
+.keep-with-next { break-before: column; -webkit-column-break-before: always; }
