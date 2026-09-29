@@ -65,3 +65,7 @@ pre.wide, pre.xwide { font-size: 0.7em; }
 }
 .terminal-dot + .terminal-dot { border-color: #febc2e; background: transparent; }
 .terminal-dot + .terminal-dot + .terminal-dot { border-color: #28c840; background: transparent; }
+
+/* md2book addition (docs/decision-log.md): more leading in code and terminal blocks than the
+   shared 1.4, so lines read comfortably and Burmese stacks in code have headroom. */
+pre { line-height: 1.7; }

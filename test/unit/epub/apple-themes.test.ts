@@ -34,4 +34,8 @@ describe("terminal window survives reader themes", () => {
     expect(css).not.toMatch(/\.terminal (code|span)[^{]*\{[^}]*background/);
     expect(css).not.toContain("__ibooks_internal_theme");
   });
+
+  it("gives code and terminal lines room to breathe (line-height 1.7)", () => {
+    expect(rule("pre")).toMatch(/line-height: 1\.7/);
+  });
 });
