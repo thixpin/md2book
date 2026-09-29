@@ -51,6 +51,20 @@ describe("printStylesheets", () => {
     );
   });
 
+  it("carries printed.css byte-for-byte, then only the terminal-dot icons", () => {
+    const { carried, added } = split(asset("css/printed.css"));
+    expect(sha256(carried.replace(/\n+$/, "\n"))).toBe(
+      "91828a7314c79987b52479709650f2e6d72f69c1f76be231ffb6991889b0d4b2",
+    );
+    expect(added).toBe(
+      ".terminal-dot { position: relative; } " +
+        '.terminal-dot::after { content: ""; position: absolute; left: 50%; top: 50%; background: #000; transform: translate(-50%, -50%); } ' +
+        ".terminal-dot:nth-child(1)::after { width: 0.26em; height: 0.26em; border-radius: 50%; } " +
+        ".terminal-dot:nth-child(2)::after { width: 0.42em; height: 0.08em; } " +
+        ".terminal-dot:nth-child(3)::after { width: 0.46em; height: 0.08em; transform: translate(-50%, -50%) rotate(-45deg); }",
+    );
+  });
+
   it("serves common.css and print.css unchanged for my-sans", async () => {
     const [common, print] = await sheets(false);
     expect(common!.css).toBe(asset("css/common.css"));

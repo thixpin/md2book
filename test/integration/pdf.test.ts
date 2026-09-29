@@ -2,6 +2,7 @@ import { execFileSync } from "node:child_process";
 import { cpSync, existsSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { PDFDocument } from "pdf-lib";
+import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { loadBook } from "../../src/book/load.ts";
 import type { BookConfig } from "../../src/config/load.ts";
@@ -230,5 +231,60 @@ describe("buildPdf (screen edition)", { timeout: 120_000 }, () => {
     expect(existsSync(out) ? readdirSync(out).filter((name) => name.includes(".pdf")) : []).toEqual(
       [],
     );
+  });
+});
+
+/** The largest colour-channel spread of any pixel on each page, rendered at 72 dpi. */
+async function colourSpread(file: string): Promise<number[]> {
+  const doc = await getDocument({ data: new Uint8Array(readFileSync(file)), verbosity: 0 }).promise;
+  const spreads: number[] = [];
+  for (let n = 1; n <= doc.numPages; n++) {
+    const page = await doc.getPage(n);
+    const viewport = page.getViewport({ scale: 1 });
+    const { canvas, context } = doc.canvasFactory.create(viewport.width, viewport.height);
+    await page.render({ canvasContext: context, viewport, canvas }).promise;
+    const { data } = context.getImageData(0, 0, viewport.width, viewport.height);
+    let spread = 0;
+    for (let i = 0; i < data.length; i += 4) {
+      const [r, g, b] = [data[i]!, data[i + 1]!, data[i + 2]!];
+      spread = Math.max(spread, Math.max(r, g, b) - Math.min(r, g, b));
+    }
+    spreads.push(spread);
+  }
+  return spreads;
+}
+
+describe("buildPdf (printed edition)", { timeout: 120_000 }, () => {
+  it("writes the print-shop interior: no cover, title page first, same contents numbering", async () => {
+    const config = await patched("book-mm", { recto_chapter_start: true });
+    const book = await loadBook(config);
+    const { out, file, facts } = await build(config, { printed: true });
+    expect(file).toBe(join(out, "book-mm-170x240-printed.pdf"));
+    expect(readFileSync(join(out, "src", "book-printed.html"), "utf8")).not.toContain("cover-page");
+    expect(facts.lines[0]).toEqual([config.title, config.author]);
+    const opens = openings(facts, book);
+    for (const [i, ch] of book.chapters.entries()) {
+      const entry = facts.lines.flat().find((line) => line.startsWith(ch.fullTitle));
+      expect(Number(entry!.slice(ch.fullTitle.length).trim())).toBe(opens[i]);
+      expect(opens[i]! % 2).toBe(1);
+    }
+    for (const bad of [0x0000, 0xfffd]) expect(facts.text).not.toContain(String.fromCharCode(bad));
+  });
+
+  it("uses no colour: every page is greyscale (SC-004)", async () => {
+    // Without the end image, whose picture is the only colour allowed.
+    const config = await patched("book-mm", { end_image: undefined });
+    const { file } = await build(config, { printed: true });
+    const spreads = await colourSpread(file);
+    expect(
+      spreads.every((spread) => spread <= 8),
+      JSON.stringify(spreads),
+    ).toBe(true);
+  });
+
+  it("differs from the screen edition, which has colour", async () => {
+    const config = await patched("book-mm", { end_image: undefined });
+    const { file } = await build(config);
+    expect(Math.max(...(await colourSpread(file)))).toBeGreaterThan(8);
   });
 });

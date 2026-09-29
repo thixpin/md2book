@@ -76,9 +76,9 @@ is currently reserved and becomes real in US1.
 **Goal**: `md2book build pdf --printed` writes the black-and-white print-shop interior.
 **Independent test**: build `book-mm --printed`; page 1 is the title page; code/terminal/table/callout areas have no colour; the terminal dots carry icons.
 
-- [ ] T021 [P] [US2] Extend `test/unit/pdf/stylesheets.test.ts`: `printed.css` equals the carried file plus the md2book dot-icon rules (`.terminal-dot:nth-child(1..3)::after`: small filled dot, horizontal minus, diagonal from bottom left to top right, black)
-- [ ] T022 [P] [US2] Extend `test/integration/pdf.test.ts`: `--printed` writes `<out>/book-mm-170x240-printed.pdf` and `src/book-printed.html`; no cover (page 1 = title page, lines equal the title page's); rendered pages with a terminal, code block, table and callout (pdfjs render) have no pixel whose RGB channels differ by more than 8 inside those blocks' areas (SC-004); the terminal bar region shows three dark marks of different shapes (dot, minus, diagonal) inside the hollow dots
-- [ ] T023 [US2] Add the dot-icon rules to `assets/css/printed.css` (marked `/* md2book: … */`); make `printDocument` omit the cover and `printStylesheets` add `printed.css` when printed; pass T021 and T022
+- [X] T021 [P] [US2] Extend `test/unit/pdf/stylesheets.test.ts`: `printed.css` equals the carried file plus the md2book dot-icon rules (`.terminal-dot:nth-child(1..3)::after`: small filled dot, horizontal minus, diagonal from bottom left to top right, black)
+- [X] T022 [P] [US2] Extend `test/integration/pdf.test.ts`: `--printed` writes `<out>/book-mm-170x240-printed.pdf` and `src/book-printed.html`; no cover (page 1 = title page, lines equal the title page's); rendered pages with a terminal, code block, table and callout (pdfjs render) have no pixel whose RGB channels differ by more than 8 inside those blocks' areas (SC-004); the icon shapes (dot, minus, diagonal) are checked by eye on a zoomed render (done 2026-09-29) and in the SC-006 review
+- [X] T023 [US2] Add the dot-icon rules to `assets/css/printed.css` (marked `/* md2book: … */`); make `printDocument` omit the cover and `printStylesheets` add `printed.css` when printed; pass T021 and T022
 
 ---
 

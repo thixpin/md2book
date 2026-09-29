@@ -38,3 +38,23 @@ th { background: none; }
   background: none;
   border-left-color: #000;
 }
+
+/* md2book addition (docs/decision-log.md): without colour the three hollow dots look alike, so
+   each carries a small black mark like the window controls it stands for: a dot, a minus and a
+   diagonal (spec 004 FR-008). */
+.terminal-dot { position: relative; }
+.terminal-dot::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  background: #000;
+  transform: translate(-50%, -50%);
+}
+.terminal-dot:nth-child(1)::after { width: 0.26em; height: 0.26em; border-radius: 50%; }
+.terminal-dot:nth-child(2)::after { width: 0.42em; height: 0.08em; }
+.terminal-dot:nth-child(3)::after {
+  width: 0.46em;
+  height: 0.08em;
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
