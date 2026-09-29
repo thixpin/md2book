@@ -1,10 +1,9 @@
 import { loadConfig } from "../config/load.ts";
-import { BookError } from "../errors.ts";
 import { fetchFontSet } from "./fetch.ts";
 import { fontSetById, getFontSet, loadManifest } from "./manifest.ts";
 
 export interface FontsOptions {
-  /** Book config whose `language` and `font_set` pick the set. */
+  /** Book config whose `language` and `font_set` pick the set (default book.json). */
   config?: string;
   /** Set id instead of a config: my-sans, my-serif, en-sans, en-serif. */
   set?: string;
@@ -17,14 +16,12 @@ export async function runFonts(
   options: FontsOptions,
   manifestPath?: string,
 ): Promise<{ dir: string; files: string[] }> {
-  if (!options.config && !options.set)
-    throw new BookError("fonts", "give --config <path> or --set <id>");
   const manifest = await loadManifest(manifestPath);
   let set;
   if (options.set) {
     set = fontSetById(manifest, options.set);
   } else {
-    const { config } = await loadConfig(options.config!);
+    const { config } = await loadConfig(options.config ?? "book.json");
     set = getFontSet(manifest, config.language, config.font_set);
   }
   return fetchFontSet(set, { fontsDir: options.fontsDir, manifest });

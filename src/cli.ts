@@ -64,7 +64,10 @@ export async function runCli(argv: string[], deps: CliDeps = {}): Promise<number
   program
     .command("fonts")
     .description("Fetch and verify the book's font set into the local cache.")
-    .option("--config <path>", "book config; its language and font_set pick the set")
+    .option(
+      "--config <path>",
+      "book config (default book.json); its language and font_set pick the set",
+    )
     .option("--set <id>", "font set id: my-sans, my-serif, en-sans, en-serif")
     .option("--fonts <dir>", "font cache root (overrides MD2BOOK_FONTS)")
     .action(async (options: { config?: string; set?: string; fonts?: string }) => {
@@ -80,7 +83,7 @@ export async function runCli(argv: string[], deps: CliDeps = {}): Promise<number
   build
     .command("pdf")
     .description("Build the 170 × 240 mm PDF (screen edition, or --printed for the print shop).")
-    .requiredOption("--config <path>", "book config")
+    .option("--config <path>", "book config", "book.json")
     .option("--out <dir>", "output directory (default dist/<config name>/)")
     .option("--printed", "print-shop interior: no cover page, no colour")
     .action(async (options: { config: string; out?: string; printed?: boolean }) => {
@@ -90,7 +93,7 @@ export async function runCli(argv: string[], deps: CliDeps = {}): Promise<number
   build
     .command("epub")
     .description("Build the reflowable EPUB 3 of the whole book.")
-    .requiredOption("--config <path>", "book config")
+    .option("--config <path>", "book config", "book.json")
     .option("--out <dir>", "output directory (default dist/<config name>/)")
     .action(async (options: { config: string; out?: string }) => {
       await runEpub(options, deps.manifestPath, (line) => stdout(`${line}\n`));
@@ -99,7 +102,7 @@ export async function runCli(argv: string[], deps: CliDeps = {}): Promise<number
   program
     .command("qa")
     .description("Write QA-REPORT.md: manuscript, Unicode, typeface, PDF and EPUB checks.")
-    .requiredOption("--config <path>", "book config")
+    .option("--config <path>", "book config", "book.json")
     .option("--out <dir>", "output directory (default dist/<config name>/)")
     .option("--printed", "check the printed edition's PDF")
     .action(async (options: { config: string; out?: string; printed?: boolean }) => {
@@ -109,7 +112,7 @@ export async function runCli(argv: string[], deps: CliDeps = {}): Promise<number
   build
     .command("all")
     .description("Build the PDF, the EPUB and the web edition, then write the QA report.")
-    .requiredOption("--config <path>", "book config")
+    .option("--config <path>", "book config", "book.json")
     .option("--out <dir>", "output directory (default dist/<config name>/)")
     .option("--printed", "build and check the printed edition's PDF")
     .action(async (options: { config: string; out?: string; printed?: boolean }) => {
@@ -119,7 +122,7 @@ export async function runCli(argv: string[], deps: CliDeps = {}): Promise<number
   build
     .command("web")
     .description("Build the static web edition of the published chapters.")
-    .requiredOption("--config <path>", "book config")
+    .option("--config <path>", "book config", "book.json")
     .option("--out <dir>", "output directory (default dist/<config name>/)")
     .action(async (options: { config: string; out?: string }) => {
       stdout(`${webWrittenLine(await runWeb(options, deps.manifestPath))}\n`);
@@ -128,7 +131,7 @@ export async function runCli(argv: string[], deps: CliDeps = {}): Promise<number
   program
     .command("serve")
     .description("Build the web edition and preview it at http://127.0.0.1:<port>/.")
-    .requiredOption("--config <path>", "book config")
+    .option("--config <path>", "book config", "book.json")
     .option("--out <dir>", "output directory (default dist/<config name>/)")
     .option("--port <n>", "port on 127.0.0.1", "8000")
     .action(async (options: { config: string; out?: string; port: string }) => {

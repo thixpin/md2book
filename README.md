@@ -73,6 +73,10 @@ Add a cover image at `cover/cover.png`, then fetch the fonts:
 $ md2book fonts --config my-book/book.json
 ```
 
+`--config` defaults to `book.json` in the current directory, so inside
+the project folder `md2book fonts`, `md2book build pdf` and the other
+commands need no options. The examples below run from its parent.
+
 ## PDF
 
 ```console
@@ -182,13 +186,13 @@ downloads the set once, checks every file's SHA-256 against the
 manifest shipped in the package, and caches it. After that, everything
 works offline.
 
-| Option or variable     | Meaning                                                |
-| ---------------------- | ------------------------------------------------------ |
-| `--config <path>`      | pick the set from the book's `language` and `font_set` |
-| `--set <id>`           | pick a set by id instead                               |
-| `--fonts <dir>`        | cache root                                             |
-| `MD2BOOK_FONTS`        | cache root (default `~/.cache/md2book/fonts`)          |
-| `MD2BOOK_FONTS_SOURCE` | mirror URL or local folder with the same files         |
+| Option or variable     | Meaning                                                                      |
+| ---------------------- | ---------------------------------------------------------------------------- |
+| `--config <path>`      | pick the set from the book's `language` and `font_set` (default `book.json`) |
+| `--set <id>`           | pick a set by id instead                                                     |
+| `--fonts <dir>`        | cache root                                                                   |
+| `MD2BOOK_FONTS`        | cache root (default `~/.cache/md2book/fonts`)                                |
+| `MD2BOOK_FONTS_SOURCE` | mirror URL or local folder with the same files                               |
 
 ## Writing chapters
 

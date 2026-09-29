@@ -1,3 +1,4 @@
+import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import { runCli } from "../../src/cli.ts";
 
@@ -19,11 +20,20 @@ describe("runCli", () => {
     expect(io.err.join("")).toContain("missing required argument 'file'");
   });
 
-  it("requires --config for build pdf", async () => {
+  // The repository root has no book.json, so the default config is reported as unreadable.
+  it.each([
+    ["build", "pdf", "--printed"],
+    ["build", "epub"],
+    ["build", "web"],
+    ["build", "all"],
+    ["qa"],
+    ["serve"],
+    ["fonts"],
+  ])("defaults --config to book.json: %s", async (...args) => {
     const io = capture();
-    const code = await runCli(["build", "pdf", "--printed"], io.deps);
-    expect(code).not.toBe(0);
-    expect(io.err.join("")).toContain("--config <path>");
+    const code = await runCli(args, io.deps);
+    expect(code).toBe(1);
+    expect(io.err.join("")).toBe(`md2book: ${resolve("book.json")}: cannot read config file\n`);
   });
 
   it.each(["epub", "web", "all", "pdf"])(
