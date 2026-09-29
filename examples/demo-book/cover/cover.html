@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="my">
+<head>
+<meta charset="utf-8">
+<title>Python အခြေခံ — cover</title>
+<style>
+  /* The page size is the book's: md2book cover renders exactly one page of this size. */
+  @page { size: 170mm 240mm; margin: 0; }
+  html, body { margin: 0; }
+  body {
+    width: 170mm; height: 240mm; position: relative; overflow: hidden;
+    background: linear-gradient(160deg, #0b4f6c 0%, #126570 55%, #1b3b52 100%);
+    color: #f4f1ea;
+    /* The book's font family: md2book cover supplies the book font's files for it. */
+    font-family: "Noto Sans Myanmar", sans-serif;
+  }
+  .ring {
+    position: absolute; right: -30mm; bottom: -40mm; width: 110mm; height: 110mm;
+    border: 5mm solid #9a9a55; border-radius: 50%;
+  }
+  .dot {
+    position: absolute; right: 12mm; bottom: 18mm; width: 34mm; height: 34mm;
+    background: #2e6a99; border-radius: 50%;
+  }
+  .title { position: absolute; top: 58mm; left: 18mm; right: 18mm; font-size: 40pt; font-weight: 700; line-height: 1.5; }
+  .subtitle { position: absolute; top: 108mm; left: 18mm; right: 28mm; font-size: 15pt; line-height: 1.9; }
+  .author { position: absolute; bottom: 24mm; left: 18mm; font-size: 14pt; font-weight: 600; }
+</style>
+</head>
+<body>
+  <div class="ring"></div>
+  <div class="dot"></div>
+  <div class="title">Python အခြေခံ</div>
+  <div class="subtitle">စတင်လေ့လာသူများအတွက် လက်တွေ့ လမ်းညွှန်</div>
+  <div class="author">Demo Author</div>
+</body>
+</html>

@@ -39,7 +39,7 @@ export async function runCover(
   let set: FontSet;
   let fix: string;
   if (options.config) {
-    const { config } = await loadConfig(options.config);
+    const { config } = await loadConfig(options.config, { requireCover: false });
     set = getFontSet(manifest, config.language, config.font_set);
     fix = `md2book fonts --config ${config.configPath}`;
   } else {

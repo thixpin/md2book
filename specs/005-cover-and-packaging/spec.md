@@ -31,6 +31,8 @@ Values from the Python toolchain are cited as **[REF]** (`publish/render_cover.p
 - Q: Should the repository include a demo book authors can copy the syntax and formats from?
   → A: Yes (author request): a complete example book in the repository, not in the package
   (User Story 4).
+- Author requests during planning: GitHub community files (security policy, contributing guide,
+  issue templates; FR-015) and a coverage check in CI (FR-016).
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -199,6 +201,13 @@ fonts) and check that each documented format appears in its output.
   the tag equals the package version, run the package check and publish publicly with provenance.
 - **FR-013**: The README MUST document installing from npm, the one Chromium setup step, and the
   `cover` command, and link the demo book.
+- **FR-015**: The repository MUST have GitHub community files (author request): `SECURITY.md`
+  (supported versions, how to report a vulnerability privately, response time),
+  `CONTRIBUTING.md` (setup, the Spec Kit workflow, tests-first, `npm run check`, commit messages,
+  pull requests) and issue templates for bug reports and feature requests (with the version,
+  platform, command, config excerpt and a minimal manuscript for bugs).
+- **FR-016**: CI MUST measure test coverage (lines, statements, functions, branches) and fail when
+  it falls below the recorded thresholds (author request); `npm run coverage` runs it locally.
 - **FR-014**: The repository MUST include `examples/demo-book/` as described in User Story 4; it is
   not part of the published package and its cover PNG is rendered by `md2book cover` from its
   HTML.

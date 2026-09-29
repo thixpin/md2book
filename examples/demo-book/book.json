@@ -1,0 +1,26 @@
+{
+  "title": "Python အခြေခံ",
+  "author": "Demo Author",
+  "year": "2026",
+  "language": "my",
+  "identifier": "urn:uuid:06a2ca6a-6ee3-4587-aa56-291dd7b8604a",
+  "output_name": "python",
+  "cover": "cover/cover.png",
+  "chapter_glob": "chapters/chapter-*.md",
+  "font_set": "sans",
+  "strings": {
+    "licence_text": "This work is licensed under the MIT License. https://opensource.org/license/mit"
+  },
+  "part_glob": "chapters/part-*.md",
+  "code_root": "code",
+  "web_published_chapters": [
+    "chapter-01.md",
+    "chapter-02.md"
+  ],
+  "subtitle": "စတင်လေ့လာသူများအတွက် လက်တွေ့ လမ်းညွှန်",
+  "description": "Python ကို မြန်မာလို စတင်လေ့လာသူများအတွက် ဥပမာ စာအုပ်။",
+  "recto_chapter_start": true,
+  "running_headers": true,
+  "end_image": "cover/end.png",
+  "end_image_after": "chapter-03.md"
+}

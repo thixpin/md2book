@@ -74,6 +74,29 @@ describe("md2book cover", { timeout: 120_000 }, () => {
     expect(Buffer.compare(first, english)).not.toBe(0);
   });
 
+  it("renders a book's first cover with --config, before cover.png exists", async () => {
+    const fontsDir = await fonts("my-sans");
+    const dir = coverDir();
+    const config = join(dir, "book.json");
+    writeFileSync(
+      config,
+      JSON.stringify({
+        title: "T",
+        author: "A",
+        year: "2026",
+        identifier: "urn:uuid:x",
+        output_name: "t",
+        cover: "cover.png",
+        chapter_glob: "chapters/*.md",
+      }),
+    );
+    const result = await runCover(
+      { html: join(dir, "cover.html"), config, fontsDir },
+      PRINT_MANIFEST,
+    );
+    expect(existsSync(result.file)).toBe(true);
+  });
+
   it("stops when the cover is not exactly one page, writing nothing", async () => {
     const fontsDir = await fonts("my-sans");
     const dir = coverDir();

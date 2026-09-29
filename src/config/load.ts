@@ -29,7 +29,14 @@ const PATH_KEYS = [
   "end_image",
 ] as const;
 
-export async function loadConfig(configPath: string): Promise<LoadedConfig> {
+/**
+ * Loads and validates a book config. `requireCover: false` skips the cover-file check, for the
+ * `cover` command, which creates that file.
+ */
+export async function loadConfig(
+  configPath: string,
+  options: { requireCover?: boolean } = {},
+): Promise<LoadedConfig> {
   const path = resolve(configPath);
   const raw = await readJson(path);
   const parsed = bookConfigSchema.safeParse(raw);
@@ -53,7 +60,9 @@ export async function loadConfig(configPath: string): Promise<LoadedConfig> {
     const value = config[key];
     if (value) config[key] = resolve(configDir, value);
   }
-  if (!existsSync(config.cover)) throw new BookError(path, `cover not found: ${config.cover}`);
+  if (options.requireCover !== false && !existsSync(config.cover)) {
+    throw new BookError(path, `cover not found: ${config.cover}`);
+  }
 
   return { config, warnings, placeholders: findPlaceholders(parsed.data) };
 }

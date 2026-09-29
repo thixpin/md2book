@@ -39,8 +39,8 @@ implementation. Rendering tests are offline and use the print font fixture.
 
 ## Phase 3: User Story 4 - Demo book (P2)
 
-- [ ] T007 [US4] Create `examples/demo-book/` from the scratch demo book: `book.json` (common keys incl. `end_image`/`end_image_after`, `recto_chapter_start`, `web_published_chapters`, `strings.licence_text`), `chapters/part-01.md`, `chapter-01.md`, `chapter-02.md`, new `chapter-03.md` completing the format coverage of spec US4 #2 (section levels 2–4, emphasis, list, scene break, `[!TRY]`, a snippet include from `code/`), `code/…` with regions, `cover/cover.html` (Burmese title), `cover/end.png`, and `README.md` explaining each file and the build commands; add `examples/` to `.prettierignore`
-- [ ] T008 [US4] Render `examples/demo-book/cover/cover.png` with `md2book cover` from its HTML; add `test/integration/demo-book.test.ts`: the demo book loads and renders, every format of US4 #2 appears in the rendered HTML, and its EPUB builds (print fonts)
+- [X] T007 [US4] Create `examples/demo-book/` from the scratch demo book: `book.json` (common keys incl. `end_image`/`end_image_after`, `recto_chapter_start`, `web_published_chapters`, `strings.licence_text`), `chapters/part-01.md`, `chapter-01.md`, `chapter-02.md`, new `chapter-03.md` completing the format coverage of spec US4 #2 (section levels 2–4, emphasis, list, scene break, `[!TRY]`, a snippet include from `code/`), `code/…` with regions, `cover/cover.html` (Burmese title), `cover/end.png`, and `README.md` explaining each file and the build commands; add `examples/` to `.prettierignore`
+- [X] T008 [US4] Render `examples/demo-book/cover/cover.png` with `md2book cover` from its HTML; add `test/integration/demo-book.test.ts`: the demo book loads and renders, every format of US4 #2 appears in the rendered HTML, and its EPUB builds (print fonts)
 
 ---
 
@@ -58,6 +58,11 @@ implementation. Rendering tests are offline and use the print font fixture.
 - [ ] T013 [US3] Rewrite `.github/workflows/ci.yml`: trigger on `pull_request` and `push: tags: ["v*"]` only; jobs `check`, `browser` (Chromium + WebKit) run on both; `release` runs only on tags (`if: startsWith(github.ref, 'refs/tags/v')`, needs both; tag = `v` + package version, else fail naming both; `npm run package:check`; `npm publish --provenance --access public` with `NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}`; `permissions: contents: read, id-token: write`; registry-url set in setup-node)
 
 ---
+
+## Phase 5b: Repository health (author requests)
+
+- [ ] T016 [P] Add `SECURITY.md`, `CONTRIBUTING.md`, `.github/ISSUE_TEMPLATE/bug_report.yml`, `.github/ISSUE_TEMPLATE/feature_request.yml` and `.github/ISSUE_TEMPLATE/config.yml` (FR-015); link them from `README.md`
+- [ ] T017 Add a coverage check (FR-016): `@vitest/coverage-v8` dev dependency, `npm run coverage` (unit + integration), thresholds just below today's measured values in `vitest.config.ts`, run in the CI `check` job
 
 ## Phase 6: Polish
 
