@@ -7,6 +7,13 @@ Myanmar and mono faces). No layout features: these files test fetching and cover
 
   python scripts/make-font-fixtures.py [path/to/development-book/publish/fonts]
 
+With --print it writes test/fixtures/fonts-print/ instead: the shipped faces (default
+build/fonts/, from scripts/build-fonts.py) with the whole Myanmar block, Latin-1 and punctuation,
+and their layout features, so the PDF tests shape Burmese exactly like the real fonts without
+falling back to system fonts.
+
+  python scripts/make-font-fixtures.py --print [path/to/build/fonts]
+
 Needs fontTools (e.g. development-book/.venv/bin/python).
 """
 from __future__ import annotations
@@ -20,11 +27,17 @@ from pathlib import Path
 from fontTools import subset
 
 ROOT = Path(__file__).resolve().parent.parent
-OUT = ROOT / "test" / "fixtures" / "fonts-source"
-SOURCE = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT.parent / "development-book" / "publish" / "fonts"
+PRINT = "--print" in sys.argv
+ARGS = [a for a in sys.argv[1:] if a != "--print"]
+OUT = ROOT / "test" / "fixtures" / ("fonts-print" if PRINT else "fonts-source")
+DEFAULT_SOURCE = ROOT / "build" / "fonts" if PRINT else ROOT.parent / "development-book" / "publish" / "fonts"
+SOURCE = Path(ARGS[0]) if ARGS else DEFAULT_SOURCE
 
 ASCII = "U+0020-007E"
 MYANMAR = "U+1000-1021"  # consonants only: enough for coverage tests, keeps files small
+# --print: what the PDF fixtures use (Latin-1, punctuation, arrows, box drawing, all Myanmar).
+PRINT_LATIN = "U+0020-007E,U+00A0-00FF,U+2010-2027,U+2030-205E,U+2190-21FF,U+2500-257F"
+PRINT_MYANMAR = "U+1000-109F,U+A9E0-A9FF,U+AA60-AA7F"
 ROLES = ["body-regular", "body-semibold", "body-bold", "body-italic", "body-bolditalic", "mono-regular", "mono-bold"]
 WEIGHTS = {"regular": 400, "semibold": 600, "bold": 700, "italic": 400, "bolditalic": 700}
 
@@ -42,7 +55,8 @@ MONO = {"mono-regular": "NotoSansMono-Regular.ttf", "mono-bold": "NotoSansMono-B
 def make(src: str, dest: str, unicodes: str) -> None:
     subset.main([
         str(SOURCE / src), f"--unicodes={unicodes}", f"--output-file={OUT / dest}",
-        "--layout-features=", "--name-IDs=*", "--no-hinting", "--desubroutinize", "--notdef-outline",
+        f"--layout-features={'*' if PRINT else ''}", "--name-IDs=*", "--no-hinting",
+        "--desubroutinize", "--notdef-outline",
     ])
 
 
@@ -60,11 +74,15 @@ def main() -> None:
     if OUT.exists():
         shutil.rmtree(OUT)
     OUT.mkdir(parents=True)
+    latin, myanmar = (PRINT_LATIN, PRINT_MYANMAR) if PRINT else (ASCII, MYANMAR)
     for role, name in MY_BODY.items():
-        make(name, name, f"{ASCII},{MYANMAR}")          # Myanmar + Latin (like the real merged faces)
-        make(name, EN_BODY[role], ASCII)                  # Latin-only stand-in for English faces
+        make(name, name, f"{latin},{myanmar}")          # Myanmar + Latin (like the real merged faces)
+        if PRINT:
+            make(EN_BODY[role], EN_BODY[role], latin)     # the real English faces
+        else:
+            make(name, EN_BODY[role], ASCII)              # Latin-only stand-in for English faces
     for name in MONO.values():
-        make(name, name, f"{ASCII},{MYANMAR}")
+        make(name, name, f"{latin},{myanmar}")
     shutil.copy(SOURCE / "LICENSE-OFL.txt", OUT / "LICENSE-OFL.txt")
 
     licence = {"file": "LICENSE-OFL.txt", "sha256": sha256("LICENSE-OFL.txt")}
