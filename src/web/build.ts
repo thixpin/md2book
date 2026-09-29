@@ -48,8 +48,8 @@ export async function buildWeb(
   const coverName = `cover${extname(config.cover)}`;
   copyFileSync(config.cover, join(web, coverName));
 
-  const favicon = await writeFavicons(config, web);
   const facts = await coverFacts(config.cover);
+  await writeFavicons(config, web, facts);
   await writeOgImage(config.cover, web, facts);
   if (!config.web_url) {
     warn("web_url is not set; canonical and og:url are omitted and og:image is relative");
@@ -65,7 +65,7 @@ export async function buildWeb(
   };
 
   const bookDescription = config.description || config.subtitle || config.title;
-  const common = { stylesheet: assets.stylesheet, favicon };
+  const common = { stylesheet: assets.stylesheet, favicon: true };
   const reader = { ...common, script: assets.script, headerTools: readerToolbar() };
   writeFileSync(
     join(web, "index.html"),

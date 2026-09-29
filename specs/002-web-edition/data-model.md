@@ -38,7 +38,7 @@ reader storage keys `{bookKey}:position` (`{page, pageCount}`) and `{bookKey}:bo
 | cover | `cover{ext}` (original extension) |
 | back cover | `back-cover{ext}` (copied) or `back-cover.png` (generated) |
 | share image | `og-image.png`, 1200 × 630 |
-| favicons | `favicon.svg`, `favicon-32.png` (32), `apple-touch-icon.png` (180) — only with `favicon` |
+| favicons | `favicon.svg`, `favicon-32.png` (32), `apple-touch-icon.png` (180) — copied from `favicon`, or the generated default (open book on the cover edge colour) |
 | fonts | `fonts/` = every file of the configured font set + `LICENSE-OFL.txt` |
 
 ## Reference constants (from `development-book/publish/web.py`, `d235dbd`)

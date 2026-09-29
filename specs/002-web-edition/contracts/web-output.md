@@ -12,7 +12,7 @@ fonts/*.ttf, fonts/LICENSE-OFL.txt
 cover.<ext>
 back-cover.<ext>
 og-image.png
-favicon.svg, favicon-32.png, apple-touch-icon.png   (only with `favicon`)
+favicon.svg, favicon-32.png, apple-touch-icon.png   (configured or default)
 ```
 
 ## Page shell
@@ -20,7 +20,7 @@ favicon.svg, favicon-32.png, apple-touch-icon.png   (only with `favicon`)
 `<html lang>`; viewport meta; `<title>`; `meta[name=description]`; social tags (canonical and
 `og:url` only with `web_url`; `robots noindex` only on 404; `og:type` `book`/`article`;
 `og:site_name`, `og:title`, `og:description`, `og:image` (+ width, height, alt);
-`twitter:card=summary_large_image`); hashed stylesheet; favicon links when configured.
+`twitter:card=summary_large_image`); hashed stylesheet; favicon links (always: configured or default icon).
 `header.site-header > a[href="/"][data-home]` (`.site-title`, `.site-subtitle`) + reader toolbar;
 `main`; `footer.footer` (author); deferred reader script (not on 404).
 

@@ -55,6 +55,16 @@ describe("buildWeb", { timeout: 60_000 }, () => {
     expect(files.filter((f) => f.startsWith("fonts/"))).toHaveLength(8);
   });
 
+  it("links a generated default favicon for a book without one", async () => {
+    const { web } = await build(bookMm);
+    expect(tree(web)).toEqual(
+      expect.arrayContaining(["favicon.svg", "favicon-32.png", "apple-touch-icon.png"]),
+    );
+    expect(readFileSync(join(web, "index.html"), "utf8")).toContain(
+      '<link rel="icon" href="/favicon.svg" type="image/svg+xml">',
+    );
+  });
+
   it("never publishes an unlisted chapter", async () => {
     const { web } = await build(bookEn);
     for (const file of tree(web)) {

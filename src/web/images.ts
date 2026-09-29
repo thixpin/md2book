@@ -1,8 +1,9 @@
-import { copyFileSync, existsSync } from "node:fs";
+import { copyFileSync, existsSync, writeFileSync } from "node:fs";
 import { extname, join } from "node:path";
 import sharp from "sharp";
 import type { BookConfig } from "../config/load.ts";
 import { BookError } from "../errors.ts";
+import { BOOK_OPEN_PATHS } from "./icons.ts";
 import { OG_IMAGE } from "./page.ts";
 
 export interface CoverFacts {
@@ -72,15 +73,52 @@ const FAVICON_PNGS = [
   ["apple-touch-icon.png", 180],
 ] as const;
 
-/** Copies the SVG favicon and renders its PNG fallbacks; false when `favicon` is not set. */
-export async function writeFavicons(config: BookConfig, web: string): Promise<boolean> {
-  if (!config.favicon) return false;
-  if (extname(config.favicon) !== ".svg" || !existsSync(config.favicon)) {
-    throw new BookError(config.favicon, "favicon must be an existing .svg file");
+/** Reader palette ink and paper (web.css), used for the default favicon's glyph. */
+const INK = "#202a35";
+const PAPER = "#fbfbf9";
+
+const hex = (rgb: number[]) =>
+  `#${rgb.map((c) => pyRound(c).toString(16).padStart(2, "0")).join("")}`;
+
+/** WCAG relative luminance of an sRGB colour (0 = black, 1 = white). */
+function luminance(rgb: number[]): number {
+  const [r, g, b] = rgb.map((c) => {
+    const v = c / 255;
+    return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
+  }) as [number, number, number];
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+
+/** Default favicon: an open book on a rounded square in the cover's edge colour. */
+export function defaultFaviconSvg(edge: CoverFacts["edge"]): string {
+  const glyph = luminance(edge) > 0.5 ? INK : PAPER;
+  return (
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">' +
+    `<rect width="64" height="64" rx="14" fill="${hex(edge)}"/>` +
+    `<g transform="translate(14 14) scale(1.5)" fill="none" stroke="${glyph}" stroke-width="2" ` +
+    `stroke-linecap="round" stroke-linejoin="round">${BOOK_OPEN_PATHS}</g></svg>\n`
+  );
+}
+
+/**
+ * Writes `favicon.svg` and its PNG fallbacks: the configured SVG, or the default open-book icon
+ * in the cover's edge colour (spec 002 US-3 #5).
+ */
+export async function writeFavicons(
+  config: BookConfig,
+  web: string,
+  facts: CoverFacts,
+): Promise<void> {
+  const svg = join(web, "favicon.svg");
+  if (config.favicon) {
+    if (extname(config.favicon) !== ".svg" || !existsSync(config.favicon)) {
+      throw new BookError(config.favicon, "favicon must be an existing .svg file");
+    }
+    copyFileSync(config.favicon, svg);
+  } else {
+    writeFileSync(svg, defaultFaviconSvg(facts.edge));
   }
-  copyFileSync(config.favicon, join(web, "favicon.svg"));
   for (const [name, size] of FAVICON_PNGS) {
-    await sharp(config.favicon, { density: 384 }).resize(size, size).png().toFile(join(web, name));
+    await sharp(svg, { density: 384 }).resize(size, size).png().toFile(join(web, name));
   }
-  return true;
 }

@@ -16,6 +16,14 @@ Uses the core pipeline from feature 001."
 Exact values from the Python toolchain are cited as **[REF §n]** (`reference/docs/`, git-ignored);
 the values this feature needs are copied into `data-model.md` → Reference constants during planning.
 
+## Clarifications
+
+### Session 2026-09-29
+
+- Q: Should the web edition include a default favicon when `favicon` is not set? → A: Yes:
+  generate an open-book icon (Lucide `book-open`) on a rounded square in the cover's edge colour.
+  The reference writes no icon; this is a deliberate difference (decision log).
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Publish selected chapters as a web book (Priority: P1)
@@ -130,7 +138,9 @@ favicons.
    configured but missing, the build stops naming it.
 5. **Given** `favicon` is an existing `.svg`, **When** built, **Then** it is copied and 32 px and
    180 px PNGs are rendered with matching link tags; **given** it is not an existing `.svg`, the
-   build stops naming it; **given** it is unset, no icon files or tags are written.
+   build stops naming it; **given** it is unset, a default favicon is generated (an open-book
+   icon on a rounded square in the cover's edge colour, the icon dark or light for contrast) with
+   the same files and link tags.
 6. **Given** `404.html`, **When** built, **Then** it has no canonical URL, is `noindex` and loads no
    reader script.
 

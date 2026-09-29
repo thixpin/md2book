@@ -22,11 +22,34 @@ describe("share image", () => {
   });
 });
 
+const facts = { width: 70, height: 100, ratio: 0.7, edge: [0, 0, 0] as [number, number, number] };
+
 describe("favicons", () => {
-  it("writes nothing without a favicon", async () => {
+  it("generates a default open-book icon in the cover's edge colour when none is set", async () => {
     const out = tempDir();
-    expect(await writeFavicons(testConfig(tempDir()), out)).toBe(false);
-    expect(readdirSync(out)).toEqual([]);
+    await writeFavicons(testConfig(tempDir()), out, { ...facts, edge: [11, 102, 112] });
+    expect(readdirSync(out).sort()).toEqual([
+      "apple-touch-icon.png",
+      "favicon-32.png",
+      "favicon.svg",
+    ]);
+    const svg = readFileSync(join(out, "favicon.svg"), "utf8");
+    expect(svg).toContain('fill="#0b6670"');
+    expect(svg).toContain("M12 5v16");
+    expect(svg).toContain('stroke="#fbfbf9"');
+    for (const [name, size] of [
+      ["favicon-32.png", 32],
+      ["apple-touch-icon.png", 180],
+    ] as const) {
+      const meta = await sharp(join(out, name)).metadata();
+      expect([meta.width, meta.height]).toEqual([size, size]);
+    }
+  });
+
+  it("draws the default icon dark on a light cover", async () => {
+    const out = tempDir();
+    await writeFavicons(testConfig(tempDir()), out, { ...facts, edge: [240, 235, 220] });
+    expect(readFileSync(join(out, "favicon.svg"), "utf8")).toContain('stroke="#202a35"');
   });
 
   it("rejects a non-SVG favicon", async () => {
@@ -34,6 +57,7 @@ describe("favicons", () => {
     const error: unknown = await writeFavicons(
       testConfig(dir, { favicon: join(dir, "icon.png") }),
       tempDir(),
+      facts,
     ).catch((e: unknown) => e);
     expect(error).toBeInstanceOf(BookError);
     expect((error as BookError).reason).toMatch(/svg/);
@@ -44,6 +68,7 @@ describe("favicons", () => {
     const error: unknown = await writeFavicons(
       testConfig(dir, { favicon: join(dir, "missing.svg") }),
       tempDir(),
+      facts,
     ).catch((e: unknown) => e);
     expect((error as BookError).reason).toMatch(/svg/);
   });
@@ -51,7 +76,7 @@ describe("favicons", () => {
   it("copies the SVG and renders square 32 px and 180 px PNGs", async () => {
     const out = tempDir();
     const favicon = fixture("book-en", "cover", "favicon.svg");
-    expect(await writeFavicons(testConfig(tempDir(), { favicon }), out)).toBe(true);
+    await writeFavicons(testConfig(tempDir(), { favicon }), out, facts);
     expect(existsSync(join(out, "favicon.svg"))).toBe(true);
     for (const [name, size] of [
       ["favicon-32.png", 32],
