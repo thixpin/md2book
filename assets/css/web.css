@@ -301,3 +301,7 @@ table { display: block; overflow-x: auto; }
   .page-turn .icon { width: 1.5rem; height: 1.5rem; }
   .nav-label { display: none; }
 }
+
+/* md2book addition (docs/decision-log.md): more leading in code and terminal blocks than the
+   shared 1.4, so lines read comfortably and Burmese stacks in code have headroom. */
+pre { line-height: 1.7; }

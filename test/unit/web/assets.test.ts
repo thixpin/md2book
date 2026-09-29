@@ -28,4 +28,13 @@ describe("web assets", () => {
     expect(hashedName("style", "css", "a")).toBe("style.ca978112ca1b.css");
     expect(hashedName("reader", "js", readerScript())).toMatch(/^reader\.[0-9a-f]{12}\.js$/);
   });
+
+  it("gives code and terminal lines more room than the shared 1.4 (last pre rule wins)", async () => {
+    const { sets } = await loadManifest(FIXTURE_MANIFEST);
+    const css = stylesheet(sets["my-sans"]);
+    const heights = [...css.matchAll(/(?:^|\n|\})\s*pre\s*\{[^}]*line-height:\s*([\d.]+)/g)].map(
+      (m) => m[1],
+    );
+    expect(heights.at(-1)).toBe("1.7");
+  });
 });
