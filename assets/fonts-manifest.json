@@ -14,49 +14,49 @@
           "file": "NotoSansMyanmar-Regular.ttf",
           "weight": 400,
           "italic": false,
-          "sha256": "218c3992b3f59156bc9ff6aee3fc6a1434e231244604c96eb5142878c0202ea3"
+          "sha256": "862c3cd0dc79ce487f2e10ce2c5caed8a55c99f7b543578d28d5ba7edcc53f24"
         },
         {
           "role": "body-semibold",
           "file": "NotoSansMyanmar-SemiBold.ttf",
           "weight": 600,
           "italic": false,
-          "sha256": "265e46e82451baaa38cc9d4c8d8dabb8d424029e486c2fc4c48014b5c258fc0a"
+          "sha256": "d592551d1555d42dbb789617901f55f4a2ec783abab552cb247d1781032900dc"
         },
         {
           "role": "body-bold",
           "file": "NotoSansMyanmar-Bold.ttf",
           "weight": 700,
           "italic": false,
-          "sha256": "8b10b83bfdf4ec0754da1d9d773e948d60b77e5d79cc715e0e19d0188b7ccf0e"
+          "sha256": "4ea52a6480afe4a8ca74ad4f48bc5f53e5d417ac9f4e2c214240360d1280bba8"
         },
         {
           "role": "body-italic",
           "file": "NotoSansMyanmar-Italic.ttf",
           "weight": 400,
           "italic": true,
-          "sha256": "cb19c1e66d1d986f3558ff6eeba3b0ae55a7662db0a715b7856f00cd3884a185"
+          "sha256": "019872323764c5036a51cad7095e597196d08473d105f1576016b83249015bb7"
         },
         {
           "role": "body-bolditalic",
           "file": "NotoSansMyanmar-BoldItalic.ttf",
           "weight": 700,
           "italic": true,
-          "sha256": "a5ca9a52b0124498ea16500eccc24933fe0469f09999e35d01883db198fd73fa"
+          "sha256": "d8a7b700c01f3f2752ae0f0561020452bcc6a544acbceb016d26e3a1cf4cf0c8"
         },
         {
           "role": "mono-regular",
           "file": "NotoSansMono-Regular.ttf",
           "weight": 400,
           "italic": false,
-          "sha256": "a13eeb0e860858caab9bc1caf28ef1a98efe3317f3952f6bfe43c18b2c94de92"
+          "sha256": "a45fb11bb1bf49bc2d21563ce6feb153c87dd2e5440601efecc4d9a29fcdf4a8"
         },
         {
           "role": "mono-bold",
           "file": "NotoSansMono-Bold.ttf",
           "weight": 700,
           "italic": false,
-          "sha256": "35842ad22f763a324b286eda088d10133afd22e845ec53711904ad28e2c98930"
+          "sha256": "fe99ebe0d8134edd363c4ce5fedf0b13b71f8f11633e38172bc4a2c47d35b059"
         }
       ],
       "licence": {
@@ -75,49 +75,49 @@
           "file": "NotoSerifMyanmar-Regular.ttf",
           "weight": 400,
           "italic": false,
-          "sha256": "dbf1e9044a7d2a599bb44b15e947c0b1c933b930a2cb7db8c0d1e03dacb0403a"
+          "sha256": "c2cce795bfddec23efd4181f08ec539d0f21eb8015d974b5dfacf09153ebdd55"
         },
         {
           "role": "body-semibold",
           "file": "NotoSerifMyanmar-SemiBold.ttf",
           "weight": 600,
           "italic": false,
-          "sha256": "fe0b5b0fed9f35cfa210b8c2491785a52e0ae19e37604c0a62cc074176b07c08"
+          "sha256": "0a8cd7fc5bbec18c3b7cf0dff486b6bfaa782ee0a536f5da0645491c0e0597fe"
         },
         {
           "role": "body-bold",
           "file": "NotoSerifMyanmar-Bold.ttf",
           "weight": 700,
           "italic": false,
-          "sha256": "2a9511a4df4ec31a1f433667ad38464c7d31fdc792bcc12af65a1148bf3f80b7"
+          "sha256": "8c04bf9377c10422b9eceba8656fac66917683c2248863e6e4348ca3b3b23eb0"
         },
         {
           "role": "body-italic",
           "file": "NotoSerifMyanmar-Italic.ttf",
           "weight": 400,
           "italic": true,
-          "sha256": "ca04268b55a5812e67573c2408a2738d94aa90dd95638add34a70317c2154ee9"
+          "sha256": "6c5032dee2f223f29dff5315c114ce5511286cb55e794aebf77eb19ea23f97b4"
         },
         {
           "role": "body-bolditalic",
           "file": "NotoSerifMyanmar-BoldItalic.ttf",
           "weight": 700,
           "italic": true,
-          "sha256": "2a8b1adcfaab4e35ac9aecf3dbe60cbb6aec9b52f67a95caafac14a525425b26"
+          "sha256": "894742cc0406c69cd3d42ac6c8fa1da7cc61a26d1c648e85d6aca27003437e09"
         },
         {
           "role": "mono-regular",
           "file": "NotoSansMono-Regular.ttf",
           "weight": 400,
           "italic": false,
-          "sha256": "a13eeb0e860858caab9bc1caf28ef1a98efe3317f3952f6bfe43c18b2c94de92"
+          "sha256": "a45fb11bb1bf49bc2d21563ce6feb153c87dd2e5440601efecc4d9a29fcdf4a8"
         },
         {
           "role": "mono-bold",
           "file": "NotoSansMono-Bold.ttf",
           "weight": 700,
           "italic": false,
-          "sha256": "35842ad22f763a324b286eda088d10133afd22e845ec53711904ad28e2c98930"
+          "sha256": "fe99ebe0d8134edd363c4ce5fedf0b13b71f8f11633e38172bc4a2c47d35b059"
         }
       ],
       "licence": {
@@ -171,14 +171,14 @@
           "file": "NotoSansMono-Regular.ttf",
           "weight": 400,
           "italic": false,
-          "sha256": "a13eeb0e860858caab9bc1caf28ef1a98efe3317f3952f6bfe43c18b2c94de92"
+          "sha256": "a45fb11bb1bf49bc2d21563ce6feb153c87dd2e5440601efecc4d9a29fcdf4a8"
         },
         {
           "role": "mono-bold",
           "file": "NotoSansMono-Bold.ttf",
           "weight": 700,
           "italic": false,
-          "sha256": "35842ad22f763a324b286eda088d10133afd22e845ec53711904ad28e2c98930"
+          "sha256": "fe99ebe0d8134edd363c4ce5fedf0b13b71f8f11633e38172bc4a2c47d35b059"
         }
       ],
       "licence": {
@@ -232,14 +232,14 @@
           "file": "NotoSansMono-Regular.ttf",
           "weight": 400,
           "italic": false,
-          "sha256": "a13eeb0e860858caab9bc1caf28ef1a98efe3317f3952f6bfe43c18b2c94de92"
+          "sha256": "a45fb11bb1bf49bc2d21563ce6feb153c87dd2e5440601efecc4d9a29fcdf4a8"
         },
         {
           "role": "mono-bold",
           "file": "NotoSansMono-Bold.ttf",
           "weight": 700,
           "italic": false,
-          "sha256": "35842ad22f763a324b286eda088d10133afd22e845ec53711904ad28e2c98930"
+          "sha256": "fe99ebe0d8134edd363c4ce5fedf0b13b71f8f11633e38172bc4a2c47d35b059"
         }
       ],
       "licence": {

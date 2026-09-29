@@ -209,6 +209,44 @@ def merge(tmp: Path, zips, out_name: str, family: str, primary: tuple[str, str],
     merged.save(str(OUT / out_name))
 
 
+def myanmar_single_substitutions(font: TTFont):
+    """Single-substitution subtables reachable from the Myanmar script (mym2) features."""
+    gsub = font["GSUB"].table
+    indices = set()
+    for record in gsub.ScriptList.ScriptRecord:
+        if record.ScriptTag != "mym2":
+            continue
+        systems = [record.Script.DefaultLangSys] + [r.LangSys for r in record.Script.LangSysRecord]
+        for langsys in filter(None, systems):
+            for i in langsys.FeatureIndex:
+                indices.update(gsub.FeatureList.FeatureRecord[i].Feature.LookupListIndex)
+    for i in sorted(indices):
+        lookup = gsub.LookupList.Lookup[i]
+        for sub in lookup.SubTable:
+            if lookup.LookupType == 7:
+                sub = sub.ExtSubTable
+            if getattr(sub, "LookupType", lookup.LookupType) == 1:
+                yield sub
+
+
+def latin_glyphs(font: TTFont) -> set[str]:
+    """Glyphs mapped from code points outside the Myanmar blocks (Latin, digits, punctuation, space)."""
+    return {g for cp, g in font.getBestCmap().items() if not (0x1000 <= cp <= 0x109F or 0xA9E0 <= cp <= 0xAA7F)}
+
+
+def keep_mono_latin(font: TTFont) -> None:
+    """Remove Myanmar-script substitutions of Latin glyphs from a merged mono face.
+
+    Noto Sans Myanmar's `locl` (mym2) swaps `space` and `question` for its own proportional
+    glyphs (`space.1` is 260 units wide, not 600). Merged into the mono face, that rule shrank the
+    spaces in code wherever text is shaped as Myanmar: WebKit (Apple Books, Safari) does so for
+    spaces in `lang="my"` pages. Code keeps the mono glyphs in every script.
+    """
+    latin = latin_glyphs(font)
+    for sub in myanmar_single_substitutions(font):
+        sub.mapping = {k: v for k, v in sub.mapping.items() if k not in latin}
+
+
 def sha256(name: str) -> str:
     return hashlib.sha256((OUT / name).read_bytes()).hexdigest()
 
@@ -231,9 +269,16 @@ def check(sets: dict) -> None:
                 if cp not in cmap:
                     errors.append(f"{set_id}: {face['file']} lacks U+{cp:04X} (SC-006)")
             print(f"{set_id} {face['file']}: {len(cmap)} codepoints")
+    for name in MONO_FILES.values():
+        font = TTFont(str(OUT / name))
+        latin = latin_glyphs(font)
+        for sub in myanmar_single_substitutions(font):
+            touched = sorted(set(sub.mapping) & latin)
+            if touched:
+                errors.append(f"{name}: Myanmar-script substitution replaces Latin glyphs {touched}")
     if errors:
-        fail("coverage check failed:\n  " + "\n  ".join(errors))
-    print("SC-006 coverage check passed for all four sets")
+        fail("font check failed:\n  " + "\n  ".join(errors))
+    print("SC-006 coverage check passed for all four sets; mono faces keep their Latin glyphs")
 
 
 def main() -> int:
@@ -246,6 +291,9 @@ def main() -> int:
         face, weight, _ = STYLE[role]
         merge(tmp, zips, out_name, "Noto Sans Mono", ("NotoSansMono", face), ("NotoSansMyanmar", face),
               1.0, weight, False, False)
+        font = TTFont(str(OUT / out_name))
+        keep_mono_latin(font)
+        font.save(str(OUT / out_name))
 
     sets = {}
     for set_id, (family, myanmar, latin) in SETS.items():
