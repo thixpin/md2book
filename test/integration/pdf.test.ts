@@ -204,6 +204,37 @@ describe("buildPdf (screen edition)", { timeout: 120_000 }, () => {
     vi.unstubAllEnvs();
   });
 
+  it("ends with the gated end image alone on the last page", async () => {
+    const config = await bookMm(); // end_image_after: chapter-02.md, which exists
+    const { out, facts } = await build(config);
+    const html = readFileSync(join(out, "src", "book-print.html"), "utf8");
+    expect(html).toContain(
+      '<section class="end-image-page"><img src="/book/end.png" alt=""/></section>\n</body></html>',
+    );
+    expect(facts.lines.at(-1)).toEqual([]); // the picture only: no header, no folio
+    const doc = await PDFDocument.load(readFileSync(join(out, "book-mm-170x240.pdf")));
+    const withoutEnd = await build(await patched("book-mm", { end_image: undefined }));
+    expect(doc.getPageCount()).toBeGreaterThan(withoutEnd.facts.pages);
+  });
+
+  it("withholds the end image until its gate chapter exists", async () => {
+    const config = await patched("book-mm", { end_image_after: "chapter-09.md" });
+    vi.stubEnv("MD2BOOK_FONTS", await fixtureFontCache(config, true));
+    const out = join(tempDir(), "book");
+    const lines: string[] = [];
+    const code = await runCli(["build", "pdf", "--config", config.configPath, "--out", out], {
+      stdout: (s) => lines.push(s),
+      stderr: (s) => lines.push(s),
+      manifestPath: PRINT_MANIFEST,
+    });
+    expect(code).toBe(0);
+    expect(lines[0]).toBe("End image: withheld (chapter-09.md not in chapters/)\n");
+    expect(readFileSync(join(out, "src", "book-print.html"), "utf8")).not.toMatch(
+      /end-image|end\.png/,
+    );
+    vi.unstubAllEnvs();
+  });
+
   it("stops with the fonts command when the font set is missing", async () => {
     const config = await bookMm();
     const error = await buildPdf(await loadBook(config), {

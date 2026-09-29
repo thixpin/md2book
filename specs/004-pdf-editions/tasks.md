@@ -123,8 +123,8 @@ is currently reserved and becomes real in US1.
 
 ## Phase 7: User Story 3 - Gated end image in the PDF (P2)
 
-- [ ] T037 [P] [US3] Extend `test/integration/pdf.test.ts`: with the `book-mm` gate present the last page holds only the end image (no header, no folio; image served as `/book/end{ext}`) and the log shows `End image: included`; with the gate missing (temp copy) the image is absent from the PDF and `src/book-print.html`, and the log shows `End image: withheld (chapter-02.md not in chapters/)`
-- [ ] T038 [US3] Use `endImage(config)` (feature 003) in `printDocument`/`buildPdf` and log its line in `runPdf`; pass T037
+- [X] T037 [P] [US3] Extend `test/integration/pdf.test.ts`: with the `book-mm` gate present the last page holds only the end image (no header, no folio; image served as `/book/end{ext}`) and the log shows `End image: included`; with the gate missing (temp copy) the image is absent from the PDF and `src/book-print.html`, and the log shows `End image: withheld (chapter-02.md not in chapters/)`
+- [X] T038 [US3] Use `endImage(config)` (feature 003) in `printDocument`/`buildPdf` and log its line in `runPdf`; pass T037
 
 ---
 
