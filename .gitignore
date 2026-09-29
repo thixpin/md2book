@@ -14,3 +14,6 @@ coverage/
 
 # Maintainer font build output (uploaded to the fonts release, not committed)
 build/
+
+# VitePress (docs site)
+docs/.vitepress/cache/

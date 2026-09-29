@@ -75,7 +75,9 @@ Every command reads `book.json` from the current folder (or
 
 ## Documentation
 
-The full documentation is in [`docs/`](docs/README.md):
+The full documentation is on the website,
+**[thixpin.github.io/md2book](https://thixpin.github.io/md2book/)**, and
+in [`docs/`](docs/README.md):
 
 - [Getting started](docs/getting-started.md)
 - [Writing chapters](docs/writing.md): headings, parts, code includes,
@@ -107,7 +109,8 @@ $ npm run check
 never use the network. `npm run coverage` runs the tests with coverage
 thresholds, `npm run test:e2e` the browser tests and
 `npm run package:check` installs the packed tarball into an empty
-project and runs the CLI from it. Design notes live in `specs/` and deliberate
+project and runs the CLI from it. `npm run docs:dev` previews the
+documentation site and `npm run docs:build` builds it. Design notes live in `specs/` and deliberate
 differences from the original Python toolchain in
 [`specs/decision-log.md`](specs/decision-log.md).
 

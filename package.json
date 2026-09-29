@@ -60,7 +60,10 @@
     "equivalence:epub-qa": "node scripts/equivalence-epub-qa.ts",
     "equivalence:pdf": "node scripts/equivalence-pdf.ts",
     "package:check": "node scripts/package-check.ts",
-    "prepublishOnly": "npm run check && npm run build"
+    "prepublishOnly": "npm run check && npm run build",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
   },
   "dependencies": {
     "@napi-rs/canvas": "^1.0.9",
@@ -94,6 +97,7 @@
     "prettier": "^3.9.9",
     "typescript": "~6.0.3",
     "typescript-eslint": "^8.70.1",
+    "vitepress": "^1.6.4",
     "vitest": "^5.0.2"
   }
 }

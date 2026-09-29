@@ -113,6 +113,6 @@ A minimal cover:
 </html>
 ```
 
-[`examples/demo-book/cover/`](../examples/demo-book/cover) has a complete
+[`examples/demo-book/cover/`](https://github.com/thixpin/md2book/tree/master/examples/demo-book/cover) has a complete
 cover and a closing illustration. All options are listed under
 [`cover`](commands.md#cover) in the command reference.

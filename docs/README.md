@@ -27,7 +27,7 @@ Myanmar (Burmese) script.
 
 ## Project
 
-- [Decision log](../specs/decision-log.md): deliberate differences from the
+- [Decision log](https://github.com/thixpin/md2book/blob/master/specs/decision-log.md): deliberate differences from the
   original Python toolchain.
-- [`examples/demo-book`](../examples/demo-book): a complete small
+- [`examples/demo-book`](https://github.com/thixpin/md2book/tree/master/examples/demo-book): a complete small
   Burmese book that uses every manuscript format.

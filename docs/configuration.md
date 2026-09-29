@@ -71,7 +71,7 @@ The config is checked before any work:
 - Paths are relative to the config file.
 
 The full JSON Schema is
-[`specs/001-core-manuscript-pipeline/contracts/book-config.schema.json`](../specs/001-core-manuscript-pipeline/contracts/book-config.schema.json).
+[`specs/001-core-manuscript-pipeline/contracts/book-config.schema.json`](https://github.com/thixpin/md2book/blob/master/specs/001-core-manuscript-pipeline/contracts/book-config.schema.json).
 
 ## Book
 

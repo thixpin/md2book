@@ -1,7 +1,7 @@
 # Writing chapters
 
 A manuscript is a folder of Markdown files: one per chapter, plus
-optional part files. The [demo book](../examples/demo-book) uses every
+optional part files. The [demo book](https://github.com/thixpin/md2book/tree/master/examples/demo-book) uses every
 format on this page.
 
 ## Chapters

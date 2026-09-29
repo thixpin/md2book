@@ -109,4 +109,4 @@ Serving http://127.0.0.1:8000/ (Ctrl+C to stop)
   publishing.
 - Build the print-shop interior with `md2book build pdf --printed`.
 - Browse the [usage examples](examples.md) and the
-  [demo book](../examples/demo-book).
+  [demo book](https://github.com/thixpin/md2book/tree/master/examples/demo-book).
