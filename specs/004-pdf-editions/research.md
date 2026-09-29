@@ -49,8 +49,8 @@ pipelines. Spike scripts stayed in the session scratchpad; the findings below ar
   is served (`src/pdf/paged.ts`); a unit test fails if either target text is not found exactly
   once, so an upgrade cannot silently drop them.
 - **Start sequence** (fonts before layout): `PagedConfig = { auto: false }`; after load, await
-  `document.fonts.ready` and every face's `load()`, then `PagedPolyfill.preview()`, then wait for the
-  `after` hook, then `page.pdf`. Paged.js measures text while it paginates; starting it before the
+  `document.fonts.ready` and every face's `load()`, then await `PagedPolyfill.preview()` (its `after` hook can fire before
+  the last page exists), then `page.pdf`. Paged.js measures text while it paginates; starting it before the
   book's fonts are ready could paginate with fallback metrics on a slow machine. Measured output is
   byte-identical to the automatic start.
 - **Maintenance risk**: `pagedjs` 0.4.3 was last published in 2024. It is pinned exactly; its

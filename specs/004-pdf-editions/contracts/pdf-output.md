@@ -26,9 +26,10 @@ md2book additions (each marked `/* md2book: … */` and guarded by a unit test):
 
 ## Rendering sequence
 
-1. Load `/index.html` with `window.PagedConfig = { auto: false, after: () => { done = true } }`.
+1. Load `/index.html` with `window.PagedConfig = { auto: false }`.
 2. Await `document.fonts.ready` and `load()` of every declared face.
-3. Call `window.PagedPolyfill.preview()`; wait for `done` (10-minute limit).
+3. Await `window.PagedPolyfill.preview()` (10-minute limit). Its promise, not the `after` hook,
+   marks the end of layout: `after` can fire before the last pages exist.
 4. `page.pdf({ preferCSSPageSize: true, printBackground: true })`, then normalise.
 
 The served Paged.js bundle carries two exact patches (research R-01): whitespace-only text inside
