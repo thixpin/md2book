@@ -12,6 +12,12 @@ export default defineConfig({
   cleanUrls: true,
   // docs/README.md is the index when browsing docs/ on GitHub; index.md is the site's home.
   srcExclude: ["README.md"],
+  // The open-book icon md2book gives web editions (src/web/images.ts), in the site's brand colour.
+  head: [
+    ["link", { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" }],
+    ["link", { rel: "icon", type: "image/png", sizes: "32x32", href: "/favicon-32.png" }],
+    ["link", { rel: "apple-touch-icon", href: "/apple-touch-icon.png" }],
+  ],
   themeConfig: {
     nav: [
       { text: "Guide", link: "/getting-started" },
