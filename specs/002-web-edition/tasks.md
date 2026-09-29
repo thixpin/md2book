@@ -43,7 +43,7 @@ server only.
 
 ## Phase 3: User Story 1 - Publish selected chapters as a web book (P1) 🎯 MVP
 
-**Goal**: `md2book web` writes the full site with the reference reader DOM.
+**Goal**: `md2book build web` writes the full site with the reference reader DOM.
 
 **Independent Test**: build the fixtures and inspect tree, markup, drafts and errors (no browser).
 
@@ -61,7 +61,7 @@ server only.
 - [X] T014 [US1] Implement `src/web/reader-dom.ts` (front/back sections, chapter sections, controls, panels, icons from `src/web/icons.ts`, book key) porting web.py `reader()` exactly; pass T009
 - [X] T015 [US1] Implement `src/web/page.ts` minimal shell (html lang, head with title, stylesheet, header, main, footer, deferred script) — social tags come in US3
 - [X] T016 [US1] Implement `src/web/build.ts` `buildWeb(config, { out, backCover })`: load published chapters, parts, snippets, render; empty and recreate `web/`; assets; cover copy; `index.html`, `chapters/chNN.html`, `404.html`; pass T011
-- [X] T017 [US1] Wire `md2book web --config [--out]` in `src/cli.ts` (via `src/web/command.ts`) and export `web()` from `src/index.ts`; update `test/unit/public-api.test.ts` to exactly `fonts`, `init`, `serve`, `web` (serve added in US4)
+- [X] T017 [US1] Wire `md2book build web --config [--out]` in `src/cli.ts` (via `src/web/command.ts`) and export `web()` from `src/index.ts`; update `test/unit/public-api.test.ts` to exactly `fonts`, `init`, `serve`, `web` (serve added in US4)
 
 **Checkpoint**: site builds; reader opens in a browser.
 
@@ -127,7 +127,7 @@ server only.
 - [X] T033 [P] Write `scripts/equivalence-web.ts` (SC-001): build `book-01` with the Python `web.py` in a temporary copy of `development-book/publish` (the checkout untouched) and with ours; compare file trees ignoring hash segments and the element/attribute skeleton of `index.html` and `chapters/ch01.html`; exit 1 on differences
 - [X] T034 [P] Write `test/integration/web-perf.test.ts`: 20-chapter synthetic book builds in < 30 s with a copied back cover (SC-006)
 - [X] T035 Update `README.md` (web and serve commands, Chromium install note, `web_published_chapters`) and `docs/decision-log.md` (all FR-021 edits, no web end image, English folios, Vitest + Playwright library)
-- [X] T036 Run `npm run check`, `npm run test:e2e`, `npm run equivalence:web`, and the quickstart; rebuild the demo book in the scratch folder with `md2book web` and open it
+- [X] T036 Run `npm run check`, `npm run test:e2e`, `npm run equivalence:web`, and the quickstart; rebuild the demo book in the scratch folder with `md2book build web` and open it
 
 ---
 

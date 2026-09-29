@@ -3,7 +3,7 @@ import { BookError } from "./errors.ts";
 import { runFonts } from "./fonts/command.ts";
 import { runInit } from "./init/init.ts";
 import { promptMissing, type InitAnswers } from "./init/prompts.ts";
-import { runServe, runWeb } from "./web/command.ts";
+import { runServe, runWeb, webWrittenLine } from "./web/command.ts";
 import { runEpub } from "./epub/command.ts";
 import { runAll, runQa } from "./qa/command.ts";
 
@@ -15,8 +15,6 @@ export interface CliDeps {
   /** Defaults to process.stdin; prompts only when it is a TTY. */
   stdin?: { isTTY?: boolean } & Partial<NodeJS.ReadableStream>;
 }
-
-const RESERVED = ["pdf", "cover"] as const;
 
 /** Runs `md2book` with user arguments (no node/script prefix); resolves to the exit code. */
 export async function runCli(argv: string[], deps: CliDeps = {}): Promise<number> {
@@ -75,7 +73,9 @@ export async function runCli(argv: string[], deps: CliDeps = {}): Promise<number
       stdout(`${dir}\n`);
     });
 
-  program
+  const build = program.command("build").description("Build an edition of the book.");
+
+  build
     .command("epub")
     .description("Build the reflowable EPUB 3 of the whole book.")
     .requiredOption("--config <path>", "book config")
@@ -93,23 +93,22 @@ export async function runCli(argv: string[], deps: CliDeps = {}): Promise<number
       await runQa(options, deps.manifestPath, (line) => stdout(`${line}\n`));
     });
 
-  program
+  build
     .command("all")
-    .description("Build the EPUB, then write the QA report.")
+    .description("Build the EPUB and the web edition, then write the QA report.")
     .requiredOption("--config <path>", "book config")
     .option("--out <dir>", "output directory (default dist/<config name>/)")
     .action(async (options: { config: string; out?: string }) => {
       await runAll(options, deps.manifestPath, (line) => stdout(`${line}\n`));
     });
 
-  program
+  build
     .command("web")
     .description("Build the static web edition of the published chapters.")
     .requiredOption("--config <path>", "book config")
     .option("--out <dir>", "output directory (default dist/<config name>/)")
     .action(async (options: { config: string; out?: string }) => {
-      const { dir, chapters } = await runWeb(options, deps.manifestPath);
-      stdout(`Web edition written: ${dir} (${chapters} published chapters)\n`);
+      stdout(`${webWrittenLine(await runWeb(options, deps.manifestPath))}\n`);
     });
 
   program
@@ -130,13 +129,17 @@ export async function runCli(argv: string[], deps: CliDeps = {}): Promise<number
       );
     });
 
-  for (const name of RESERVED) {
-    program
+  for (const [parent, name] of [
+    [build, "pdf"],
+    [program, "cover"],
+  ] as const) {
+    const label = parent === build ? `build ${name}` : name;
+    parent
       .command(name)
       .allowUnknownOption()
       .allowExcessArguments()
       .action(() => {
-        throw new BookError(name, "not available yet");
+        throw new BookError(label, "not available yet");
       });
   }
 

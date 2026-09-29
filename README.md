@@ -48,9 +48,9 @@ $ md2book fonts --config my-book/book.json
 ## EPUB and QA report
 
 ```console
-$ md2book epub --config my-book/book.json
+$ md2book build epub --config my-book/book.json
 $ md2book qa --config my-book/book.json
-$ md2book all --config my-book/book.json
+$ md2book build all --config my-book/book.json
 ```
 
 `epub` writes a reflowable EPUB 3 of every chapter to
@@ -59,7 +59,9 @@ $ md2book all --config my-book/book.json
 Burmese text checks, typeface coverage, and EPUB checks when the EPUB
 exists. It reports problems and never changes your files. With
 [epubcheck](https://www.w3.org/publishing/epubcheck/) on your PATH, the
-report includes its result. `all` runs `epub`, then `qa`.
+report includes its result. `build all` runs `build epub`, then
+`build web` (skipped with a note when `web_published_chapters` is not
+set), then `qa`.
 
 An `end_image` shows after the last chapter only once the chapter named
 by `end_image_after` exists.
@@ -76,7 +78,7 @@ other chapter files are never read:
 ```
 
 ```console
-$ md2book web --config my-book/book.json
+$ md2book build web --config my-book/book.json
 $ md2book serve --config my-book/book.json --port 8000
 ```
 

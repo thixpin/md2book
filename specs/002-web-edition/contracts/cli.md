@@ -1,9 +1,9 @@
-# CLI contract: `md2book web` and `md2book serve`
+# CLI contract: `md2book build web` and `md2book serve`
 
 Both follow feature 001's rules: exit 0 on success; failure → exit 1 and one line
 `md2book: <subject>: <reason>` on stderr; warnings prefixed `warning:`.
 
-## `md2book web --config <path> [--out <dir>]`
+## `md2book build web --config <path> [--out <dir>]`
 
 - `--out` default: `dist/<config file name without extension>/` in the current directory.
 - Writes `<out>/web/` (emptied first) and prints `Web edition written: <dir> (<n> published chapters)`.

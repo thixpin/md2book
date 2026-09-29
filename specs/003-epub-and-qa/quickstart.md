@@ -5,7 +5,7 @@ optional `epubcheck` on PATH (`brew install epubcheck`).
 
 ```console
 $ npm run check
-$ md2book all --config my-book/book.json
+$ md2book build all --config my-book/book.json
 $ epubcheck dist/book/*.epub
 $ open dist/book/QA-REPORT.md
 ```

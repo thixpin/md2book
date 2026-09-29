@@ -11,7 +11,7 @@ export interface EpubOptions {
   out?: string;
 }
 
-/** `md2book epub`. `manifestPath` is internal and test-only; `log` receives progress lines. */
+/** `md2book build epub`. `manifestPath` is internal and test-only; `log` receives progress lines. */
 export async function runEpub(
   options: EpubOptions,
   manifestPath?: string,

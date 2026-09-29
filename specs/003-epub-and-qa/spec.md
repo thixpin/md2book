@@ -6,7 +6,7 @@
 
 **Status**: Draft
 
-**Input**: User description: "EPUB + QA (delivery slice 2): `md2book epub --config <path>
+**Input**: User description: "EPUB + QA (delivery slice 2): `md2book build epub --config <path>
 [--out <dir>]` builds a valid reflowable EPUB 3 of all chapters (US-7), and `md2book qa
 --config <path>` writes QA-REPORT.md (US-8) with the manuscript section, em dash search,
 Unicode/Burmese checks, typeface coverage, EPUB checks, metadata placeholders, known limitations
@@ -45,7 +45,7 @@ navigation, metadata and zip layout; run epubcheck when installed.
 
 **Acceptance Scenarios**:
 
-1. **Given** a valid config, **When** the author runs `md2book epub --config book.json`,
+1. **Given** a valid config, **When** the author runs `md2book build epub --config book.json`,
    **Then** `<out>/<output_name>.epub` is written and its unpacked tree is kept in
    `<out>/src/epub/`.
 2. **Given** the built EPUB, **When** its reading order is listed, **Then** it is: cover (not in
@@ -160,7 +160,7 @@ gate file.
 
 **EPUB**
 
-- **FR-001**: `md2book epub --config <path> [--out <dir>]` MUST build `<out>/<output_name>.epub`
+- **FR-001**: `md2book build epub --config <path> [--out <dir>]` MUST build `<out>/<output_name>.epub`
   from all chapters; `--out` defaults to `dist/<config file name without extension>/`.
 - **FR-002**: Document order, navigation, NCX, metadata, manifest and spine MUST follow User Story 1
   and **[REF §7a]**.
@@ -185,7 +185,7 @@ gate file.
   sections of User Story 2, using the reference wording for every check and count **[REF §8]**.
 - **FR-011**: The report MUST check the EPUB at `<out>/<output_name>.epub` when it exists.
 - **FR-012**: The only timestamp in the report MUST be its generation time.
-- **FR-013**: `md2book all --config <path>` MUST run `epub` then `qa` until the PDF feature adds
+- **FR-013**: `md2book build all --config <path>` MUST run `epub` then `qa` until the PDF feature adds
   the PDF step.
 - **FR-014**: QA MUST NOT modify any source file and MUST NOT stop on content issues; it stops only
   on the same load errors as the core pipeline.

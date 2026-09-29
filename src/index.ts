@@ -19,7 +19,7 @@ export function fonts(options: FontsOptions): Promise<{ dir: string; files: stri
   return runFonts(options);
 }
 
-/** `md2book web`: build the static web edition; resolves to the site dir and chapter count. */
+/** `md2book build web`: build the static web edition; resolves to the site dir and chapter count. */
 export function web(options: WebOptions): Promise<{ dir: string; chapters: number }> {
   return runWeb(options);
 }
@@ -29,7 +29,7 @@ export function serve(options: ServeOptions): Promise<Served> {
   return runServe(options);
 }
 
-/** `md2book epub`: build the EPUB 3 of the whole book; resolves to the file written. */
+/** `md2book build epub`: build the EPUB 3 of the whole book; resolves to the file written. */
 export function epub(options: EpubOptions): Promise<{ file: string }> {
   return runEpub(options);
 }
@@ -39,7 +39,7 @@ export function qa(options: QaOptions): Promise<{ file: string }> {
   return runQa(options);
 }
 
-/** `md2book all`: EPUB, then QA; resolves to both files. */
-export function all(options: QaOptions): Promise<{ epub: string; report: string }> {
+/** `md2book build all`: EPUB, web edition (when chapters are published), then QA. */
+export function all(options: QaOptions): Promise<{ epub: string; web?: string; report: string }> {
   return runAll(options);
 }

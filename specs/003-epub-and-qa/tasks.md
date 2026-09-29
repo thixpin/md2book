@@ -49,7 +49,7 @@ implementation. Offline; epubcheck assertions skip (with a note) when `epubcheck
 - [X] T012 [P] [US1] Implement `src/epub/front-matter.ts` and `src/epub/documents.ts` to pass T009
 - [X] T013 [P] [US1] Implement `src/epub/package.ts` (NCX, OPF, container) to pass T010
 - [X] T014 [US1] Implement `src/epub/build.ts` `buildEpub(book, {out, fontsDir?, manifestPath?, now?})`: write `src/epub/` tree, zip with yazl (mimetype first stored, rest deflated sorted); pass T011
-- [X] T015 [US1] Wire `md2book epub` in `src/cli.ts` via `src/epub/command.ts`; export `epub()` from `src/index.ts`; public-API test adds `epub`
+- [X] T015 [US1] Wire `md2book build epub` in `src/cli.ts` via `src/epub/command.ts`; export `epub()` from `src/index.ts`; public-API test adds `epub`
 
 ---
 
@@ -61,7 +61,7 @@ implementation. Offline; epubcheck assertions skip (with a note) when `epubcheck
 - [X] T017 [P] [US2] Write `test/unit/qa/unicode.test.ts`: on `book-qa` exactly one entry per seeded issue with the exact formats of `contracts/qa-report.md` (line numbers, `pyRepr` quoting); markers inside ``` fences ignored; cap at 200 with `- ... N more`
 - [X] T018 [P] [US2] Write `test/unit/qa/coverage.test.ts`: Myanmar/Latin counts and uncovered list (`U+XXXX NAME xN`, count-descending) with fixture fonts; characters ≤ 32 and whitespace ignored
 - [X] T019 [P] [US2] Write `test/unit/qa/epub-checks.test.ts`: a built fixture EPUB passes (no structural errors, text identical, chapter docs = N, fonts listed, reflowable); tampered copies report mimetype order, compression, broken XHTML, missing manifest href and text mismatch; epubcheck PASS/FAIL/NOT RUN (NOT RUN simulated with an empty PATH)
-- [X] T020 [P] [US2] Write `test/integration/qa.test.ts`: `md2book qa` on `book-qa` writes `QA-REPORT.md` with the sections and order of the contract (no Em dash section), `PDF not built.`, `EPUB not built.` before and EPUB details after `md2book epub`, placeholders listed, generated line the only timestamp; sources unchanged; `md2book all` writes both files
+- [X] T020 [P] [US2] Write `test/integration/qa.test.ts`: `md2book qa` on `book-qa` writes `QA-REPORT.md` with the sections and order of the contract (no Em dash section), `PDF not built.`, `EPUB not built.` before and EPUB details after `md2book build epub`, placeholders listed, generated line the only timestamp; sources unchanged; `md2book build all` writes both files
 
 ### Implementation
 

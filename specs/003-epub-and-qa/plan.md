@@ -9,7 +9,7 @@
 
 ## Summary
 
-Add `md2book epub`, `md2book qa` and `md2book all` (epub + qa until the PDF feature).
+Add `md2book build epub`, `md2book qa` and `md2book build all` (epub + qa until the PDF feature).
 The EPUB is a port of `build_epub`: XHTML documents from the core pipeline's rendered chapters,
 nav + NCX + OPF from fixed templates, the configured font set and the carried `common.css` +
 `epub.css`, zipped with `mimetype` first and stored. The QA report is a port of `qa.py` without

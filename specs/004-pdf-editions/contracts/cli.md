@@ -3,14 +3,15 @@
 Rules of feature 001 apply (exit codes, one-line errors `md2book: <subject>: <reason>`, `warning:`
 lines). `--out` default: `dist/<config file name without extension>/`.
 
-- `md2book pdf --config <path> [--out <dir>] [--printed]`
+- `md2book build pdf --config <path> [--out <dir>] [--printed]`
   - screen: `<out>/<output_name>-170x240.pdf` and `<out>/src/book-print.html`;
   - `--printed`: `<out>/<output_name>-170x240-printed.pdf` and `<out>/src/book-printed.html`;
   - prints the end-image line (as `epub`) when `end_image` is set, then `PDF written: <file>`.
 - `md2book qa --config <path> [--out <dir>] [--printed]` → checks the edition's PDF when it
   exists (writing `<out>/qa-pages/`) and `<out>/<output_name>.epub` when it exists; prints
   `QA report written: <file>`.
-- `md2book all --config <path> [--out <dir>] [--printed]` → `pdf`, then `epub`, then `qa`, all
+- `md2book build all --config <path> [--out <dir>] [--printed]` → `pdf`, then `epub`, then `web` (skipped with a log line when
+  `web_published_chapters` is not set), then `qa`, all
   with the same `--printed`.
 - `cover` stays reserved (`not available yet`).
 

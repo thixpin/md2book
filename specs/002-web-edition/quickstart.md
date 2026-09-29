@@ -20,7 +20,7 @@ a local server only).
 ## 2. Build and read the demo book
 
 ```console
-$ md2book web --config my-book/book.json
+$ md2book build web --config my-book/book.json
 $ md2book serve --config my-book/book.json
 ```
 

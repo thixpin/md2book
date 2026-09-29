@@ -12,26 +12,36 @@ function capture() {
 }
 
 describe("runCli", () => {
-  it.each(["pdf", "cover"])(
-    "reserved command %s prints 'not available yet' and exits 1",
-    async (command) => {
-      const io = capture();
-      const code = await runCli([command], io.deps);
-      expect(code).toBe(1);
-      expect(io.err.join("")).toBe(`md2book: ${command}: not available yet\n`);
-    },
-  );
+  it.each([
+    [["cover"], "cover"],
+    [["build", "pdf"], "build pdf"],
+  ])("reserved command %j prints 'not available yet' and exits 1", async (argv, name) => {
+    const io = capture();
+    const code = await runCli(argv, io.deps);
+    expect(code).toBe(1);
+    expect(io.err.join("")).toBe(`md2book: ${name}: not available yet\n`);
+  });
 
   it("says 'not available yet' even when options are passed to a reserved command", async () => {
     const io = capture();
-    const code = await runCli(["pdf", "--config", "book.json", "--printed"], io.deps);
+    const code = await runCli(["build", "pdf", "--config", "book.json", "--printed"], io.deps);
     expect(code).toBe(1);
-    expect(io.err.join("")).toBe("md2book: pdf: not available yet\n");
+    expect(io.err.join("")).toBe("md2book: build pdf: not available yet\n");
   });
+
+  it.each(["epub", "web", "all", "pdf"])(
+    "builds editions only through `build`: top-level %s is unknown",
+    async (command) => {
+      const io = capture();
+      const code = await runCli([command, "--config", "book.json"], io.deps);
+      expect(code).not.toBe(0);
+      expect(io.err.join("")).toContain(`unknown command '${command}'`);
+    },
+  );
 
   it("maps a thrown BookError to exit code 1 with a one-line message", async () => {
     const io = capture();
-    const code = await runCli(["pdf"], io.deps);
+    const code = await runCli(["cover"], io.deps);
     expect(code).toBe(1);
     expect(io.err.join("").trimEnd().split("\n")).toHaveLength(1);
   });

@@ -6,7 +6,7 @@ import { runEpub, type EpubOptions } from "../epub/command.ts";
 import { BookError } from "../errors.ts";
 import { getFontSet, loadManifest } from "../fonts/manifest.ts";
 import { requireFontSet } from "../fonts/require.ts";
-import { defaultOut } from "../web/command.ts";
+import { defaultOut, runWeb, webWrittenLine } from "../web/command.ts";
 import { fontCoverage, type Coverage } from "./coverage.ts";
 import { epubChecks } from "./epub-checks.ts";
 import { qaReport } from "./report.ts";
@@ -53,13 +53,22 @@ export async function runQa(
   return { file };
 }
 
-/** `md2book all`: EPUB, then QA (the PDF step comes with the PDF feature). */
+/** `md2book build all`: EPUB, web edition (when chapters are published), then QA. */
 export async function runAll(
   options: QaOptions,
   manifestPath?: string,
   log: (line: string) => void = () => {},
-): Promise<{ epub: string; report: string }> {
+): Promise<{ epub: string; web?: string; report: string }> {
   const { file: epub } = await runEpub(options, manifestPath, log);
+  let web: string | undefined;
+  const { config } = await loadConfig(options.config);
+  if (config.web_published_chapters === undefined) {
+    log("Web edition: skipped (web_published_chapters is not set)");
+  } else {
+    const built = await runWeb(options, manifestPath);
+    web = built.dir;
+    log(webWrittenLine(built));
+  }
   const { file: report } = await runQa(options, manifestPath, log);
-  return { epub, report };
+  return { epub, web, report };
 }

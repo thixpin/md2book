@@ -6,12 +6,12 @@
 
 **Status**: Draft
 
-**Input**: User description: "PDF (delivery slice 3 of reference/docs/spec.md): `md2book pdf
+**Input**: User description: "PDF (delivery slice 3 of reference/docs/spec.md): `md2book build pdf
 --config <path> [--out <dir>] [--printed]` builds the 170 × 240 mm screen PDF (US-5) and the
 printed edition (US-6: no cover, colour removed, grayscale-readable; plus the author's request
 that the three terminal title-bar dots carry icons — dot, minus, diagonal — since colour is
 removed), the PDF part of US-11 (gated end image as the last page), the PDF section of the QA
-report (US-8 §5), and `md2book all` gains the PDF step. Behaviour must match the Python
+report (US-8 §5), and `md2book build all` gains the PDF step. Behaviour must match the Python
 toolchain's build.py build_pdf, css/print.css, printed.css and qa.py pdf_checks at d235dbd.
 Open decisions: page-count tolerance against the Python PDF and the full-build time target."
 
@@ -45,7 +45,7 @@ matter, contents numbers, headers, folios and chapter openings, and the extracte
 
 **Acceptance Scenarios**:
 
-1. **Given** a valid config, **When** the author runs `md2book pdf --config book.json`,
+1. **Given** a valid config, **When** the author runs `md2book build pdf --config book.json`,
    **Then** `<out>/<output_name>-170x240.pdf` is written and the intermediate HTML is kept at
    `<out>/src/book-print.html`.
 2. **Given** the built PDF, **When** its pages are measured, **Then** every page is 170 × 240 mm;
@@ -99,7 +99,7 @@ grayscale, including the terminal title-bar dots.
 
 **Acceptance Scenarios**:
 
-1. **Given** a valid config, **When** the author runs `md2book pdf --config book.json
+1. **Given** a valid config, **When** the author runs `md2book build pdf --config book.json
    --printed`, **Then** `<out>/<output_name>-170x240-printed.pdf` is written and its intermediate
    HTML is kept at `<out>/src/book-printed.html`.
 2. **Given** the printed PDF, **When** its pages are listed, **Then** there is no cover page: the
@@ -166,9 +166,10 @@ the PDF's known facts; check the sample images.
    opening and the last page; the folder is rebuilt on each run **[REF §8]**.
 6. **Given** no PDF of the requested edition exists, **When** QA runs, **Then** the PDF section
    says `PDF not built.` as before.
-7. **Given** a valid config, **When** the author runs `md2book all --config book.json
-   [--printed]`, **Then** the PDF of that edition, the EPUB and the QA report are all built, in
-   that order.
+7. **Given** a valid config, **When** the author runs `md2book build all --config book.json
+   [--printed]`, **Then** the PDF of that edition, the EPUB, the web edition and the QA report are
+   built, in that order; the web step is skipped with a log line when `web_published_chapters`
+   is not set.
 
 ---
 
@@ -225,7 +226,7 @@ starts the next page.
 
 ### Functional Requirements
 
-- **FR-001**: `md2book pdf --config <path> [--out <dir>] [--printed]` MUST build the screen
+- **FR-001**: `md2book build pdf --config <path> [--out <dir>] [--printed]` MUST build the screen
   PDF, or the printed edition with `--printed`; `--out` defaults as for the other commands.
 - **FR-002**: The screen PDF MUST follow the page geometry, typography, page order, front matter,
   contents, chapter start, running header, folio and keep-together rules of US-1 **[REF §5,
@@ -252,8 +253,10 @@ starts the next page.
   (consistent with feature 003's removal of em dash checks).
 - **FR-012**: QA MUST write the sample page images of US-4 scenario 5 to `<out>/qa-pages/`,
   replacing its previous contents.
-- **FR-013**: `md2book all` MUST build the PDF (edition per `--printed`), then the EPUB, then
-  the QA report, and log each output path.
+- **FR-013**: `md2book build all` MUST build the PDF (edition per `--printed`), then the EPUB,
+  then the web edition (skipped with `Web edition: skipped (web_published_chapters is not set)`
+  when the key is absent), then the QA report, and log each output path. Editions are built with
+  `md2book build <pdf|epub|web|all>`; `init`, `fonts`, `qa` and `serve` stay top-level.
 - **FR-014**: The public API MUST gain exactly one function, `pdf()`, mirroring the command;
   `all()` and `qa()` gain the `printed` option.
 - **FR-015**: Missing fonts, a missing cover, a missing typesetting browser, or a failed render

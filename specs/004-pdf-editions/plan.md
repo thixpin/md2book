@@ -9,8 +9,8 @@
 
 ## Summary
 
-Add `md2book pdf [--printed]`, the PDF section of `md2book qa [--printed]`, the PDF step of
-`md2book all [--printed]`, and the author's shared pagination rule (a section heading keeps at
+Add `md2book build pdf [--printed]`, the PDF section of `md2book qa [--printed]`, the PDF step of
+`md2book build all [--printed]`, and the author's shared pagination rule (a section heading keeps at
 least 2 lines of its content on its page) for the PDF and the web reader. The build ports `build_pdf`: one print HTML document (cover, front
 matter, contents, chapter sections with fitted `pre` sizes and Burmese syllable breaks, optional
 end image) styled by the carried `common.css` + `print.css` (+ `printed.css`), laid out by Paged.js

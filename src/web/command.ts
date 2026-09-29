@@ -14,7 +14,7 @@ export function defaultOut(configPath: string): string {
   return resolve("dist", basename(configPath, extname(configPath)));
 }
 
-/** `md2book web`. `manifestPath` is internal and test-only. */
+/** `md2book build web`. `manifestPath` is internal and test-only. */
 export async function runWeb(
   options: WebOptions,
   manifestPath?: string,
@@ -35,4 +35,8 @@ export interface ServeOptions extends WebOptions {
 export async function runServe(options: ServeOptions, manifestPath?: string): Promise<Served> {
   const { dir } = await runWeb(options, manifestPath);
   return serveDir(dir, options.port ?? 8000);
+}
+
+export function webWrittenLine({ dir, chapters }: { dir: string; chapters: number }): string {
+  return `Web edition written: ${dir} (${chapters} published chapters)`;
 }

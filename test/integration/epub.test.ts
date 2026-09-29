@@ -96,16 +96,19 @@ describe("buildEpub", { timeout: 60_000 }, () => {
     expect((error as BookError).reason).toContain("run: md2book fonts --config");
   });
 
-  it("runs as md2book epub and reports the end image", async () => {
+  it("runs as md2book build epub and reports the end image", async () => {
     const config = await bookMm();
     vi.stubEnv("MD2BOOK_FONTS", await fixtureFontCache(config));
     const out = join(tempDir(), "book");
     const lines: string[] = [];
-    const code = await runCli(["epub", "--config", fixture("book-mm", "book.json"), "--out", out], {
-      stdout: (s) => lines.push(s),
-      stderr: (s) => lines.push(s),
-      manifestPath: FIXTURE_MANIFEST,
-    });
+    const code = await runCli(
+      ["build", "epub", "--config", fixture("book-mm", "book.json"), "--out", out],
+      {
+        stdout: (s) => lines.push(s),
+        stderr: (s) => lines.push(s),
+        manifestPath: FIXTURE_MANIFEST,
+      },
+    );
     expect(code).toBe(0);
     expect(lines.join("")).toBe(
       `End image: included\nEPUB written: ${join(out, "book-mm.epub")}\n`,

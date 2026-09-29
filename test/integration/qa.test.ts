@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { runCli } from "../../src/cli.ts";
@@ -61,11 +61,36 @@ describe("md2book qa", { timeout: 60_000 }, () => {
     expect(hashTree(fixture())).toEqual(before);
   });
 
-  it("checks the EPUB after md2book all", async () => {
+  it("md2book build all writes the EPUB, the web edition and the report", async () => {
+    const configPath = fixture("book-en", "book.json");
+    vi.stubEnv("MD2BOOK_FONTS", await fixtureFontCache((await loadConfig(configPath)).config));
+    const out = join(tempDir(), "all");
+    const result = await cli(["build", "all", "--config", configPath, "--out", out]);
+    expect(result.code).toBe(0);
+    expect(result.out).toBe(
+      `EPUB written: ${join(out, "book-en.epub")}\n` +
+        `Web edition written: ${join(out, "web")} (2 published chapters)\n` +
+        `QA report written: ${join(out, "QA-REPORT.md")}\n`,
+    );
+    expect(existsSync(join(out, "web", "index.html"))).toBe(true);
+  });
+
+  it("md2book build all skips the web edition when no chapters are published", async () => {
+    const configPath = fixture("book-qa", "book.json");
+    vi.stubEnv("MD2BOOK_FONTS", await fixtureFontCache((await loadConfig(configPath)).config));
+    const out = join(tempDir(), "all");
+    const result = await cli(["build", "all", "--config", configPath, "--out", out]);
+    expect(result.code).toBe(0);
+    expect(result.out).toContain("Web edition: skipped (web_published_chapters is not set)\n");
+    expect(existsSync(join(out, "web"))).toBe(false);
+    expect(existsSync(join(out, "QA-REPORT.md"))).toBe(true);
+  });
+
+  it("checks the EPUB after md2book build all", async () => {
     const configPath = fixture("book-mm", "book.json");
     vi.stubEnv("MD2BOOK_FONTS", await fixtureFontCache((await loadConfig(configPath)).config));
     const out = join(tempDir(), "all");
-    const result = await cli(["all", "--config", configPath, "--out", out]);
+    const result = await cli(["build", "all", "--config", configPath, "--out", out]);
     expect(result.code).toBe(0);
     const report = readFileSync(join(out, "QA-REPORT.md"), "utf8");
     expect(report).toContain("- File: book-mm.epub");
