@@ -90,14 +90,14 @@ is currently reserved and becomes real in US1.
 ### Tests ⚠️
 
 - [X] T024 [P] [US4] Write `test/unit/qa/pdf-checks.test.ts` with synthetic `PdfFacts`: chapter start = first page (not yet assigned) with < 40 non-empty lines whose first 6 lines contain a line equal (trimmed) to the label directly followed by one equal to the title; short pages = page > front count with ≤ 3 non-empty lines; `textChars` = sum of page text length without Python `\s`; stray = code point > 0x7F, not U+1000–U+109F, category not P*/Z*, not `©` or U+200B, top 8 with first-seen tie order; sample names per data-model.md (screen fronts `cover,title,copyright,toc`, printed `title,copyright,toc`, `ch01-open/p2/p3`, `mid-chapter-open/p2` for chapter `len // 2`, `last-chapter-open`, `last-page`, later names win, pages outside 1…n dropped)
-- [ ] T025 [P] [US4] Write `test/unit/qa/report-pdf.test.ts`: the PDF section lines equal contracts/qa-pdf.md exactly for a given facts object (screen and printed edition line, `none` forms, Python list formatting `[(12, 2)]` and `[('×', 7)]` via `pyRepr`, `en-US` thousands separators); no `Em dash on pages` line; without a PDF the section is `- PDF not built.`
+- [X] T025 [P] [US4] Write `test/unit/qa/report-pdf.test.ts`: the PDF section lines equal contracts/qa-pdf.md exactly for a given facts object (screen and printed edition line, `none` forms, Python list formatting `[(12, 2)]` and `[('×', 7)]` via `pyRepr`, `en-US` thousands separators); no `Em dash on pages` line; without a PDF the section is `- PDF not built.`
 - [ ] T026 [P] [US4] Write `test/integration/pdf-qa.test.ts`: after `md2book build pdf`, `md2book qa` writes the PDF section (170 x 240 mm, `Chapter opening pages detected: 2 of 2`, 0 replacement characters) and `qa-pages/page-001-cover.png`, `page-00N-ch01-open.png`, … `last-page.png` (110 dpi: width 736 px); `qa-pages/` rebuilt (a stray file disappears); `qa --printed` checks the printed PDF (edition line, no cover sample); `md2book build all` logs PDF, EPUB, web, QA in that order and `build all --printed` builds the printed PDF
 
 ### Implementation
 
 - [X] T027 [P] [US4] Implement `src/qa/pdf-checks.ts` to pass T024
 - [ ] T028 [P] [US4] Implement `src/qa/pdf-samples.ts` `writeSamples(file, samples, dir)` (pdfjs render at 110/72 on its canvas factory, PNG, directory emptied first)
-- [ ] T029 [US4] Add the PDF section to `src/qa/report.ts` per contracts/qa-pdf.md to pass T025
+- [X] T029 [US4] Add the PDF section to `src/qa/report.ts` per contracts/qa-pdf.md to pass T025
 - [ ] T030 [US4] Extend `src/qa/command.ts`: `runQa` accepts `printed` and checks `<out>/<output_name>-170x240[-printed].pdf` when present; `runAll` = `runPdf` → `runEpub` → web (skipped when `web_published_chapters` is unset) → `runQa`, all with `printed`; add `--printed` to `qa` and `build all` in `src/cli.ts`; `qa()`/`all()` in `src/index.ts` accept `printed` and `all()` returns `pdf`; pass T026
 
 ---

@@ -3,8 +3,10 @@ import type { Book } from "../book/load.ts";
 import type { FontSet } from "../fonts/manifest.ts";
 import type { Coverage } from "./coverage.ts";
 import type { EpubCheckResult } from "./epub-checks.ts";
+import type { PdfChecks } from "./pdf-checks.ts";
+import type { PdfFacts } from "./pdf-read.ts";
 import { chapterOrderOk, manuscriptStats } from "./stats.ts";
-import { formatIssues } from "./unicode.ts";
+import { formatIssues, pyRepr } from "./unicode.ts";
 
 export interface ReportInput {
   book: Book;
@@ -14,10 +16,39 @@ export interface ReportInput {
   coverage?: Coverage;
   fontsCommand: string;
   epub?: { file: string; checks: EpubCheckResult };
+  pdf?: { file: string; printed: boolean; facts: PdfFacts; checks: PdfChecks };
   generated: Date;
 }
 
 const n = (value: number) => value.toLocaleString("en-US");
+/** Python's str() of a float: `170.0`, `239.9`. */
+const pyFloat = (value: number) => (Number.isInteger(value) ? value.toFixed(1) : String(value));
+
+/** The PDF section (port of qa.py; spec 004 contracts/qa-pdf.md). */
+function pdfSection(pdf: NonNullable<ReportInput["pdf"]>, chapters: number, charsNoSpace: number) {
+  const { facts, checks } = pdf;
+  const [w, h] = facts.sizeMm;
+  const shortPages = checks.shortPages.map(([page, lines]) => `(${page}, ${lines})`).join(", ");
+  const stray = checks.stray.map(([c, count]) => `(${pyRepr(c)}, ${count})`).join(", ");
+  const samples = checks.samples.map(
+    ([page, name]) => `page-${String(page).padStart(3, "0")}-${name}.png`,
+  );
+  return [
+    `- File: ${basename(pdf.file)}`,
+    `- Edition: ${pdf.printed ? "printed (no cover page, black-and-white code)" : "screen"}`,
+    `- Pages: ${facts.pages}`,
+    `- Page size: ${pyFloat(w)} x ${pyFloat(h)} mm (target 170 x 240)`,
+    `- Fonts embedded: ${facts.fonts.join(", ") || "none detected"}`,
+    "- Body font size: 11 pt; line spacing 1.55; first-line indent 6 mm; no extra space between paragraphs",
+    "- Margins: top 20 mm, bottom 22 mm, inside 24 mm, outside 18 mm",
+    `- Chapter opening pages detected: ${checks.chapterStarts.size} of ${chapters}`,
+    `- Nearly empty pages (3 lines or fewer, after front matter): ${shortPages ? `[${shortPages}]` : "none"}`,
+    `- Extracted text characters (excl. whitespace): ${n(checks.textChars)} (manuscript: ${n(charsNoSpace)}; PDF includes front matter, headers, page numbers)`,
+    `- Text extraction check (copy/search): ${checks.replacement} replacement characters; non-Burmese non-ASCII characters present: ${stray ? `[${stray}]` : "none"} (all from the manuscript). Syllable-break zero-width spaces are layout-only and not part of the extracted text.`,
+    "- Extracted Burmese is in logical (typed) order: the PDF carries the text of each shaped cluster.",
+    `- Sample renders in qa-pages/: ${samples.join(", ")}`,
+  ];
+}
 
 /** Local time like Python's `datetime.now().isoformat(timespec="seconds")`. */
 function isoLocal(date: Date): string {
@@ -89,7 +120,9 @@ export function qaReport(input: ReportInput): string {
   }
   add("");
 
-  add("## PDF", "", "- PDF not built.", "");
+  add("## PDF", "");
+  if (input.pdf) add(...pdfSection(input.pdf, chapters.length, stats.charsNoSpace), "");
+  else add("- PDF not built.", "");
 
   add("## EPUB", "");
   if (epub) {

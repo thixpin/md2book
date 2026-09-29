@@ -1,6 +1,7 @@
 import { execFileSync } from "node:child_process";
 import { cpSync, existsSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { createCanvas } from "@napi-rs/canvas";
 import { PDFDocument } from "pdf-lib";
 import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -241,8 +242,13 @@ async function colourSpread(file: string): Promise<number[]> {
   for (let n = 1; n <= doc.numPages; n++) {
     const page = await doc.getPage(n);
     const viewport = page.getViewport({ scale: 1 });
-    const { canvas, context } = doc.canvasFactory.create(viewport.width, viewport.height);
-    await page.render({ canvasContext: context, viewport, canvas }).promise;
+    const canvas = createCanvas(Math.ceil(viewport.width), Math.ceil(viewport.height));
+    const context = canvas.getContext("2d");
+    await page.render({
+      canvasContext: context as unknown as CanvasRenderingContext2D,
+      viewport,
+      canvas: canvas as unknown as HTMLCanvasElement,
+    }).promise;
     const { data } = context.getImageData(0, 0, viewport.width, viewport.height);
     let spread = 0;
     for (let i = 0; i < data.length; i += 4) {
