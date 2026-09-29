@@ -42,6 +42,8 @@ export function readerToolbar(): string {
     `aria-label="Contents" title="Contents">${icon("list")}</button>` +
     '<button type="button" class="reader-tool" popovertarget="reader-search" ' +
     `aria-label="Search" title="Search this book">${icon("search")}</button>` +
+    '<button type="button" class="reader-tool" popovertarget="reader-text" ' +
+    `aria-label="Text size" title="Text size (+ / -)">${icon("a-large-small")}</button>` +
     '<button type="button" class="reader-tool" data-bookmark-toggle aria-pressed="false" ' +
     'aria-label="Bookmark page" title="Bookmark page">' +
     `${icon("bookmark")}${icon("bookmark-check")}</button>` +
@@ -138,6 +140,16 @@ export function readerHtml(book: WebBook, openChapter: string): string {
     '<input type="search" data-search-input autofocus aria-label="Search this book" ' +
     'placeholder="Word or phrase" autocomplete="off" spellcheck="false">' +
     '<p class="empty" data-search-status role="status"></p>' +
-    "<ol data-search-results></ol></div></div>"
+    "<ol data-search-results></ol></div>" +
+    // Text size (md2book addition, spec 002 FR-024).
+    '<div class="reader-panel" id="reader-text" popover>' +
+    "<h2>Text size</h2>" +
+    '<div class="text-size">' +
+    '<button type="button" class="reader-tool" data-text-smaller aria-label="Smaller text" title="Smaller text (-)">' +
+    '<span class="text-step-small" aria-hidden="true">A</span></button>' +
+    '<output data-text-size aria-live="polite">100%</output>' +
+    '<button type="button" class="reader-tool" data-text-larger aria-label="Larger text" title="Larger text (+)">' +
+    '<span class="text-step-large" aria-hidden="true">A</span></button>' +
+    "</div></div></div>"
   );
 }

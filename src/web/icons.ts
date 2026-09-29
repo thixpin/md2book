@@ -13,6 +13,10 @@ export const ICON_PATHS = {
   "minimize-2": '<path d="M4 14h6v6M20 10h-6V4M14 10l7-7M3 21l7-7"/>',
   "chevron-left": '<path d="m15 18-6-6 6-6"/>',
   "chevron-right": '<path d="m9 18 6-6-6-6"/>',
+  // Lucide `a-large-small` (lucide-static 1.48.0, ISC): the text-size control.
+  "a-large-small":
+    '<path d="m15 16 2.536-7.328a1.02 1.02 1 0 1 1.928 0L22 16"/><path d="M15.697 14h5.606"/>' +
+    '<path d="m2 16 4.039-9.69a.5.5 0 0 1 .923 0L11 16"/><path d="M3.304 13h6.392"/>',
 } as const;
 
 export type IconName = keyof typeof ICON_PATHS;

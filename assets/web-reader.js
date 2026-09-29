@@ -65,6 +65,15 @@
   const backCoverSection = flow.querySelector(".back-cover-page");
   const positionKey = `${reader.dataset.bookKey}:position`;
   const bookmarksKey = `${reader.dataset.bookKey}:bookmarks`;
+  // Text size (md2book addition, spec 002 FR-024): seven steps scale the text and titles, not
+  // code; the choice is kept per storage prefix and the book re-paginates at the same place.
+  const TEXT_SCALES = [0.85, 0.92, 1, 1.1, 1.2, 1.35, 1.5];
+  const textScaleKey = `${reader.dataset.bookKey.split(":")[0]}:text-scale`;
+  const textSmaller = reader.querySelector("[data-text-smaller]");
+  const textLarger = reader.querySelector("[data-text-larger]");
+  const textSizeOutput = reader.querySelector("[data-text-size]");
+  let textScale = TEXT_SCALES.includes(storage.read(textScaleKey, 1)) ? storage.read(textScaleKey, 1) : 1;
+  applyTextScale(textScale);
   // Two pages on wide, landscape screens and on foldables spanning their
   // fold; the same query as the spread styles in web.py.
   const desktop = window.matchMedia(
@@ -577,6 +586,23 @@
     updateControls();
   }
 
+  function applyTextScale(scale) {
+    textScale = scale;
+    reader.style.setProperty("--text-scale", String(scale));
+    const index = TEXT_SCALES.indexOf(scale);
+    if (textSmaller) textSmaller.disabled = index === 0;
+    if (textLarger) textLarger.disabled = index === TEXT_SCALES.length - 1;
+    if (textSizeOutput) textSizeOutput.textContent = `${Math.round(scale * 100)}%`;
+  }
+
+  function stepTextScale(delta) {
+    const index = TEXT_SCALES.indexOf(textScale) + delta;
+    if (animating || index < 0 || index >= TEXT_SCALES.length) return;
+    applyTextScale(TEXT_SCALES[index]);
+    storage.write(textScaleKey, textScale);
+    measure();
+  }
+
   function measure() {
     if (animating) return;
     const styles = getComputedStyle(flow);
@@ -1023,6 +1049,8 @@
   });
   previous.addEventListener("click", () => changeTurn(-1));
   next.addEventListener("click", () => changeTurn(1));
+  textSmaller?.addEventListener("click", () => stepTextScale(-1));
+  textLarger?.addEventListener("click", () => stepTextScale(1));
   desktop.addEventListener("change", measure);
   window.addEventListener("resize", () => {
     window.clearTimeout(resizeTimer);
@@ -1039,6 +1067,12 @@
     } else if (event.key === "Escape" && fullscreenElement() && !panelOpen()) {
       // With a panel open, Esc closes the panel first.
       exitFullscreen();
+    } else if (event.key === "+" || event.key === "=") {
+      event.preventDefault();
+      stepTextScale(1);
+    } else if (event.key === "-") {
+      event.preventDefault();
+      stepTextScale(-1);
     } else if (event.key === "ArrowLeft") {
       event.preventDefault();
       changeTurn(-1);

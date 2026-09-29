@@ -305,3 +305,17 @@ table { display: block; overflow-x: auto; }
 /* md2book addition (docs/decision-log.md): more leading in code and terminal blocks than the
    shared 1.4, so lines read comfortably and Burmese stacks in code have headroom. */
 pre { line-height: 1.7; }
+
+/* md2book addition (docs/decision-log.md, spec 002 FR-024): reader text size. web-reader.js sets
+   --text-scale on the reader; body text and titles scale, code blocks and terminals keep their
+   size, and the turning-page copies (also .reader-flow) inherit the same value. */
+.reader-flow { font-size: calc(1em * var(--text-scale, 1)); }
+.reader-flow pre { font-size: calc(.72em / var(--text-scale, 1)); }
+.chapter-head h1 { font-size: calc(clamp(1.75rem, 3vw, 2.5rem) * var(--text-scale, 1)); }
+.book-name, .chapter-number { font-size: calc(.9rem * var(--text-scale, 1)); }
+.text-size { display: flex; align-items: center; justify-content: space-between; gap: .75rem; }
+.text-size output { flex: 1; text-align: center; font-variant-numeric: tabular-nums; }
+.text-size .reader-tool { min-width: 2.75rem; min-height: 2.75rem; border: 1px solid var(--rule); }
+.text-size .reader-tool:disabled { opacity: .4; cursor: default; }
+.text-step-small { font-size: .85rem; font-weight: 700; }
+.text-step-large { font-size: 1.35rem; font-weight: 700; }

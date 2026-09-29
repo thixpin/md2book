@@ -37,4 +37,17 @@ describe("web assets", () => {
     );
     expect(heights.at(-1)).toBe("1.7");
   });
+
+  it("scales text and titles by --text-scale and keeps code blocks at their size", async () => {
+    const { sets } = await loadManifest(FIXTURE_MANIFEST);
+    const css = stylesheet(sets["my-sans"]).replace(/\s+/g, " ");
+    expect(css).toContain(".reader-flow { font-size: calc(1em * var(--text-scale, 1)); }");
+    expect(css).toContain(".reader-flow pre { font-size: calc(.72em / var(--text-scale, 1)); }");
+    expect(css).toContain(
+      ".chapter-head h1 { font-size: calc(clamp(1.75rem, 3vw, 2.5rem) * var(--text-scale, 1)); }",
+    );
+    expect(css).toContain(
+      ".book-name, .chapter-number { font-size: calc(.9rem * var(--text-scale, 1)); }",
+    );
+  });
 });

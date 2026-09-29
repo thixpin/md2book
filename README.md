@@ -81,6 +81,9 @@ $ book-build web --config my-book/book.json
 $ book-build serve --config my-book/book.json --port 8000
 ```
 
+Readers can change the text size with the "Aa" button or the `+` and
+`-` keys; titles and body text scale, code blocks keep their size.
+
 The site is written to `dist/<config name>/web/` (or `--out <dir>`) and
 must be served from the root of its domain. Set `web_url` for canonical
 and share links. `favicon` (an SVG) and `back_cover` are optional; without

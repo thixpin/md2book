@@ -16,6 +16,12 @@ import { buildWeb } from "../src/web/build.ts";
 import { skeleton } from "../test/helpers/html.ts";
 
 // Deliberate differences recorded in docs/decision-log.md.
+/** Removes the recorded additions (text-size button and panel, spec 002 FR-024) from our page. */
+function withoutAdditions(html: string): string {
+  return html
+    .replace(/<button[^>]*popovertarget="reader-text"[\s\S]*?<\/button>/, "")
+    .replace(/<div class="reader-panel" id="reader-text"[\s\S]*?<\/div><\/div>/, "");
+}
 const ALLOWED_EXTRA = new Set(["fonts/LICENSE-OFL.txt"]);
 
 const { values } = parseArgs({ options: { book: { type: "string", default: "book-01" } } });
@@ -65,7 +71,7 @@ try {
 
   for (const page of ["index.html", "chapters/ch01.html"]) {
     const a = skeleton(readFileSync(join(reference, page), "utf8"), ["pre"]);
-    const b = skeleton(readFileSync(join(ours, page), "utf8"), ["pre"]);
+    const b = skeleton(withoutAdditions(readFileSync(join(ours, page), "utf8")), ["pre"]);
     const at = a.findIndex((node, i) => node !== b[i]);
     if (at !== -1 || a.length !== b.length) {
       failures.push(`${page} DOM differs at element ${at}: python ${a[at]} / ours ${b[at]}`);

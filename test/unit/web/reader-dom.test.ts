@@ -166,4 +166,21 @@ describe("reader DOM", () => {
       1,
     );
   });
+
+  it("offers a text-size control: toolbar button and panel with smaller/larger and the size", async () => {
+    const toolbar = readerToolbar();
+    const [button] = find(toolbar, (el) => attr(el, "popovertarget") === "reader-text");
+    expect(attr(button!, "aria-label")).toBe("Text size");
+    expect(find(toolbar, (el) => matches(el, "svg.icon-a-large-small"))).toHaveLength(1);
+    const html = readerHtml(await webBook(await bookMm()), "");
+    expect(find(html, (el) => matches(el, "div.reader-panel#reader-text[popover]"))).toHaveLength(
+      1,
+    );
+    const [smaller] = find(html, (el) => matches(el, "button.reader-tool[data-text-smaller]"));
+    const [larger] = find(html, (el) => matches(el, "button.reader-tool[data-text-larger]"));
+    expect(attr(smaller!, "aria-label")).toBe("Smaller text");
+    expect(attr(larger!, "aria-label")).toBe("Larger text");
+    const [output] = find(html, (el) => matches(el, "output[data-text-size]"));
+    expect(attr(output!, "aria-live")).toBe("polite");
+  });
 });
