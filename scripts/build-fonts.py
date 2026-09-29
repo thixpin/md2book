@@ -43,7 +43,7 @@ MANIFEST = ROOT / "assets" / "fonts-manifest.json"
 LANGUAGE_TS = ROOT / "src" / "config" / "language.ts"
 
 RELEASE = "fonts-v1"
-BASE_URL = "<GitHub release download URL for fonts-v1>/"
+BASE_URL = "https://github.com/thixpin/md2book/releases/download/fonts-v1/"
 LATIN_SCALE = 0.93
 ITALIC_ANGLE = 12.0
 

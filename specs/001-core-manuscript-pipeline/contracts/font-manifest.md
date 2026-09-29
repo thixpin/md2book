@@ -7,7 +7,7 @@ The tool trusts only files whose SHA-256 matches this manifest.
 {
   "version": 1,
   "release": "fonts-v1",
-  "base_url": "<GitHub release download URL for fonts-v1>/",
+  "base_url": "https://github.com/thixpin/md2book/releases/download/fonts-v1/",
   "sets": {
     "my-sans": {
       "language": "my",
@@ -43,5 +43,5 @@ Rules:
 - Each set's `body_family` must equal the catalogue in `src/config/language.ts`, which supplies
   the `strings.typeface_line` default.
 - A file may appear in several sets (e.g. mono faces); it is stored once per set directory.
-- The repository URL behind `base_url` is set when the package repo is published.
+- `base_url` points at the `fonts-v1` release of `thixpin/md2book`.
 - `version` changes only on an incompatible shape change.

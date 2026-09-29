@@ -1,7 +1,7 @@
 {
   "version": 1,
   "release": "fonts-v1",
-  "base_url": "<GitHub release download URL for fonts-v1>/",
+  "base_url": "https://github.com/thixpin/md2book/releases/download/fonts-v1/",
   "sets": {
     "my-sans": {
       "language": "my",

@@ -8,8 +8,7 @@ web edition and a QA report, with first-class support for Myanmar
 > manuscript pipeline, `init` and `fonts`, the web edition (`web`,
 > `serve`), the EPUB (`epub`) and the QA report (`qa`, `all`). The `pdf`
 > and `cover` commands are reserved and print "not available yet". The
-> package is not on npm yet, and the font download needs the `fonts-v1`
-> release to be published.
+> package is not on npm yet.
 
 ## Requirements
 
