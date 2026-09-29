@@ -33,5 +33,5 @@
 
 - Tool names that are part of the user-facing contract (npm, Chromium install command, GitHub
   Actions for the existing CI) are named because they are what the author types or configures.
-- Resolved 2026-09-29: FR-011 first version 0.1.0; CI on tags only (FR-012); demo book added
+- Resolved 2026-09-29: FR-011 first version 0.1.0; CI on pull requests and tags, publish on tags (FR-012); demo book added
   (User Story 4, FR-014).

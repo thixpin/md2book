@@ -47,7 +47,7 @@ Measured 2026-09-29 on `development-book/book-01-dsa/cover/cover.html` (referenc
   --help` lists every command, `md2book init` succeeds, and `md2book build epub` builds
   `examples/demo-book` (copied into the temp dir).
 
-## R-06 CI on tags only
+## R-06 CI on pull requests and tags, publish on tags
 
 - **Decision**: trigger `.github/workflows/ci.yml` on `pull_request` and `push: tags: ["v*"]`; jobs:
   `check` (npm ci, Chromium, epubcheck, `npm run check`), `browser` (Chromium + WebKit,
