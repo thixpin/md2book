@@ -1,0 +1,12 @@
+/* md2book: Paged.js workarounds (spec 004 research R-01). */
+
+/* `@page chapter-a:nth(1 of chapter-a)` is not supported: assets/paged-handler.js marks each
+   chapter's first page instead, and its margin boxes (header, folio) are hidden here. */
+.pagedjs_page.chapter-first .pagedjs_margin { visibility: hidden; }
+
+/* The generated left-page title rule outranks `@page :blank`; blank pages stay empty. */
+.pagedjs_page.pagedjs_blank_page .pagedjs_margin { visibility: hidden; }
+
+/* Paged.js keeps the last line of a split element justified; on a split container (a chapter
+   section) every child would inherit it. Only split paragraphs and list items keep it. */
+[data-align-last-split-element='justify']:not(p, li) { text-align-last: auto; }

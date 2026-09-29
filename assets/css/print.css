@@ -228,3 +228,11 @@ body {
   font-size: 10pt;
   color: #333;
 }
+
+/* md2book addition (docs/decision-log.md): more leading in code and terminal blocks than the
+   shared 1.4, as in the EPUB and web editions (spec 004 FR-018). */
+pre { line-height: 1.7; }
+
+/* md2book addition (docs/decision-log.md): every section heading stays with at least two lines
+   of what follows, not only h2 (spec 004 FR-019). */
+h3, h4, h5, h6 { page-break-after: avoid; break-after: avoid; }
