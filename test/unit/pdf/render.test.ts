@@ -7,8 +7,8 @@ import { pagedBundle } from "../../../src/pdf/paged.ts";
 import { renderPdf, type ServedFile } from "../../../src/pdf/render.ts";
 import { fixture } from "../../helpers/temp.ts";
 
-// A handler that writes the font status onto the first page as it is laid out: the fonts must be
-// loaded by the time Paged.js measures text (it also loads them itself, after the stylesheets).
+// A handler that writes each font face's status onto the first page as it is laid out: the
+// book's fonts must be loaded by the time Paged.js measures text (it also loads them itself).
 const PROBE =
   "class Probe extends Paged.Handler { afterPageLayout(page) { if (window.probed) return; window.probed = true;" +
   " const note = document.createElement('p'); note.textContent = 'fonts ' + document.fonts.status + ' ' + [...document.fonts].map((f) => f.family + ':' + f.status + ':' + f.display).join(',');" +
@@ -50,7 +50,9 @@ describe("renderPdf", { timeout: 60_000 }, () => {
     const bytes = await renderPdf({ html, files: files() });
     expect((await PDFDocument.load(bytes)).getPageCount()).toBe(2);
     const extracted = await text(bytes);
-    expect(extracted).toContain("fonts loaded");
+    // The book's face is loaded when Paged.js lays out (the document-wide status can still say
+    // "loading" for faces the page never uses).
+    expect(extracted).toContain("Probe:loaded");
     expect(extracted).toContain("Two");
   });
 
@@ -59,6 +61,17 @@ describe("renderPdf", { timeout: 60_000 }, () => {
     await expect(renderPdf({ html, files: files(), timeoutMs: 1 })).rejects.toThrow(
       new BookError("pdf", "page layout did not finish"),
     );
+  });
+
+  it("fails when the layout stops before the end marker", async () => {
+    const html = `<!DOCTYPE html><html><head>${HEAD}</head><body><p>One</p></body></html>`;
+    await expect(renderPdf({ html, files: files(), endMarker: ".md2book-end" })).rejects.toThrow(
+      new BookError("pdf", "page layout stopped early (the end of the book is missing)"),
+    );
+    const complete = `<!DOCTYPE html><html><head>${HEAD}</head><body><p>One</p><div class="md2book-end"></div></body></html>`;
+    await expect(
+      renderPdf({ html: complete, files: files(), endMarker: ".md2book-end" }),
+    ).resolves.toBeInstanceOf(Uint8Array);
   });
 
   it("fails on any request it does not serve", async () => {

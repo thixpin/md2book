@@ -209,7 +209,7 @@ describe("buildPdf (screen edition)", { timeout: 120_000 }, () => {
     const { out, facts } = await build(config);
     const html = readFileSync(join(out, "src", "book-print.html"), "utf8");
     expect(html).toContain(
-      '<section class="end-image-page"><img src="/book/end.png" alt=""/></section>\n</body></html>',
+      '<section class="end-image-page"><img src="/book/end.png" alt=""/><div class="md2book-end"></div></section>\n</body></html>',
     );
     expect(facts.lines.at(-1)).toEqual([]); // the picture only: no header, no folio
     const doc = await PDFDocument.load(readFileSync(join(out, "book-mm-170x240.pdf")));

@@ -3,7 +3,12 @@ import { loadBook } from "../../../src/book/load.ts";
 import { frontMatterHtml } from "../../../src/epub/front-matter.ts";
 import { tocListHtml } from "../../../src/manuscript/toc.ts";
 import { chapterHeadHtml } from "../../../src/markdown/chapter-head.ts";
-import { addSyllableBreaks, fitPreBlocks, printDocument } from "../../../src/pdf/document.ts";
+import {
+  addSyllableBreaks,
+  fitPreBlocks,
+  isolateCodeNewlines,
+  printDocument,
+} from "../../../src/pdf/document.ts";
 import { bookEn, bookMm } from "../../helpers/fixture-config.ts";
 
 const SHEETS = ["common.css", "print.css", "paged.css", "book.css"];
@@ -25,8 +30,8 @@ describe("printDocument", () => {
       `<section class="front">${titlePage}</section>`,
       `<section class="front">${copyrightPage}</section>`,
       `<section class="front toc-page"><h1>${book.config.strings.contents_heading}</h1>${tocListHtml(book.parts, book.chapters, "#{slug}")}</section>`,
-      `<section class="chapter group-a recto" id="ch01">${chapterHeadHtml(ch1!)}${fitPreBlocks(addSyllableBreaks(ch1!.html!))}</section>`,
-      `<section class="chapter group-b recto" id="ch02">${chapterHeadHtml(ch2!)}${fitPreBlocks(addSyllableBreaks(ch2!.html!))}</section>`,
+      `<section class="chapter group-a recto" id="ch01">${chapterHeadHtml(ch1!)}${isolateCodeNewlines(fitPreBlocks(addSyllableBreaks(ch1!.html!)))}</section>`,
+      `<section class="chapter group-b recto" id="ch02">${chapterHeadHtml(ch2!)}${isolateCodeNewlines(fitPreBlocks(addSyllableBreaks(ch2!.html!)))}<div class="md2book-end"></div></section>`,
       "</body></html>",
     ].join("\n");
     expect(printDocument(book, { printed: false, stylesheets: SHEETS })).toBe(expected);
@@ -49,7 +54,7 @@ describe("printDocument", () => {
     });
     expect(
       html.endsWith(
-        '\n<section class="end-image-page"><img src="/book/end.png" alt=""/></section>\n</body></html>',
+        '\n<section class="end-image-page"><img src="/book/end.png" alt=""/><div class="md2book-end"></div></section>\n</body></html>',
       ),
     ).toBe(true);
   });
@@ -64,5 +69,17 @@ describe("printDocument", () => {
     const html = printDocument(await loadBook(config), { printed: true, stylesheets: [] });
     expect(html).toContain("<title>A &amp; B &quot;C&quot;</title>");
     expect(html).toContain('<body data-title="A &amp; B &quot;C&quot;">');
+  });
+});
+
+describe("isolateCodeNewlines", () => {
+  it("gives every newline inside <pre> its own node, like the reference highlighter", () => {
+    expect(
+      isolateCodeNewlines(
+        '<p>a\nb</p><pre class="code"><code><span class="k">f</span>(\n  x,\n)\n</code></pre>',
+      ),
+    ).toBe(
+      '<p>a\nb</p><pre class="code"><code><span class="k">f</span>(<span class="nl">\n</span>  x,<span class="nl">\n</span>)<span class="nl">\n</span></code></pre>',
+    );
   });
 });

@@ -14,6 +14,8 @@ export interface RenderInput {
   files: Record<string, ServedFile>;
   /** Paged.js layout limit. */
   timeoutMs?: number;
+  /** Selector of an element that ends the document: the build fails if it is not laid out. */
+  endMarker?: string;
   /** Test-only: how to start Chromium. */
   launch?: () => Promise<Browser>;
 }
@@ -30,6 +32,7 @@ export async function renderPdf({
   html,
   files,
   timeoutMs = 600_000,
+  endMarker,
   launch = () => chromium.launch(),
 }: RenderInput): Promise<Uint8Array> {
   let browser: Browser;
@@ -78,6 +81,16 @@ export async function renderPdf({
     });
     await Promise.race([layout, limit]);
     check();
+    // Paged.js can stop part-way without an error; a missing end marker means a cut-off book.
+    if (endMarker) {
+      const complete = await page.evaluate(
+        (selector) => document.querySelector(`.pagedjs_pages ${selector}`) !== null,
+        endMarker,
+      );
+      if (!complete) {
+        throw new BookError("pdf", "page layout stopped early (the end of the book is missing)");
+      }
+    }
     return new Uint8Array(await page.pdf({ preferCSSPageSize: true, printBackground: true }));
   } finally {
     clearTimeout(timer);

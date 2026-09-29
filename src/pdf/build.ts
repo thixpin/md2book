@@ -7,7 +7,7 @@ import { endImage } from "../epub/build.ts";
 import { IMAGE_TYPES } from "../epub/package.ts";
 import { BookError } from "../errors.ts";
 import { requireFontSet } from "../fonts/require.ts";
-import { bookImagePath, printDocument } from "./document.ts";
+import { bookImagePath, END_MARKER, printDocument } from "./document.ts";
 import { normalisePdf } from "./normalise.ts";
 import { pagedBundle } from "./paged.ts";
 import { renderPdf, type ServedFile } from "./render.ts";
@@ -71,7 +71,9 @@ export async function buildPdf(book: Book, options: PdfBuildOptions): Promise<{ 
   mkdirSync(src, { recursive: true });
   writeFileSync(join(src, printed ? "book-printed.html" : "book-print.html"), html);
 
-  const pdf = await normalisePdf(await renderPdf({ html, files, launch: options.launch }));
+  const pdf = await normalisePdf(
+    await renderPdf({ html, files, endMarker: `.${END_MARKER}`, launch: options.launch }),
+  );
   const file = join(options.out, pdfName(config.output_name, printed));
   const partial = `${file}.partial`;
   try {

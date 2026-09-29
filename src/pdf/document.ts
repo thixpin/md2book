@@ -46,6 +46,25 @@ export function addSyllableBreaks(fragment: string): string {
     .join("");
 }
 
+/**
+ * Every newline inside <pre> in its own node. Paged.js stops laying out the rest of the book
+ * when it splits a text node that holds several code lines at a page foot; the reference's
+ * highlighter (Pygments) never produced such nodes, Prism does.
+ */
+export function isolateCodeNewlines(fragment: string): string {
+  return fragment.replace(/<pre\b[\s\S]*?<\/pre>/g, (pre) =>
+    pre
+      .split(/(<[^>]+>)/)
+      .map((piece) =>
+        piece.startsWith("<") ? piece : piece.replace(/\n/g, '<span class="nl">\n</span>'),
+      )
+      .join(""),
+  );
+}
+
+/** Class of the empty element that ends the print document; its absence means a cut-off book. */
+export const END_MARKER = "md2book-end";
+
 export interface PrintDocumentOptions {
   printed: boolean;
   /** Stylesheet names served at `/css/<name>`, in cascade order. */
@@ -94,7 +113,7 @@ export function printDocument(book: Book, options: PrintDocumentOptions): string
     pieces.push(
       `<section class="${classes.join(" ")}" id="${ch.slug}">` +
         chapterHeadHtml(ch) +
-        fitPreBlocks(addSyllableBreaks(ch.html ?? "")) +
+        isolateCodeNewlines(fitPreBlocks(addSyllableBreaks(ch.html ?? ""))) +
         "</section>",
     );
   }
@@ -104,6 +123,12 @@ export function printDocument(book: Book, options: PrintDocumentOptions): string
       `<section class="end-image-page"><img src="${bookImagePath("end", options.endImage)}" alt=""/></section>`,
     );
   }
+  // Inside the last section: on its own the marker would start a new (unnamed) page.
+  const last = pieces.length - 1;
+  pieces[last] = pieces[last]!.replace(
+    /<\/section>$/,
+    `<div class="${END_MARKER}"></div></section>`,
+  );
   pieces.push("</body></html>");
   return pieces.join("\n");
 }
