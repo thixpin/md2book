@@ -33,7 +33,9 @@ export async function renderPdf({
   files,
   timeoutMs = 600_000,
   endMarker,
-  launch = () => chromium.launch(),
+  // On Linux, hinting snaps glyphs to the pixel grid, so the PDF's glyph positions drift from the
+  // font's advances ("T wo", "HEADI NG" when the text is read back); PDFs want unhinted outlines.
+  launch = () => chromium.launch({ args: ["--font-render-hinting=none"] }),
 }: RenderInput): Promise<Uint8Array> {
   let browser: Browser;
   try {
