@@ -28,6 +28,8 @@ into `data-model.md` → Reference constants during planning.
 - Author request (added during planning): a section heading must never end a page (PDF) or a
   page of the web reader with fewer than 2 lines of its following content below it; if it cannot
   keep 2 lines, it moves to the next page with its content (User Story 5).
+- Author request (during implementation): the printed dots show the macOS window-control icons
+  ×, −, + (replacing dot, minus, diagonal); the PDF contents entries get more line spacing.
 - Planning finding: ±2% of `book-01`'s 12 pages is less than one page, so SC-001 allows at least
   ±1 page and adds a 20-chapter book (research R-06).
 
@@ -109,8 +111,9 @@ grayscale, including the terminal title-bar dots.
    white with a thin dark outline, a light grey title bar, a bold black prompt and grey output,
    and tables and callouts without background fills and with black rules **[REF §5]**.
 4. **Given** a terminal block in the printed PDF, **When** its title bar is viewed, **Then** its
-   three hollow dots carry, from left to right, a small inner dot, a minus sign and a diagonal
-   line, so they stay recognisable without colour (author addition to the reference).
+   three dots carry, from left to right, the window-control icons close (×), minimise (−) and
+   zoom (+), dark on grey like the macOS controls, so they stay recognisable without colour (author
+   addition to the reference).
 5. **Given** the printed PDF, **When** each page is converted to grayscale, **Then** all text,
    including code tokens and terminal output, remains legible against its background.
 
@@ -242,7 +245,7 @@ starts the next page.
 - **FR-007**: All fonts from the configured font set MUST be embedded; the build MUST use only the
   configured set's files for book text, never system copies of the same families.
 - **FR-008**: The printed edition MUST omit the cover page, remove all colour from code, terminal,
-  table and callout styling as in US-2, and draw icons (dot, minus, diagonal) in the three
+  table and callout styling as in US-2, and draw the icons ×, − and + in the three
   terminal title-bar dots.
 - **FR-009**: The end image MUST be the PDF's last page, alone, unnumbered and without header,
   exactly when the feature 003 gate says so; the build log line MUST match the EPUB build's.

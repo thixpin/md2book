@@ -39,22 +39,28 @@ th { background: none; }
   border-left-color: #000;
 }
 
-/* md2book addition (docs/decision-log.md): without colour the three hollow dots look alike, so
-   each carries a small black mark like the window controls it stands for: a dot, a minus and a
-   diagonal (spec 004 FR-008). */
-.terminal-dot { position: relative; }
+/* md2book addition (docs/decision-log.md): without colour the three dots look alike, so they
+   carry the window-control icons, as on macOS: close (×), minimise (−) and zoom (+), dark on a
+   grey dot (spec 004 FR-008, author request). */
+.terminal-dot,
+.terminal-dot + .terminal-dot,
+.terminal-dot + .terminal-dot + .terminal-dot {
+  position: relative;
+  background: #d4d4d4;
+  border-color: #6e6e6e;
+}
+.terminal-dot::before,
 .terminal-dot::after {
-  content: "";
   position: absolute;
   left: 50%;
   top: 50%;
-  background: #000;
+  width: 0.42em;
+  height: 0.1em;
+  background: #2b2b2b;
   transform: translate(-50%, -50%);
 }
-.terminal-dot:nth-child(1)::after { width: 0.26em; height: 0.26em; border-radius: 50%; }
-.terminal-dot:nth-child(2)::after { width: 0.42em; height: 0.08em; }
-.terminal-dot:nth-child(3)::after {
-  width: 0.46em;
-  height: 0.08em;
-  transform: translate(-50%, -50%) rotate(-45deg);
-}
+.terminal-dot:nth-child(1)::before { content: ""; transform: translate(-50%, -50%) rotate(45deg); }
+.terminal-dot:nth-child(1)::after { content: ""; transform: translate(-50%, -50%) rotate(-45deg); }
+.terminal-dot:nth-child(2)::after { content: ""; }
+.terminal-dot:nth-child(3)::before { content: ""; }
+.terminal-dot:nth-child(3)::after { content: ""; transform: translate(-50%, -50%) rotate(90deg); }

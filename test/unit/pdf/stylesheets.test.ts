@@ -47,21 +47,25 @@ describe("printStylesheets", () => {
       "ba066984454101e17332978e7894e47dab737553d4ad3e17ebc436e6ca6b857d",
     );
     expect(added).toBe(
-      "pre { line-height: 1.7; } h3, h4, h5, h6 { page-break-after: avoid; break-after: avoid; }",
+      "pre { line-height: 1.7; } h3, h4, h5, h6 { page-break-after: avoid; break-after: avoid; } " +
+        ".toc-page li:not(.toc-part) { line-height: 2; margin-bottom: 1.2mm; }",
     );
   });
 
-  it("carries printed.css byte-for-byte, then only the terminal-dot icons", () => {
+  it("carries printed.css byte-for-byte, then only the terminal window-control icons", () => {
     const { carried, added } = split(asset("css/printed.css"));
     expect(sha256(carried.replace(/\n+$/, "\n"))).toBe(
       "91828a7314c79987b52479709650f2e6d72f69c1f76be231ffb6991889b0d4b2",
     );
+    // Close (×), minimise (−) and zoom (+), dark on a grey dot, like the macOS window controls.
     expect(added).toBe(
-      ".terminal-dot { position: relative; } " +
-        '.terminal-dot::after { content: ""; position: absolute; left: 50%; top: 50%; background: #000; transform: translate(-50%, -50%); } ' +
-        ".terminal-dot:nth-child(1)::after { width: 0.26em; height: 0.26em; border-radius: 50%; } " +
-        ".terminal-dot:nth-child(2)::after { width: 0.42em; height: 0.08em; } " +
-        ".terminal-dot:nth-child(3)::after { width: 0.46em; height: 0.08em; transform: translate(-50%, -50%) rotate(-45deg); }",
+      ".terminal-dot, .terminal-dot + .terminal-dot, .terminal-dot + .terminal-dot + .terminal-dot { position: relative; background: #d4d4d4; border-color: #6e6e6e; } " +
+        ".terminal-dot::before, .terminal-dot::after { position: absolute; left: 50%; top: 50%; width: 0.42em; height: 0.1em; background: #2b2b2b; transform: translate(-50%, -50%); } " +
+        '.terminal-dot:nth-child(1)::before { content: ""; transform: translate(-50%, -50%) rotate(45deg); } ' +
+        '.terminal-dot:nth-child(1)::after { content: ""; transform: translate(-50%, -50%) rotate(-45deg); } ' +
+        '.terminal-dot:nth-child(2)::after { content: ""; } ' +
+        '.terminal-dot:nth-child(3)::before { content: ""; } ' +
+        '.terminal-dot:nth-child(3)::after { content: ""; transform: translate(-50%, -50%) rotate(90deg); }',
     );
   });
 

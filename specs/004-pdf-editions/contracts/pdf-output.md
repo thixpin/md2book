@@ -15,8 +15,11 @@ md2book additions (each marked `/* md2book: … */` and guarded by a unit test):
 
 - `print.css`: `pre { line-height: 1.7; }` (FR-018); `h3, h4, h5, h6 { break-after: avoid; }`
   (FR-019);
-- `printed.css`: `.terminal-dot` children 1, 2, 3 get a black `::after` mark centred in the
-  hollow dot: a small filled dot, a horizontal minus and a diagonal line (bottom-left to top-right);
+- `print.css`: `.toc-page li:not(.toc-part) { line-height: 2; margin-bottom: 1.2mm; }` (author
+  request: room between contents entries);
+- `printed.css`: the dots are grey (`#d4d4d4`, border `#6e6e6e`) and `.terminal-dot` children
+  1, 2, 3 carry dark (`#2b2b2b`) bars from `::before`/`::after`: close (×), minimise (−) and
+  zoom (+), like the macOS window controls;
 - `paged.css`:
   - `.pagedjs_page.chapter-first .pagedjs_margin { visibility: hidden; }`
   - `.pagedjs_page.pagedjs_blank_page .pagedjs_margin { visibility: hidden; }`

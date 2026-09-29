@@ -18,8 +18,8 @@ Expected:
   contents with page numbers, chapters with headers and folios
   ([contracts/pdf-output.md](./contracts/pdf-output.md) → Pages);
 - `<output_name>-170x240-printed.pdf`: title page first, no colour in
-  code, terminal, table and callout blocks; terminal dots show a dot,
-  a minus and a diagonal;
+  code, terminal, table and callout blocks; terminal dots show ×, − and +
+  like the macOS window controls;
 - `QA-REPORT.md` → `## PDF` lists 170 x 240 mm, N of N chapter openings,
   0 replacement characters ([contracts/qa-pdf.md](./contracts/qa-pdf.md));
 - `qa-pages/` holds the sample PNGs; open them to review the layout.
