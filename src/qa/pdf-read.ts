@@ -95,7 +95,7 @@ function fontNames(doc: PDFDocument): string[] {
  * What QA reads back from a PDF (spec 004 research R-04). Chromium writes the characters of each
  * shaped cluster as ActualText; pdfjs ignores it, so the text of a marked-content span is its
  * ActualText (placed at its first glyph) and other text is pdfjs's. Items are grouped into lines
- * by baseline.
+ * by baseline and ordered left to right.
  */
 export async function pdfFacts(file: string): Promise<PdfFacts> {
   const bytes = new Uint8Array(readFileSync(file));
@@ -110,29 +110,39 @@ export async function pdfFacts(file: string): Promise<PdfFacts> {
       const pieces: { x: number; y: number; text: string }[] = [];
       let span = -1;
       let depth = 0;
-      let actual: string | null = null;
-      let placed = false;
+      // The open ActualText span: where its first glyph is and the glyph text pdfjs gave it.
+      let open: { actual: string; x: number; y: number; glyphs: string } | undefined;
+      const close = () => {
+        if (open && open.glyphs !== "") {
+          // pdfjs marks a word gap by a space in the glyph text; keep it around the span.
+          const lead = /^\s/.test(open.glyphs) ? " " : "";
+          const trail = /\S\s+$/.test(open.glyphs) ? " " : "";
+          pieces.push({ x: open.x, y: open.y, text: lead + open.actual + trail });
+        }
+        open = undefined;
+      };
       for (const item of content.items) {
         if ("type" in item) {
           if (item.type === "beginMarkedContent" || item.type === "beginMarkedContentProps") {
             span++;
             if (depth++ === 0) {
-              actual = spans[span] ?? null;
-              placed = false;
+              const actual = spans[span];
+              open = actual == null ? undefined : { actual, x: NaN, y: NaN, glyphs: "" };
             }
           } else if (item.type === "endMarkedContent" && --depth === 0) {
-            actual = null;
+            close();
           }
           continue;
         }
         const [x, y] = [item.transform[4] as number, item.transform[5] as number];
-        if (actual === null) {
+        if (!open) {
           if (item.str) pieces.push({ x, y, text: item.str });
-        } else if (!placed) {
-          pieces.push({ x, y, text: actual });
-          placed = true;
+          continue;
         }
+        if (open.glyphs === "") Object.assign(open, { x, y });
+        open.glyphs += item.str;
       }
+      close();
       const rows: { y: number; items: typeof pieces }[] = [];
       for (const piece of pieces) {
         const row = rows.find((r) => Math.abs(r.y - piece.y) < 2);
@@ -140,7 +150,15 @@ export async function pdfFacts(file: string): Promise<PdfFacts> {
         else rows.push({ y: piece.y, items: [piece] });
       }
       rows.sort((a, b) => b.y - a.y);
-      lines.push(rows.map((row) => row.items.map((i) => i.text).join("")));
+      // Left to right within a line: a right-floated page number in the contents comes last.
+      lines.push(
+        rows.map((row) =>
+          row.items
+            .sort((a, b) => a.x - b.x)
+            .map((i) => i.text)
+            .join(""),
+        ),
+      );
     }
     const sample = lib.getPage(Math.min(5, lib.getPageCount() - 1)).getMediaBox();
     return {
