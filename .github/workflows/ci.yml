@@ -1,12 +1,18 @@
 name: CI
 
+# Checks run on pull requests and version tags; publishing runs on version tags only (spec 005).
 on:
-  push:
   pull_request:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
 
 jobs:
   check:
-    # The Linux runner SC-007 refers to; also the merge gate (constitution: tests, lint, format).
+    # The Linux runner SC-007 refers to; also the merge gate (constitution: tests, lint, format),
+    # with the tests run once under the coverage thresholds (spec 005 FR-016).
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -19,7 +25,10 @@ jobs:
       - run: npx playwright install --with-deps chromium
       # EPUB validation in the EPUB tests (spec 003).
       - run: sudo apt-get install -y epubcheck
-      - run: npm run check
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm run format:check
+      - run: npm run coverage
 
   browser:
     # Reader behaviour and the device matrix (spec 002 SC-003, SC-004); headings in Chromium and
@@ -34,3 +43,34 @@ jobs:
       - run: npm ci
       - run: npx playwright install --with-deps chromium webkit
       - run: npm run test:e2e
+
+  release:
+    # Publishes @thixpin/md2book with npm provenance (spec 005 US3). Needs the NPM_TOKEN secret.
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [check, browser]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          registry-url: https://registry.npmjs.org
+      - run: npm ci
+      - name: Tag matches the package version
+        run: |
+          version="v$(node -p 'require("./package.json").version')"
+          if [ "$GITHUB_REF_NAME" != "$version" ]; then
+            echo "md2book: tag $GITHUB_REF_NAME does not match package.json version $version"
+            exit 1
+          fi
+      - run: npm run package:check
+      # The check and browser jobs already ran `npm run check`; skip prepublishOnly and publish
+      # the fresh build.
+      - run: npm run build
+      - run: npm publish --provenance --access public --ignore-scripts
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

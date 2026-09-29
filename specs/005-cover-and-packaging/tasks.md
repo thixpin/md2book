@@ -55,14 +55,14 @@ implementation. Rendering tests are offline and use the print font fixture.
 
 ## Phase 5: User Story 3 - Publish a release (P2)
 
-- [ ] T013 [US3] Rewrite `.github/workflows/ci.yml`: trigger on `pull_request` and `push: tags: ["v*"]` only; jobs `check`, `browser` (Chromium + WebKit) run on both; `release` runs only on tags (`if: startsWith(github.ref, 'refs/tags/v')`, needs both; tag = `v` + package version, else fail naming both; `npm run package:check`; `npm publish --provenance --access public` with `NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}`; `permissions: contents: read, id-token: write`; registry-url set in setup-node)
+- [X] T013 [US3] Rewrite `.github/workflows/ci.yml`: trigger on `pull_request` and `push: tags: ["v*"]` only; jobs `check`, `browser` (Chromium + WebKit) run on both; `release` runs only on tags (`if: startsWith(github.ref, 'refs/tags/v')`, needs both; tag = `v` + package version, else fail naming both; `npm run package:check`; `npm publish --provenance --access public` with `NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}`; `permissions: contents: read, id-token: write`; registry-url set in setup-node)
 
 ---
 
 ## Phase 5b: Repository health (author requests)
 
 - [ ] T016 [P] Add `SECURITY.md`, `CONTRIBUTING.md`, `.github/ISSUE_TEMPLATE/bug_report.yml`, `.github/ISSUE_TEMPLATE/feature_request.yml` and `.github/ISSUE_TEMPLATE/config.yml` (FR-015); link them from `README.md`
-- [ ] T017 Add a coverage check (FR-016): `@vitest/coverage-v8` dev dependency, `npm run coverage` (unit + integration), thresholds just below today's measured values in `vitest.config.ts`, run in the CI `check` job
+- [X] T017 Add a coverage check (FR-016): `@vitest/coverage-v8` dev dependency, `npm run coverage` (unit + integration), thresholds just below today's measured values in `vitest.config.ts`, run in the CI `check` job
 
 ## Phase 6: Polish
 
