@@ -26,9 +26,9 @@ is currently reserved and becomes real in US1.
 
 ## Phase 1: Setup
 
-- [ ] T001 Add `pagedjs` `0.4.3` (exact), `pdf-lib@^1.17`, `pdfjs-dist@^6.3`, `@napi-rs/canvas@^1.0` to dependencies in `package.json`; add script `equivalence:pdf` (`node scripts/equivalence-pdf.ts`)
-- [ ] T002 [P] Carry over `development-book/publish/css/print.css` and `css/printed.css` byte-for-byte to `assets/css/print.css` and `assets/css/printed.css`; record both SHA-256 values in `docs/decision-log.md`
-- [ ] T003 [P] Create `test/fixtures/book-headings/` (Burmese config with `web_published_chapters` for all chapters, 1×1 cover, one part): chapters whose `##`/`###`/`####` headings fall at every offset near a page foot (filler paragraphs of 1–12 lines before each heading), each heading followed in turn by a paragraph, a code block, a list, a table, a terminal and a callout; add a unit test that the fixture loads and renders
+- [X] T001 Add `pagedjs` `0.4.3` (exact), `pdf-lib@^1.17`, `pdfjs-dist@^6.3`, `@napi-rs/canvas@^1.0` to dependencies in `package.json`; add script `equivalence:pdf` (`node scripts/equivalence-pdf.ts`)
+- [X] T002 [P] Carry over `development-book/publish/css/print.css` and `css/printed.css` byte-for-byte to `assets/css/print.css` and `assets/css/printed.css`; record both SHA-256 values in `docs/decision-log.md`
+- [X] T003 [P] Create `test/fixtures/book-headings/` (Burmese config with `web_published_chapters` for all chapters, 1×1 cover, one part): chapters whose `##`/`###`/`####` headings fall at every offset near a page foot (filler paragraphs of 1–12 lines before each heading), each heading followed in turn by a paragraph, a code block, a list, a table, a terminal and a callout; add a unit test that the fixture loads and renders
 
 ---
 

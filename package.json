@@ -40,14 +40,19 @@
     "equivalence": "node scripts/equivalence.ts",
     "test:e2e": "vitest run --config vitest.e2e.config.ts",
     "equivalence:web": "node scripts/equivalence-web.ts",
-    "equivalence:epub-qa": "node scripts/equivalence-epub-qa.ts"
+    "equivalence:epub-qa": "node scripts/equivalence-epub-qa.ts",
+    "equivalence:pdf": "node scripts/equivalence-pdf.ts"
   },
   "dependencies": {
+    "@napi-rs/canvas": "^1.0.9",
     "commander": "^15.0.0",
     "entities": "^8.1.0",
     "fast-xml-parser": "^5.11.1",
     "fontkit": "^2.0.4",
     "markdown-it": "^15.0.2",
+    "pagedjs": "0.4.3",
+    "pdf-lib": "^1.17.1",
+    "pdfjs-dist": "^6.3.289",
     "playwright": "^1.63.0",
     "prismjs": "^1.30.0",
     "sharp": "^0.35.5",

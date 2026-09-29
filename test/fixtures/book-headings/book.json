@@ -1,0 +1,18 @@
+{
+  "title": "ခေါင်းစဉ် စမ်းသပ်",
+  "author": "Fixture Author",
+  "year": "2026",
+  "language": "my",
+  "identifier": "urn:uuid:00000000-0000-4000-8000-000000000004",
+  "output_name": "book-headings",
+  "cover": "cover/cover.png",
+  "chapter_glob": "chapters/chapter-*.md",
+  "part_glob": "chapters/part-*.md",
+  "code_root": ".",
+  "recto_chapter_start": true,
+  "web_published_chapters": [
+    "chapter-01.md",
+    "chapter-02.md",
+    "chapter-03.md"
+  ]
+}

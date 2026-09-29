@@ -1,0 +1,40 @@
+/* Printed edition (build.py --printed): loaded after print.css.
+   Black-and-white interior: no dark fills and no colour, so code and terminal blocks
+   stay light on paper and still read clearly in grayscale. */
+
+/* Code: black text; keywords keep their bold weight, comments and strings use grey tones.
+   span[class] / span.x outrank the ".code .x" colour rules in common.css. */
+.code span[class] { color: #000; }
+.code span.c, .code span.ch, .code span.cm, .code span.c1, .code span.cs, .code span.cpf { color: #666; }
+.code span.s, .code span.s1, .code span.s2, .code span.sa, .code span.sb, .code span.sc, .code span.dl, .code span.sd,
+.code span.se, .code span.sh, .code span.si, .code span.sx, .code span.sr, .code span.ss { color: #333; }
+
+/* Terminal: light screen with an outline, hollow dots, bold prompt, grey output. */
+.terminal {
+  background: #fff;
+  border: 0.4pt solid #555;
+}
+.terminal-bar {
+  background: #e6e6e6;
+  border-bottom: 0.4pt solid #555;
+}
+.terminal-dot,
+.terminal-dot + .terminal-dot,
+.terminal-dot + .terminal-dot + .terminal-dot {
+  background: #fff;
+  border: 0.4pt solid #555;
+}
+.terminal pre {
+  background: #fff;
+  color: #000;
+}
+.terminal span[class] { color: #000; }
+.terminal span.gp { color: #000; font-weight: 700; }
+.terminal span.go, .terminal span.c, .terminal span.c1 { color: #555; }
+
+/* Tables and callouts: no fills; callouts keep a black left rule and their title. */
+th { background: none; }
+.callout, .callout-note, .callout-warning, .callout-try {
+  background: none;
+  border-left-color: #000;
+}
