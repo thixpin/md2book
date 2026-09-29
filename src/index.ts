@@ -2,11 +2,12 @@
 // `fonts`. Internal modules are never re-exported from here.
 import { runEpub, type EpubOptions } from "./epub/command.ts";
 import { runFonts, type FontsOptions } from "./fonts/command.ts";
+import { runAll, runQa, type QaOptions } from "./qa/command.ts";
 import { runInit, type InitOptions } from "./init/init.ts";
 import { runServe, runWeb, type ServeOptions, type WebOptions } from "./web/command.ts";
 import type { Served } from "./web/serve.ts";
 
-export type { EpubOptions, FontsOptions, InitOptions, ServeOptions, Served, WebOptions };
+export type { EpubOptions, FontsOptions, QaOptions, InitOptions, ServeOptions, Served, WebOptions };
 
 /** `book-build init`: create book.json and chapters/chapter-01.md; resolves to the files written. */
 export function init(options: InitOptions): Promise<{ files: string[] }> {
@@ -31,4 +32,14 @@ export function serve(options: ServeOptions): Promise<Served> {
 /** `book-build epub`: build the EPUB 3 of the whole book; resolves to the file written. */
 export function epub(options: EpubOptions): Promise<{ file: string }> {
   return runEpub(options);
+}
+
+/** `book-build qa`: write QA-REPORT.md; resolves to the report file. */
+export function qa(options: QaOptions): Promise<{ file: string }> {
+  return runQa(options);
+}
+
+/** `book-build all`: EPUB, then QA; resolves to both files. */
+export function all(options: QaOptions): Promise<{ epub: string; report: string }> {
+  return runAll(options);
 }

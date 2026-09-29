@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import * as api from "../../src/index.ts";
 
 // Constitution VIII: the programmatic API mirrors the CLI (init, fonts) and nothing else.
-const PUBLIC = ["epub", "init", "fonts", "serve", "web"];
+const PUBLIC = ["all", "epub", "init", "fonts", "qa", "serve", "web"];
 const INTERNAL = [
   "loadConfig",
   "loadChapters",

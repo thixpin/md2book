@@ -5,6 +5,7 @@ import { runInit } from "./init/init.ts";
 import { promptMissing, type InitAnswers } from "./init/prompts.ts";
 import { runServe, runWeb } from "./web/command.ts";
 import { runEpub } from "./epub/command.ts";
+import { runAll, runQa } from "./qa/command.ts";
 
 export interface CliDeps {
   stdout?: (text: string) => void;
@@ -15,7 +16,7 @@ export interface CliDeps {
   stdin?: { isTTY?: boolean } & Partial<NodeJS.ReadableStream>;
 }
 
-const RESERVED = ["pdf", "qa", "all", "cover"] as const;
+const RESERVED = ["pdf", "cover"] as const;
 
 /** Runs `book-build` with user arguments (no node/script prefix); resolves to the exit code. */
 export async function runCli(argv: string[], deps: CliDeps = {}): Promise<number> {
@@ -81,6 +82,24 @@ export async function runCli(argv: string[], deps: CliDeps = {}): Promise<number
     .option("--out <dir>", "output directory (default dist/<config name>/)")
     .action(async (options: { config: string; out?: string }) => {
       await runEpub(options, deps.manifestPath, (line) => stdout(`${line}\n`));
+    });
+
+  program
+    .command("qa")
+    .description("Write QA-REPORT.md: manuscript, Unicode, typeface and EPUB checks.")
+    .requiredOption("--config <path>", "book config")
+    .option("--out <dir>", "output directory (default dist/<config name>/)")
+    .action(async (options: { config: string; out?: string }) => {
+      await runQa(options, deps.manifestPath, (line) => stdout(`${line}\n`));
+    });
+
+  program
+    .command("all")
+    .description("Build the EPUB, then write the QA report.")
+    .requiredOption("--config <path>", "book config")
+    .option("--out <dir>", "output directory (default dist/<config name>/)")
+    .action(async (options: { config: string; out?: string }) => {
+      await runAll(options, deps.manifestPath, (line) => stdout(`${line}\n`));
     });
 
   program

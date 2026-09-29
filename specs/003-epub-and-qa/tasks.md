@@ -57,19 +57,19 @@ implementation. Offline; epubcheck assertions skip (with a note) when `epubcheck
 
 ### Tests ⚠️
 
-- [ ] T016 [P] [US2] Write `test/unit/qa/stats.test.ts`: chapter/character/token/Myanmar counts with Python semantics (research R-04) on known strings; chapter order OK/MISMATCH for Myanmar and English labels
-- [ ] T017 [P] [US2] Write `test/unit/qa/unicode.test.ts`: on `book-qa` exactly one entry per seeded issue with the exact formats of `contracts/qa-report.md` (line numbers, `pyRepr` quoting); markers inside ``` fences ignored; cap at 200 with `- ... N more`
-- [ ] T018 [P] [US2] Write `test/unit/qa/coverage.test.ts`: Myanmar/Latin counts and uncovered list (`U+XXXX NAME xN`, count-descending) with fixture fonts; characters ≤ 32 and whitespace ignored
-- [ ] T019 [P] [US2] Write `test/unit/qa/epub-checks.test.ts`: a built fixture EPUB passes (no structural errors, text identical, chapter docs = N, fonts listed, reflowable); tampered copies report mimetype order, compression, broken XHTML, missing manifest href and text mismatch; epubcheck PASS/FAIL/NOT RUN (NOT RUN simulated with an empty PATH)
-- [ ] T020 [P] [US2] Write `test/integration/qa.test.ts`: `book-build qa` on `book-qa` writes `QA-REPORT.md` with the sections and order of the contract (no Em dash section), `PDF not built.`, `EPUB not built.` before and EPUB details after `book-build epub`, placeholders listed, generated line the only timestamp; sources unchanged; `book-build all` writes both files
+- [X] T016 [P] [US2] Write `test/unit/qa/stats.test.ts`: chapter/character/token/Myanmar counts with Python semantics (research R-04) on known strings; chapter order OK/MISMATCH for Myanmar and English labels
+- [X] T017 [P] [US2] Write `test/unit/qa/unicode.test.ts`: on `book-qa` exactly one entry per seeded issue with the exact formats of `contracts/qa-report.md` (line numbers, `pyRepr` quoting); markers inside ``` fences ignored; cap at 200 with `- ... N more`
+- [X] T018 [P] [US2] Write `test/unit/qa/coverage.test.ts`: Myanmar/Latin counts and uncovered list (`U+XXXX NAME xN`, count-descending) with fixture fonts; characters ≤ 32 and whitespace ignored
+- [X] T019 [P] [US2] Write `test/unit/qa/epub-checks.test.ts`: a built fixture EPUB passes (no structural errors, text identical, chapter docs = N, fonts listed, reflowable); tampered copies report mimetype order, compression, broken XHTML, missing manifest href and text mismatch; epubcheck PASS/FAIL/NOT RUN (NOT RUN simulated with an empty PATH)
+- [X] T020 [P] [US2] Write `test/integration/qa.test.ts`: `book-build qa` on `book-qa` writes `QA-REPORT.md` with the sections and order of the contract (no Em dash section), `PDF not built.`, `EPUB not built.` before and EPUB details after `book-build epub`, placeholders listed, generated line the only timestamp; sources unchanged; `book-build all` writes both files
 
 ### Implementation
 
-- [ ] T021 [P] [US2] Implement `src/qa/stats.ts` to pass T016
-- [ ] T022 [P] [US2] Implement `src/qa/unicode.ts` to pass T017
-- [ ] T023 [P] [US2] Implement `src/qa/coverage.ts` (fontkit + unicode-name) to pass T018
-- [ ] T024 [P] [US2] Implement `src/qa/epub-checks.ts` (yauzl, XMLValidator, epubcheck on PATH) to pass T019
-- [ ] T025 [US2] Implement `src/qa/report.ts` and `src/qa/command.ts` (`runQa`, `runAll`); wire `qa` and `all` in `src/cli.ts`; export `qa()` and `all()`; public-API test = `all, epub, fonts, init, qa, serve, web`; pass T020
+- [X] T021 [P] [US2] Implement `src/qa/stats.ts` to pass T016
+- [X] T022 [P] [US2] Implement `src/qa/unicode.ts` to pass T017
+- [X] T023 [P] [US2] Implement `src/qa/coverage.ts` (fontkit + unicode-name) to pass T018
+- [X] T024 [P] [US2] Implement `src/qa/epub-checks.ts` (yauzl, XMLValidator, epubcheck on PATH) to pass T019
+- [X] T025 [US2] Implement `src/qa/report.ts` and `src/qa/command.ts` (`runQa`, `runAll`); wire `qa` and `all` in `src/cli.ts`; export `qa()` and `all()`; public-API test = `all, epub, fonts, init, qa, serve, web`; pass T020
 
 ---
 
