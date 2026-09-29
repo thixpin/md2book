@@ -43,7 +43,7 @@ describe("requireFontSet", () => {
     expect(error).toEqual(
       new BookError(
         join(root, "my-sans"),
-        `font set my-sans not found; run: book-build fonts --config ${config.configPath}`,
+        `font set my-sans not found; run: md2book fonts --config ${config.configPath}`,
       ),
     );
   });

@@ -125,8 +125,8 @@ From `assets/fonts-manifest.json`; contract in [contracts/font-manifest.md](./co
 | `faces` | seven entries: role, file, weight, italic, sha256 |
 | `licence` | file name + sha256 |
 
-State (per cache directory): **absent** → `book-build fonts` → **verified**. A run that needs
-fonts and finds any file absent stops with the `book-build fonts` command (FR-042).
+State (per cache directory): **absent** → `md2book fonts` → **verified**. A run that needs
+fonts and finds any file absent stops with the `md2book fonts` command (FR-042).
 
 ## InitRequest
 

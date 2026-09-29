@@ -19,7 +19,7 @@ export async function requireFontSet(
   if (setFiles(set).some(({ file }) => !existsSync(join(dir, file)))) {
     throw new BookError(
       dir,
-      `font set ${set.id} not found; run: book-build fonts --config ${config.configPath}`,
+      `font set ${set.id} not found; run: md2book fonts --config ${config.configPath}`,
     );
   }
   return { set, dir };

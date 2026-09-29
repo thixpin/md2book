@@ -9,7 +9,7 @@ and `web-reader.js` at `d235dbd`.
 
 ## Summary
 
-Add `book-build web` and `book-build serve`. The build reuses the core pipeline (feature 001) to
+Add `md2book web` and `md2book serve`. The build reuses the core pipeline (feature 001) to
 load only the allow-listed chapters (number-based slugs), renders them, and writes a static site
 whose every page carries the same continuous book inside the reference reader DOM. The reader
 script (`web-reader.js`), `common.css` and the web CSS are carried over from the reference; the
@@ -77,7 +77,7 @@ specs/002-web-edition/
 ├── data-model.md
 ├── quickstart.md
 ├── contracts/
-│   ├── cli.md              # book-build web / serve
+│   ├── cli.md              # md2book web / serve
 │   └── web-output.md       # output tree, page shell, reader DOM hooks
 └── tasks.md                # /speckit-tasks
 ```

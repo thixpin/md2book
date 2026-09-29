@@ -1,7 +1,7 @@
 // Development tool (spec 003 SC-001–SC-003): compare our EPUB and QA report with the Python
 // toolchain's.   DEVBOOK=/path/to/development-book npm run equivalence:epub-qa -- --book book-01
 // Runs `build.py epub` and `build.py qa` in a temporary copy (the checkout is never written) and
-// ours from the same config (the font set must be cached: `book-build fonts`). Compares the
+// ours from the same config (the font set must be cached: `md2book fonts`). Compares the
 // spine order, nav and NCX documents, the manifest file set, per-chapter text, and the report's
 // manuscript counts, Unicode issues and coverage numbers. Exits 1 on differences not recorded in
 // docs/decision-log.md.

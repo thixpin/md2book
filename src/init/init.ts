@@ -16,7 +16,7 @@ export interface InitOptions {
   author: string;
 }
 
-/** `book-build init`: writes book.json and chapters/chapter-01.md; never overwrites. */
+/** `md2book init`: writes book.json and chapters/chapter-01.md; never overwrites. */
 export async function runInit(options: InitOptions): Promise<{ files: string[] }> {
   const language = normalizeLanguage(options.lang);
   const fontSet = normalizeFontStyle(options.font);

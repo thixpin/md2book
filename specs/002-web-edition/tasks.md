@@ -43,7 +43,7 @@ server only.
 
 ## Phase 3: User Story 1 - Publish selected chapters as a web book (P1) 🎯 MVP
 
-**Goal**: `book-build web` writes the full site with the reference reader DOM.
+**Goal**: `md2book web` writes the full site with the reference reader DOM.
 
 **Independent Test**: build the fixtures and inspect tree, markup, drafts and errors (no browser).
 
@@ -52,7 +52,7 @@ server only.
 - [X] T008 [P] [US1] Write `test/unit/web/assets.test.ts`: stylesheet = `common.css + "\n" + web.css`; for `my-sans` identical to that concatenation (so its hash equals the reference); for `en-serif` every `Noto Sans Myanmar` → `Noto Serif`, `Noto Sans Mono` stays, `@font-face` URLs point at the set's body-regular, body-bold and mono-regular files; names `style.<12 hex>.css` and `reader.<12 hex>.js` from content hashes
 - [X] T009 [P] [US1] Write `test/unit/web/reader-dom.test.ts`: reader DOM for a two-chapter book matches the structure and every `data-*` hook of `contracts/web-output.md` (parse with a DOM/XML parser, compare the element/attribute skeleton to a checked-in expected skeleton); contents heading from `strings.contents_heading`; `data-folio-digits` / `data-name-*` absent for Myanmar defaults, present for an English book; book key `{prefix}:{out dir name}:{10 hex}` changes when chapter text changes
 - [X] T010 [P] [US1] Write `test/unit/web/reader-script.test.ts`: the carried `assets/web-reader.js` differs from the reference only in the three reads of FR-021 (defaults `myanmar`, `Cover`, `Contents`, `Back cover`), checked by a text diff against the recorded reference SHA-256 plus the known edited lines
-- [X] T011 [P] [US1] Write `test/integration/web.test.ts`: `buildWeb` on `book-mm` writes exactly the contract tree (cover, generated back cover skipped via a stub — see T021 — fonts of the set + licence); `web/` emptied on rebuild (a stray file disappears); two builds give identical file names and bytes (except generated PNGs); `DRAFT-MARKER-3` appears in no output file (SC-005); fixture sources byte-identical after the build; missing fonts → one-line error with the `book-build fonts` command
+- [X] T011 [P] [US1] Write `test/integration/web.test.ts`: `buildWeb` on `book-mm` writes exactly the contract tree (cover, generated back cover skipped via a stub — see T021 — fonts of the set + licence); `web/` emptied on rebuild (a stray file disappears); two builds give identical file names and bytes (except generated PNGs); `DRAFT-MARKER-3` appears in no output file (SC-005); fixture sources byte-identical after the build; missing fonts → one-line error with the `md2book fonts` command
 
 ### Implementation
 
@@ -61,7 +61,7 @@ server only.
 - [X] T014 [US1] Implement `src/web/reader-dom.ts` (front/back sections, chapter sections, controls, panels, icons from `src/web/icons.ts`, book key) porting web.py `reader()` exactly; pass T009
 - [X] T015 [US1] Implement `src/web/page.ts` minimal shell (html lang, head with title, stylesheet, header, main, footer, deferred script) — social tags come in US3
 - [X] T016 [US1] Implement `src/web/build.ts` `buildWeb(config, { out, backCover })`: load published chapters, parts, snippets, render; empty and recreate `web/`; assets; cover copy; `index.html`, `chapters/chNN.html`, `404.html`; pass T011
-- [X] T017 [US1] Wire `book-build web --config [--out]` in `src/cli.ts` (via `src/web/command.ts`) and export `web()` from `src/index.ts`; update `test/unit/public-api.test.ts` to exactly `fonts`, `init`, `serve`, `web` (serve added in US4)
+- [X] T017 [US1] Wire `md2book web --config [--out]` in `src/cli.ts` (via `src/web/command.ts`) and export `web()` from `src/index.ts`; update `test/unit/public-api.test.ts` to exactly `fonts`, `init`, `serve`, `web` (serve added in US4)
 
 **Checkpoint**: site builds; reader opens in a browser.
 
@@ -118,7 +118,7 @@ server only.
 ### Implementation
 
 - [X] T031 [US4] Implement `src/web/serve.ts` with `node:http` to pass T030
-- [X] T032 [US4] Wire `book-build serve --config [--out] [--port]` in `src/cli.ts` (build, serve, print URL, stop on SIGINT) and export `serve()` from `src/index.ts`; public API test = exactly `fonts`, `init`, `serve`, `web`
+- [X] T032 [US4] Wire `md2book serve --config [--out] [--port]` in `src/cli.ts` (build, serve, print URL, stop on SIGINT) and export `serve()` from `src/index.ts`; public API test = exactly `fonts`, `init`, `serve`, `web`
 
 ---
 
@@ -127,7 +127,7 @@ server only.
 - [X] T033 [P] Write `scripts/equivalence-web.ts` (SC-001): build `book-01` with the Python `web.py` in a temporary copy of `development-book/publish` (the checkout untouched) and with ours; compare file trees ignoring hash segments and the element/attribute skeleton of `index.html` and `chapters/ch01.html`; exit 1 on differences
 - [X] T034 [P] Write `test/integration/web-perf.test.ts`: 20-chapter synthetic book builds in < 30 s with a copied back cover (SC-006)
 - [X] T035 Update `README.md` (web and serve commands, Chromium install note, `web_published_chapters`) and `docs/decision-log.md` (all FR-021 edits, no web end image, English folios, Vitest + Playwright library)
-- [X] T036 Run `npm run check`, `npm run test:e2e`, `npm run equivalence:web`, and the quickstart; rebuild the demo book in the scratch folder with `book-build web` and open it
+- [X] T036 Run `npm run check`, `npm run test:e2e`, `npm run equivalence:web`, and the quickstart; rebuild the demo book in the scratch folder with `md2book web` and open it
 
 ---
 

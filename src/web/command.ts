@@ -14,7 +14,7 @@ export function defaultOut(configPath: string): string {
   return resolve("dist", basename(configPath, extname(configPath)));
 }
 
-/** `book-build web`. `manifestPath` is internal and test-only. */
+/** `md2book web`. `manifestPath` is internal and test-only. */
 export async function runWeb(
   options: WebOptions,
   manifestPath?: string,
@@ -31,7 +31,7 @@ export interface ServeOptions extends WebOptions {
   port?: number;
 }
 
-/** `book-build serve`: build, then serve `<out>/web/` locally until closed. */
+/** `md2book serve`: build, then serve `<out>/web/` locally until closed. */
 export async function runServe(options: ServeOptions, manifestPath?: string): Promise<Served> {
   const { dir } = await runWeb(options, manifestPath);
   return serveDir(dir, options.port ?? 8000);

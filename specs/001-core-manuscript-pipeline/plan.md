@@ -11,7 +11,7 @@ context from `reference/docs/plan-input.md`.
 Build the shared core of `@thixpin/md2book`: load and validate a book config (with language
 profile `my`/`en` and curated `font_set`), load chapters and parts, expand code snippets, render
 Markdown to XHTML with the Python toolchain's class vocabulary, fetch and verify prebuilt font
-sets, and scaffold new projects with `book-build init`. No book outputs yet; later slices (EPUB,
+sets, and scaffold new projects with `md2book init`. No book outputs yet; later slices (EPUB,
 PDF, QA, web) consume this pipeline. Behaviour is pinned to `development-book/publish/` at
 `d235dbd`; every deliberate difference goes into `docs/decision-log.md`.
 
@@ -32,12 +32,12 @@ well-formedness in tests. Playwright is not needed in this slice.
 
 **Target Platform**: macOS and Linux (CI); Windows best-effort.
 
-**Project Type**: npm package with a CLI (`book-build`) and a library core.
+**Project Type**: npm package with a CLI (`md2book`) and a library core.
 
 **Performance Goals**: load + render a 20-chapter book in < 10 s on the Linux CI runner (SC-007); `init` → first run
 in < 1 min (SC-008).
 
-**Constraints**: no network except `book-build fonts`; never write to manuscript files; never
+**Constraints**: no network except `md2book fonts`; never write to manuscript files; never
 merge fonts at run time; deterministic output for identical input.
 
 **Scale/Scope**: books of ~20 chapters; 2 language profiles × 2 font sets; commands `init` and
@@ -57,7 +57,7 @@ prompt mechanism, cmap reader, glob/sort) are resolved in [research.md](./resear
 | III. Complex scripts | Burmese fixture (`book-mm`) covers heading digits, NFC, stacked consonants in text; Myanmar font sets checked for U+1000 + `a`; `my-sans` is exactly the current 7 files. | Pass |
 | IV. Fail loudly | Every error in spec FR-050/SC-004 is a typed error with a one-line message and a test. FR-046 is a deliberate warning (clarified with the user), not a silent skip. | Pass |
 | V. Drafts never leak | Web allow-list is out of scope; this slice loads only the configured chapter glob and exposes no public output. | N/A (web slice) |
-| VI. Test-first | Tests before implementation per task. Tests run offline: `book-build fonts` takes a source override (`MD2BOOK_FONTS_SOURCE`, local dir) so fixture tests never touch the network. | Pass |
+| VI. Test-first | Tests before implementation per task. Tests run offline: `md2book fonts` takes a source override (`MD2BOOK_FONTS_SOURCE`, local dir) so fixture tests never touch the network. | Pass |
 | VII. Deterministic output | Code-point sorting, NFC, no timestamps in rendered HTML. `init` writes the current year and a random identifier by design (it scaffolds, it is not a build output). | Pass |
 | VIII. Small surface | One CLI + mirrored API. Language profiles and font sets are a fixed list of four data entries, not a theme or plugin mechanism; no user-supplied fonts (FR-045). Python font build script justified below. | Pass (see Complexity Tracking) |
 | IX. Accessible web output | No web output in this slice. | N/A (web slice) |
@@ -87,7 +87,7 @@ specs/001-core-manuscript-pipeline/
 
 ```text
 src/
-├── cli.ts               # book-build: init, fonts (others reserved)
+├── cli.ts               # md2book: init, fonts (others reserved)
 ├── index.ts             # public API: exports only init() and fonts() (Constitution VIII)
 ├── errors.ts            # BookError: one-line message, file/key, exit code
 ├── config/              # zod schema, load, path + code_root resolution, language defaults

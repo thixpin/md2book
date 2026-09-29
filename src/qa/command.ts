@@ -14,7 +14,7 @@ import { unicodeChecks } from "./unicode.ts";
 
 export type QaOptions = EpubOptions;
 
-/** `book-build qa`: writes `<out>/QA-REPORT.md`; checks `<out>/<output_name>.epub` if present. */
+/** `md2book qa`: writes `<out>/QA-REPORT.md`; checks `<out>/<output_name>.epub` if present. */
 export async function runQa(
   options: QaOptions,
   manifestPath?: string,
@@ -42,7 +42,7 @@ export async function runQa(
     issues: await unicodeChecks(book.chapters),
     set,
     coverage,
-    fontsCommand: `book-build fonts --config ${config.configPath}`,
+    fontsCommand: `md2book fonts --config ${config.configPath}`,
     epub,
     generated: new Date(),
   });
@@ -53,7 +53,7 @@ export async function runQa(
   return { file };
 }
 
-/** `book-build all`: EPUB, then QA (the PDF step comes with the PDF feature). */
+/** `md2book all`: EPUB, then QA (the PDF step comes with the PDF feature). */
 export async function runAll(
   options: QaOptions,
   manifestPath?: string,

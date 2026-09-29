@@ -18,12 +18,12 @@ export interface CliDeps {
 
 const RESERVED = ["pdf", "cover"] as const;
 
-/** Runs `book-build` with user arguments (no node/script prefix); resolves to the exit code. */
+/** Runs `md2book` with user arguments (no node/script prefix); resolves to the exit code. */
 export async function runCli(argv: string[], deps: CliDeps = {}): Promise<number> {
   const stdout = deps.stdout ?? ((text: string) => process.stdout.write(text));
   const stderr = deps.stderr ?? ((text: string) => process.stderr.write(text));
 
-  const program = new Command("book-build")
+  const program = new Command("md2book")
     .description("Build books from Markdown manuscripts.")
     .exitOverride()
     .configureOutput({ writeOut: stdout, writeErr: stderr });
@@ -58,7 +58,7 @@ export async function runCli(argv: string[], deps: CliDeps = {}): Promise<number
         author: answers.author!,
       });
       stdout(`${files.map((file) => `created ${file}`).join("\n")}\n`);
-      stdout(`Add a cover image, then fetch the fonts:\n  book-build fonts --config ${files[0]}\n`);
+      stdout(`Add a cover image, then fetch the fonts:\n  md2book fonts --config ${files[0]}\n`);
     });
 
   program

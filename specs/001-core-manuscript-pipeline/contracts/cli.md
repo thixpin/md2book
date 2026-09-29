@@ -1,4 +1,4 @@
-# CLI contract: `book-build` (this slice)
+# CLI contract: `md2book` (this slice)
 
 This slice contracts `init` and `fonts`. `pdf`, `epub`, `qa`, `all`, `web`, `serve` and `cover`
 are reserved names; they print "not available yet" and exit 1 until their slices land. Every
@@ -6,10 +6,10 @@ implemented command has an exported async function in the programmatic API with 
 options (this slice: `init` and `fonts`).
 
 Global rules (FR-050): exit 0 on success; on failure, exit 1 with one line on stderr:
-`book-build: <file|key|glob>: <reason>`. Warnings go to stderr prefixed `warning:` and do not
+`md2book: <file|key|glob>: <reason>`. Warnings go to stderr prefixed `warning:` and do not
 change the exit code.
 
-## `book-build init [dir]`
+## `md2book init [dir]`
 
 Creates `book.json` and `chapters/chapter-01.md` in `dir` (default `.`).
 
@@ -26,12 +26,12 @@ Creates `book.json` and `chapters/chapter-01.md` in `dir` (default `.`).
 - Unknown `--lang`/`--font` → exit 1 listing valid values.
 - The written config sets `output_name` to the title slug (or `book`) and
   `strings.licence_text` to the MIT licence line (FR-063).
-- Success prints the files written and `book-build fonts --config <dir>/book.json`.
+- Success prints the files written and `md2book fonts --config <dir>/book.json`.
 - No network access.
 
 API: `init(options: { dir?, lang, font?, title, author }): Promise<{ files: string[] }>`
 
-## `book-build fonts`
+## `md2book fonts`
 
 Fetches and verifies the font set named by the config.
 
@@ -53,4 +53,4 @@ API: `fonts(options: { config? , set?, fontsDir? }): Promise<{ dir: string, file
 ## Missing fonts (all later build commands)
 
 Any run needing fonts with a file missing exits 1:
-`book-build: <cache dir>: font set <id> not found; run: book-build fonts --config <path>`.
+`md2book: <cache dir>: font set <id> not found; run: md2book fonts --config <path>`.

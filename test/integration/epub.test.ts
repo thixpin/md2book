@@ -93,10 +93,10 @@ describe("buildEpub", { timeout: 60_000 }, () => {
       manifestPath: FIXTURE_MANIFEST,
     }).catch((e: unknown) => e);
     expect(error).toBeInstanceOf(BookError);
-    expect((error as BookError).reason).toContain("run: book-build fonts --config");
+    expect((error as BookError).reason).toContain("run: md2book fonts --config");
   });
 
-  it("runs as book-build epub and reports the end image", async () => {
+  it("runs as md2book epub and reports the end image", async () => {
     const config = await bookMm();
     vi.stubEnv("MD2BOOK_FONTS", await fixtureFontCache(config));
     const out = join(tempDir(), "book");

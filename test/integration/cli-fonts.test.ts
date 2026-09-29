@@ -20,7 +20,7 @@ function cli(args: string[]) {
   return run.then((code) => ({ code, out: out.join(""), err: err.join("") }));
 }
 
-describe("book-build fonts", () => {
+describe("md2book fonts", () => {
   it("fetches the config's font set and prints the cache directory", async () => {
     const root = tempDir();
     vi.stubEnv("MD2BOOK_FONTS_SOURCE", FIXTURE_FONTS);
@@ -43,7 +43,7 @@ describe("book-build fonts", () => {
     const result = await cli(["fonts", "--set", "xx-sans"]);
     expect(result.code).toBe(1);
     expect(result.err).toBe(
-      "book-build: xx-sans: unknown font set; valid sets: my-sans, my-serif, en-sans, en-serif\n",
+      "md2book: xx-sans: unknown font set; valid sets: my-sans, my-serif, en-sans, en-serif\n",
     );
   });
 

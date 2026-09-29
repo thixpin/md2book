@@ -4,7 +4,7 @@ export class BookError extends Error {
   readonly reason: string;
 
   constructor(subject: string, reason: string) {
-    super(`book-build: ${subject}: ${reason}`);
+    super(`md2book: ${subject}: ${reason}`);
     this.name = "BookError";
     this.subject = subject;
     this.reason = reason;

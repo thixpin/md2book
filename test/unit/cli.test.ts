@@ -18,7 +18,7 @@ describe("runCli", () => {
       const io = capture();
       const code = await runCli([command], io.deps);
       expect(code).toBe(1);
-      expect(io.err.join("")).toBe(`book-build: ${command}: not available yet\n`);
+      expect(io.err.join("")).toBe(`md2book: ${command}: not available yet\n`);
     },
   );
 
@@ -26,7 +26,7 @@ describe("runCli", () => {
     const io = capture();
     const code = await runCli(["pdf", "--config", "book.json", "--printed"], io.deps);
     expect(code).toBe(1);
-    expect(io.err.join("")).toBe("book-build: pdf: not available yet\n");
+    expect(io.err.join("")).toBe("md2book: pdf: not available yet\n");
   });
 
   it("maps a thrown BookError to exit code 1 with a one-line message", async () => {

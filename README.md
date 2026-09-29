@@ -2,7 +2,7 @@
 
 Turn a Markdown book manuscript into a print-ready PDF, an EPUB 3, a
 web edition and a QA report, with first-class support for Myanmar
-(Burmese) script. The CLI is `book-build`.
+(Burmese) script. The CLI is `md2book`.
 
 > **Status: early development.** This release contains the core
 > manuscript pipeline, `init` and `fonts`, the web edition (`web`,
@@ -26,7 +26,7 @@ $ npm link
 ## Start a book
 
 ```console
-$ book-build init my-book --lang en --font sans \
+$ md2book init my-book --lang en --font sans \
     --title "My Book" --author "Me"
 ```
 
@@ -42,15 +42,15 @@ In a terminal, `init` asks for anything you leave out. It writes
 Add a cover image at `cover/cover.png`, then fetch the fonts:
 
 ```console
-$ book-build fonts --config my-book/book.json
+$ md2book fonts --config my-book/book.json
 ```
 
 ## EPUB and QA report
 
 ```console
-$ book-build epub --config my-book/book.json
-$ book-build qa --config my-book/book.json
-$ book-build all --config my-book/book.json
+$ md2book epub --config my-book/book.json
+$ md2book qa --config my-book/book.json
+$ md2book all --config my-book/book.json
 ```
 
 `epub` writes a reflowable EPUB 3 of every chapter to
@@ -76,8 +76,8 @@ other chapter files are never read:
 ```
 
 ```console
-$ book-build web --config my-book/book.json
-$ book-build serve --config my-book/book.json --port 8000
+$ md2book web --config my-book/book.json
+$ md2book serve --config my-book/book.json --port 8000
 ```
 
 Readers can change the text size with the "Aa" button or the `+` and
@@ -104,7 +104,7 @@ bold italic body faces plus regular and bold monospace faces:
 | `en-sans`  | Noto Sans          | Latin           |
 | `en-serif` | Noto Serif         | Latin           |
 
-All sets use Noto Sans Mono (with Myanmar) for code. `book-build fonts`
+All sets use Noto Sans Mono (with Myanmar) for code. `md2book fonts`
 downloads the set once, checks every file's SHA-256 against the
 manifest shipped in the package, and caches it. After that, everything
 works offline.

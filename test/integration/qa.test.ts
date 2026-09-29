@@ -36,7 +36,7 @@ const SECTIONS = [
   "## Content / continuity issues found but NOT changed",
 ];
 
-describe("book-build qa", { timeout: 60_000 }, () => {
+describe("md2book qa", { timeout: 60_000 }, () => {
   it("writes QA-REPORT.md with the reference sections, without an em dash section", async () => {
     const configPath = fixture("book-qa", "book.json");
     vi.stubEnv("MD2BOOK_FONTS", await fixtureFontCache((await loadConfig(configPath)).config));
@@ -61,7 +61,7 @@ describe("book-build qa", { timeout: 60_000 }, () => {
     expect(hashTree(fixture())).toEqual(before);
   });
 
-  it("checks the EPUB after book-build all", async () => {
+  it("checks the EPUB after md2book all", async () => {
     const configPath = fixture("book-mm", "book.json");
     vi.stubEnv("MD2BOOK_FONTS", await fixtureFontCache((await loadConfig(configPath)).config));
     const out = join(tempDir(), "all");

@@ -25,7 +25,7 @@ beforeEach(() => {
   vi.spyOn(process.stderr, "write").mockImplementation(() => true);
 });
 
-describe("book-build init", () => {
+describe("md2book init", () => {
   it.each([
     ["en", "sans", "# Chapter 1 - "],
     ["en", "serif", "# Chapter 1 - "],
@@ -48,9 +48,9 @@ describe("book-build init", () => {
       "Me",
     ]);
     expect(result.code).toBe(0);
-    expect(
-      result.out.trimEnd().endsWith(`book-build fonts --config ${join(dir, "book.json")}`),
-    ).toBe(true);
+    expect(result.out.trimEnd().endsWith(`md2book fonts --config ${join(dir, "book.json")}`)).toBe(
+      true,
+    );
     expect(readdirSync(dir).sort()).toEqual(["book.json", "chapters"]);
 
     const configPath = join(dir, "book.json");
@@ -88,7 +88,7 @@ describe("book-build init", () => {
     const result = await cli(["init", dir, "--lang", "en", "--title", "T", "--author", "A"]);
     expect(result.code).toBe(1);
     expect(result.err).toBe(
-      `book-build: ${join(dir, "chapters", "chapter-01.md")}: already exists; nothing written\n`,
+      `md2book: ${join(dir, "chapters", "chapter-01.md")}: already exists; nothing written\n`,
     );
     expect(existsSync(join(dir, "book.json"))).toBe(false);
     expect(readFileSync(join(dir, "chapters", "chapter-01.md"), "utf8")).toBe("mine\n");
@@ -101,7 +101,7 @@ describe("book-build init", () => {
   ])("exits 1 naming %s when it is missing outside a terminal", async (flag, args) => {
     const result = await cli(["init", tempDir(), ...args]);
     expect(result.code).toBe(1);
-    expect(result.err).toBe(`book-build: ${flag}: required when not running in a terminal\n`);
+    expect(result.err).toBe(`md2book: ${flag}: required when not running in a terminal\n`);
   });
 
   it("rejects an unsupported language, listing valid values", async () => {

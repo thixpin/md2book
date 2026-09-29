@@ -1,7 +1,7 @@
 # Quickstart: validate the web edition
 
 Prerequisites: Node.js 26+, `npm install`, the configured font set fetched
-(`book-build fonts`), and for back-cover generation and browser tests:
+(`md2book fonts`), and for back-cover generation and browser tests:
 
 ```console
 $ npx playwright install chromium
@@ -20,8 +20,8 @@ a local server only).
 ## 2. Build and read the demo book
 
 ```console
-$ book-build web --config my-book/book.json
-$ book-build serve --config my-book/book.json
+$ md2book web --config my-book/book.json
+$ md2book serve --config my-book/book.json
 ```
 
 Open `http://127.0.0.1:8000/`: the book is closed on its cover; click

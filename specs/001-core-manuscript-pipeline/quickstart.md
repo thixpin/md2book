@@ -32,13 +32,13 @@ the network (Constitution VI).
 
 ```console
 $ cd "$(mktemp -d)"
-$ npx book-build init --lang en --font sans \
+$ npx md2book init --lang en --font sans \
     --title "Test Book" --author "Me"
 ```
 
 Expected: `book.json` and `chapters/chapter-01.md` are created; the
 chapter starts with `# Chapter 1 - `; the output ends with the
-`book-build fonts` command. Running init again exits 1 and names
+`md2book fonts` command. Running init again exits 1 and names
 `book.json`.
 
 Repeat with `--lang mm --font serif` in another empty directory.
@@ -59,12 +59,12 @@ exists (task T086), fetch the real set:
 ```console
 $ mkdir cover && cp /path/to/cover.png cover/cover.png
 $ export MD2BOOK_FONTS="$(mktemp -d)"
-$ npx book-build fonts --config book.json
+$ npx md2book fonts --config book.json
 ```
 
 Before the release, a maintainer can run the same step against the
 locally built files (task T067) with
-`MD2BOOK_FONTS_SOURCE=/path/to/book-build-tool/build/fonts`.
+`MD2BOOK_FONTS_SOURCE=/path/to/md2book/build/fonts`.
 
 Expected: the seven files of the chosen set and `LICENSE-OFL.txt` in
 `$MD2BOOK_FONTS/en-sans/`. This step needs the network once.
@@ -74,8 +74,8 @@ Expected: the seven files of the chosen set and `LICENSE-OFL.txt` in
 The unit suite covers each error in spec FR-050. Spot-check two:
 
 ```console
-$ npx book-build fonts --set xx-sans
-$ npx book-build init --lang fr --title T --author A
+$ npx md2book fonts --set xx-sans
+$ npx md2book init --lang fr --title T --author A
 ```
 
 Expected: both exit 1 with one line listing the valid values.

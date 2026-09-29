@@ -103,7 +103,7 @@ describe("error catalogue (SC-004)", () => {
   it.each(cases)("%s: one line naming the subject", async (_name, run) => {
     const error = await caught(run);
     expect(error.subject.length).toBeGreaterThan(0);
-    expect(error.message).toBe(`book-build: ${error.subject}: ${error.reason}`);
+    expect(error.message).toBe(`md2book: ${error.subject}: ${error.reason}`);
     expect(error.message).not.toContain("\n");
   });
 
@@ -114,6 +114,6 @@ describe("error catalogue (SC-004)", () => {
       manifestPath: FIXTURE_MANIFEST,
     });
     expect(code).toBe(1);
-    expect(err.join("")).toBe("book-build: /no/such/book.json: cannot read config file\n");
+    expect(err.join("")).toBe("md2book: /no/such/book.json: cannot read config file\n");
   });
 });

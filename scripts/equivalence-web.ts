@@ -2,7 +2,7 @@
 //   DEVBOOK=/path/to/development-book npm run equivalence:web -- --book book-01
 // Copies the reference `publish/`, the book folder and `code/` (without node_modules) into a temp
 // dir and runs `web.py build` there, so the checkout is never written. Builds ours from the same
-// config (the configured font set must be in the font cache: `book-build fonts`). Compares file
+// config (the configured font set must be in the font cache: `md2book fonts`). Compares file
 // trees with hash segments masked, and the DOM skeleton (tags, classes, attribute names) of
 // index.html and chapters/ch01.html. Highlighted code inside <pre> is compared as one opaque
 // element: token spans differ by design (Prism vs Pygments, docs/decision-log.md). Exits 1 on differences not listed in docs/decision-log.md.

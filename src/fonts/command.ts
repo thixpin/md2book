@@ -12,7 +12,7 @@ export interface FontsOptions {
   fontsDir?: string;
 }
 
-/** `book-build fonts`. `manifestPath` is internal and test-only. */
+/** `md2book fonts`. `manifestPath` is internal and test-only. */
 export async function runFonts(
   options: FontsOptions,
   manifestPath?: string,

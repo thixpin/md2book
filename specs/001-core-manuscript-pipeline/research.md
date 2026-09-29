@@ -100,7 +100,7 @@ Versions checked with `npm view` on 2026-09-28. Source behaviour checked in
 
 - **Decision**: `commander` ^15.
 - **Rationale**: stable, typed, supports Node 26; subcommands with per-command options fit
-  `book-build <command>`.
+  `md2book <command>`.
 - **Alternatives considered**: `cac` 7 (smaller, fewer typed-option guarantees); `node:util`
   `parseArgs` (no subcommand help).
 

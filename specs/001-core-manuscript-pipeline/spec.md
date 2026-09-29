@@ -27,13 +27,13 @@ as **[REF §n]**; the values this slice needs are copied into `data-model.md` �
 - Q: What should happen when an English book's text contains Burmese characters? → A: Warn and
   continue; the warning names the file and character, and the characters are recorded for the QA
   report.
-- Q: What project layout should `book-build init` create? → A: One book per directory:
+- Q: What project layout should `md2book init` create? → A: One book per directory:
   `book.json` and `chapters/chapter-01.md` in the target directory; a series runs init once per
   book folder.
-- Q: Which copyright licence text should a new book get from `book-build init`? → A: MIT. Init
+- Q: Which copyright licence text should a new book get from `md2book init`? → A: MIT. Init
   writes an MIT licence line into `strings.licence_text`; the built-in default (used when the key
   is absent) stays the series CC BY-NC-ND 4.0 paragraph for equivalence.
-- Q: What should `book-build init` set as `output_name`? → A: An ASCII slug of the title
+- Q: What should `md2book init` set as `output_name`? → A: An ASCII slug of the title
   (lower-case letters, digits and hyphens), falling back to `book` when the title has no Latin
   letters or digits.
 
@@ -198,14 +198,14 @@ then check the cache contents, font coverage and the offline and missing-font be
 **Acceptance Scenarios**:
 
 1. **Given** a config naming a font set and no cached fonts for it, **When** the author runs
-   `book-build fonts`, **Then** that set's font files and licence file are placed in the fonts
+   `md2book fonts`, **Then** that set's font files and licence file are placed in the fonts
    location and verified.
 2. **Given** a Myanmar book with the default `sans` set, **When** fonts are fetched, **Then** the
    set is exactly the seven files from **[REF §7]**.
 3. **Given** fonts are already cached, **When** any later run needs them, **Then** it uses them
    with no network access.
 4. **Given** a font file of the configured set is missing, **When** a run needs fonts, **Then** it
-   stops with a message that gives the `book-build fonts` command.
+   stops with a message that gives the `md2book fonts` command.
 5. **Given** a config naming a font set that is not on the curated list, or not offered for the
    book's language, **When** it is loaded, **Then** the run stops and lists the valid sets.
 6. **Given** every face of a Myanmar set, **When** its coverage is checked, **Then** it covers
@@ -217,7 +217,7 @@ then check the cache contents, font coverage and the offline and missing-font be
 
 ### User Story 6 - Start a new book project (Priority: P1)
 
-An author runs `book-build init` and chooses the book's language (Myanmar or English) and a font
+An author runs `md2book init` and chooses the book's language (Myanmar or English) and a font
 set, so that a new book starts from a working config with the right defaults instead of a
 hand-copied file.
 
@@ -230,7 +230,7 @@ pipeline from User Stories 1–4.
 
 **Acceptance Scenarios**:
 
-1. **Given** an empty directory, **When** the author runs `book-build init` in a terminal,
+1. **Given** an empty directory, **When** the author runs `md2book init` in a terminal,
    **Then** it asks for the language (Myanmar or English), the font set (from the curated list
    for that language, default `sans`) and the book title and author, and writes `book.json` and
    `chapters/chapter-01.md`.
@@ -249,7 +249,7 @@ pipeline from User Stories 1–4.
 7. **Given** an unsupported language or font set, **When** init runs with flags, **Then** it
    stops and lists the valid values.
 8. **Given** init has finished, **When** it prints its summary, **Then** the summary includes the
-   `book-build fonts` command to fetch the chosen set.
+   `md2book fonts` command to fetch the chosen set.
 
 ---
 
@@ -335,13 +335,13 @@ pipeline from User Stories 1–4.
 
 **Fonts**
 
-- **FR-040**: `book-build fonts` MUST make the font files of the configured font set and its
+- **FR-040**: `md2book fonts` MUST make the font files of the configured font set and its
   licence file available in a local cache, verifying each file's integrity. For a Myanmar book
   with the default `sans` set, the files are exactly the seven of **[REF §7]**.
-- **FR-041**: After `book-build fonts` has run once, commands in this slice MUST NOT need network
+- **FR-041**: After `md2book fonts` has run once, commands in this slice MUST NOT need network
   access.
 - **FR-042**: Any run that needs fonts and finds one missing MUST stop and print the
-  `book-build fonts` command.
+  `md2book fonts` command.
 - **FR-043**: The system MUST NOT build or merge fonts at run time; it only obtains prebuilt
   files.
 - **FR-044**: A `font_set` config key MUST select one set from a fixed, curated list: `sans` and
@@ -364,7 +364,7 @@ pipeline from User Stories 1–4.
 
 **Project init**
 
-- **FR-060**: `book-build init` MUST create a new book project in the current directory or a
+- **FR-060**: `md2book init` MUST create a new book project in the current directory or a
   directory given as an argument, one book per directory: `book.json` and
   `chapters/chapter-01.md`. The config's `chapter_glob` is `chapters/chapter-*.md` and its
   `cover` is `cover/cover.png` (not created). A series uses one directory per book.
@@ -383,7 +383,7 @@ pipeline from User Stories 1–4.
   language's label word and digits.
 - **FR-064**: Init MUST NOT overwrite or modify any existing file; if a file it would write
   exists, it stops, names the file and writes nothing.
-- **FR-065**: Init MUST NOT use the network; it ends by printing the `book-build fonts` command
+- **FR-065**: Init MUST NOT use the network; it ends by printing the `md2book fonts` command
   for the chosen set.
 
 ### Key Entities *(include if feature involves data)*
@@ -422,7 +422,7 @@ pipeline from User Stories 1–4.
   disabled.
 - **SC-007**: Loading and rendering a 20-chapter book takes under 10 seconds on the project's
   Linux CI runner (Ubuntu).
-- **SC-008**: For each of the 4 language and font-set combinations, `book-build init` with flags
+- **SC-008**: For each of the 4 language and font-set combinations, `md2book init` with flags
   produces a project whose sample chapter loads and renders with no error other than the missing
   cover, in under 1 minute from an empty directory to that first run.
 
@@ -430,7 +430,7 @@ pipeline from User Stories 1–4.
 
 - **Scope**: this feature is Delivery Slice 1. EPUB, PDF, QA report, web build, web reader, cover
   rendering and the build commands' API functions are separate features; this slice exposes
-  `book-build init` and `book-build fonts` to authors, through both the CLI and the mirrored
+  `md2book init` and `md2book fonts` to authors, through both the CLI and the mirrored
   programmatic API (`init()`, `fonts()`, Constitution VIII), and the rest is exercised through
   tests.
 - **Code root**: `code_root` is a config key, relative to the config file; its default is the
@@ -439,7 +439,7 @@ pipeline from User Stories 1–4.
 - **CLI inputs**: build commands take `--config <path>` (required) and `--out <dir>` (default
   `dist/<config basename>/` in the current directory), replacing the Python `--book <name>`.
 - **Fonts**: each curated font set is built once outside the tool with the existing Python script and
-  published as a versioned, checksummed download; `book-build fonts` fetches them into a user
+  published as a versioned, checksummed download; `md2book fonts` fetches them into a user
   cache that can be overridden. Hosting: versioned GitHub release assets with SHA-256 in the
   package's manifest (plan research R-05).
   The Myanmar `sans` set is the current set; the families behind the Myanmar `serif` set and

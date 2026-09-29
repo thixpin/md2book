@@ -8,7 +8,7 @@ afterEach(() => {
 describe("BookError", () => {
   it("formats a single line naming the subject and the reason", () => {
     const error = new BookError("book.json", "cover not found: cover.png");
-    expect(error.message).toBe("book-build: book.json: cover not found: cover.png");
+    expect(error.message).toBe("md2book: book.json: cover not found: cover.png");
     expect(error.message).not.toContain("\n");
     expect(error.subject).toBe("book.json");
     expect(error).toBeInstanceOf(Error);

@@ -1,11 +1,11 @@
 # Quickstart: EPUB and QA
 
-Prerequisites: Node.js 26+, the font set fetched (`book-build fonts`);
+Prerequisites: Node.js 26+, the font set fetched (`md2book fonts`);
 optional `epubcheck` on PATH (`brew install epubcheck`).
 
 ```console
 $ npm run check
-$ book-build all --config my-book/book.json
+$ md2book all --config my-book/book.json
 $ epubcheck dist/book/*.epub
 $ open dist/book/QA-REPORT.md
 ```

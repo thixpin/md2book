@@ -5,11 +5,19 @@
   "type": "module",
   "license": "MIT",
   "author": "thixpin",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thixpin/md2book.git"
+  },
+  "homepage": "https://github.com/thixpin/md2book#readme",
+  "bugs": {
+    "url": "https://github.com/thixpin/md2book/issues"
+  },
   "engines": {
     "node": ">=26"
   },
   "bin": {
-    "book-build": "dist/bin.js"
+    "md2book": "dist/bin.js"
   },
   "exports": {
     ".": {

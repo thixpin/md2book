@@ -6,8 +6,8 @@
 
 **Status**: Draft
 
-**Input**: User description: "EPUB + QA (delivery slice 2): `book-build epub --config <path>
-[--out <dir>]` builds a valid reflowable EPUB 3 of all chapters (US-7), and `book-build qa
+**Input**: User description: "EPUB + QA (delivery slice 2): `md2book epub --config <path>
+[--out <dir>]` builds a valid reflowable EPUB 3 of all chapters (US-7), and `md2book qa
 --config <path>` writes QA-REPORT.md (US-8) with the manuscript section, em dash search,
 Unicode/Burmese checks, typeface coverage, EPUB checks, metadata placeholders, known limitations
 and manual-notes sections — without the PDF section, which comes with the PDF slice. EPUB part of
@@ -45,7 +45,7 @@ navigation, metadata and zip layout; run epubcheck when installed.
 
 **Acceptance Scenarios**:
 
-1. **Given** a valid config, **When** the author runs `book-build epub --config book.json`,
+1. **Given** a valid config, **When** the author runs `md2book epub --config book.json`,
    **Then** `<out>/<output_name>.epub` is written and its unpacked tree is kept in
    `<out>/src/epub/`.
 2. **Given** the built EPUB, **When** its reading order is listed, **Then** it is: cover (not in
@@ -74,7 +74,7 @@ navigation, metadata and zip layout; run epubcheck when installed.
 
 ### User Story 2 - Review a QA report (Priority: P1)
 
-An author runs `book-build qa` and reads `QA-REPORT.md`, so typography, encoding and build problems
+An author runs `md2book qa` and reads `QA-REPORT.md`, so typography, encoding and build problems
 are caught before publishing.
 
 **Why this priority**: Quality gate before every release; required for the equivalence gate.
@@ -84,7 +84,7 @@ section with expected content.
 
 **Acceptance Scenarios**:
 
-1. **Given** a config, **When** the author runs `book-build qa --config book.json`, **Then**
+1. **Given** a config, **When** the author runs `md2book qa --config book.json`, **Then**
    `<out>/QA-REPORT.md` is written with sections in this order: Manuscript, Unicode / Burmese text
    checks, Typeface coverage, PDF, EPUB, Metadata placeholders, Known layout limitations, Content /
    continuity issues **[REF §8]** (the reference's Em dash search section is removed).
@@ -147,10 +147,10 @@ gate file.
 - An English book: chapter-order check uses the English label shape and ASCII digits; Myanmar
   character count is 0; Burmese-specific checks simply find nothing.
 - A cover that is JPEG: `images/cover.jpg` with `image/jpeg`.
-- `book-build qa` without a built EPUB: QA still runs the manuscript checks and says `EPUB not built.`
+- `md2book qa` without a built EPUB: QA still runs the manuscript checks and says `EPUB not built.`
 - epubcheck present but failing: the report shows FAIL with the output tail (last 4000 characters);
   the QA command itself still succeeds (it reports, it does not gate).
-- Fonts not fetched: `epub` stops with the `book-build fonts` command; `qa` reports coverage only
+- Fonts not fetched: `epub` stops with the `md2book fonts` command; `qa` reports coverage only
   when fonts are cached, and says so otherwise.
 - Parts with no chapters: omitted from nav and NCX.
 
@@ -160,7 +160,7 @@ gate file.
 
 **EPUB**
 
-- **FR-001**: `book-build epub --config <path> [--out <dir>]` MUST build `<out>/<output_name>.epub`
+- **FR-001**: `md2book epub --config <path> [--out <dir>]` MUST build `<out>/<output_name>.epub`
   from all chapters; `--out` defaults to `dist/<config file name without extension>/`.
 - **FR-002**: Document order, navigation, NCX, metadata, manifest and spine MUST follow User Story 1
   and **[REF §7a]**.
@@ -181,11 +181,11 @@ gate file.
 
 **QA report**
 
-- **FR-010**: `book-build qa --config <path> [--out <dir>]` MUST write `<out>/QA-REPORT.md` with the
+- **FR-010**: `md2book qa --config <path> [--out <dir>]` MUST write `<out>/QA-REPORT.md` with the
   sections of User Story 2, using the reference wording for every check and count **[REF §8]**.
 - **FR-011**: The report MUST check the EPUB at `<out>/<output_name>.epub` when it exists.
 - **FR-012**: The only timestamp in the report MUST be its generation time.
-- **FR-013**: `book-build all --config <path>` MUST run `epub` then `qa` until the PDF feature adds
+- **FR-013**: `md2book all --config <path>` MUST run `epub` then `qa` until the PDF feature adds
   the PDF step.
 - **FR-014**: QA MUST NOT modify any source file and MUST NOT stop on content issues; it stops only
   on the same load errors as the core pipeline.

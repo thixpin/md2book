@@ -103,7 +103,7 @@ describe("buildWeb", { timeout: 60_000 }, () => {
       manifestPath: FIXTURE_MANIFEST,
     }).catch((e: unknown) => e);
     expect(error).toBeInstanceOf(BookError);
-    expect((error as BookError).reason).toContain("run: book-build fonts --config");
+    expect((error as BookError).reason).toContain("run: md2book fonts --config");
   });
 
   it("opens index at the book and chapter pages at their chapter", async () => {

@@ -6,9 +6,9 @@
 
 **Status**: Draft
 
-**Input**: User description: "Web edition: `book-build web --config <path> [--out <dir>]` builds a
+**Input**: User description: "Web edition: `md2book web --config <path> [--out <dir>]` builds a
 static web edition of the allow-listed chapters that reads like a physical 3D book with page-turn
-animations, and `book-build serve` previews it locally. Scope = delivery slices 4 and 5: US-9 (web
+animations, and `md2book serve` previews it locally. Scope = delivery slices 4 and 5: US-9 (web
 build), US-10 (reader behaviour) and the web part of US-11. Behaviour must match the Python
 toolchain's web.py and web-reader.js at d235dbd; the reader script and web CSS are carried over.
 Uses the core pipeline from feature 001."
@@ -45,7 +45,7 @@ error paths, without opening a browser.
 **Acceptance Scenarios**:
 
 1. **Given** a config whose `web_published_chapters` lists existing chapter files, **When** the
-   author runs `book-build web --config book.json`, **Then** `<out>/web/` contains `index.html`,
+   author runs `md2book web --config book.json`, **Then** `<out>/web/` contains `index.html`,
    `chapters/chNN.html` for each listed chapter, `404.html`, `style.<hash12>.css`,
    `reader.<hash12>.js`, `fonts/` with the font set's files and licence, `cover.<ext>`,
    `back-cover.<ext>`, `og-image.png` and, when configured, the favicons.
@@ -161,7 +161,7 @@ An author previews the web edition before deploying it.
 
 **Acceptance Scenarios**:
 
-1. **Given** a config, **When** the author runs `book-build serve --config book.json`, **Then** the
+1. **Given** a config, **When** the author runs `md2book serve --config book.json`, **Then** the
    web edition is built and served at `http://127.0.0.1:<port>/` (default 8000, `--port` to change).
 2. **Given** a request for a path that does not exist, **When** served, **Then** the response is
    `404.html` with status 404.
@@ -212,7 +212,7 @@ text, titles, code and the reading position.
 - `end_image` configured: the web edition never includes it, whether or not its gate chapter
   exists (the reference web edition has no end image).
 - A cover that is JPEG: `cover.jpg` is written and the share image is still PNG.
-- Fonts not fetched: the build stops with the `book-build fonts` command (feature 001 FR-042).
+- Fonts not fetched: the build stops with the `md2book fonts` command (feature 001 FR-042).
 - Port already in use for `serve`: the command stops with one line naming the port.
 
 ## Requirements *(mandatory)*
@@ -221,7 +221,7 @@ text, titles, code and the reading position.
 
 **Build**
 
-- **FR-001**: `book-build web --config <path> [--out <dir>]` MUST build the web edition into
+- **FR-001**: `md2book web --config <path> [--out <dir>]` MUST build the web edition into
   `<out>/web/`; `--out` defaults to `dist/<config file name without extension>/`.
 - **FR-002**: The build MUST load only the files named in `web_published_chapters` and validate
   the list as in User Story 1 #3; chapters not listed MUST NOT be read (Constitution V).
@@ -275,7 +275,7 @@ text, titles, code and the reading position.
 
 **Preview**
 
-- **FR-030**: `book-build serve --config <path> [--out <dir>] [--port <n>]` MUST build, then serve
+- **FR-030**: `md2book serve --config <path> [--out <dir>] [--port <n>]` MUST build, then serve
   `<out>/web/` on `127.0.0.1` (default port 8000), returning `404.html` with status 404 for
   unknown paths.
 

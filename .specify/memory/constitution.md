@@ -66,7 +66,7 @@ silently skip content or produce a partial book.
 
 ### VIII. Small Surface, No Speculative Extensibility
 
-- The package MUST expose exactly one CLI (`book-build`) and one programmatic API that mirrors
+- The package MUST expose exactly one CLI (`md2book`) and one programmatic API that mirrors
   it.
 - There MUST be no plugin system or theme engine until a real second consumer needs one.
 - Series-specific strings MUST be configuration with the current values as defaults. They
@@ -117,4 +117,4 @@ silently skip content or produce a partial book.
   review MUST verify compliance. Any added complexity MUST be justified against
   Principle VIII.
 
-**Version**: 1.1.0 | **Ratified**: 2026-09-28 | **Last Amended**: 2026-09-28
+**Version**: 1.1.1 | **Ratified**: 2026-09-28 | **Last Amended**: 2026-09-29
