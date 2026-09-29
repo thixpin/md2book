@@ -20,9 +20,9 @@ implementation. Offline; epubcheck assertions skip (with a note) when `epubcheck
 
 ## Phase 1: Setup
 
-- [ ] T001 Add `yazl@^3.3`, `yauzl@^3.4`, `unicode-name@^1.2` (+ `@types/yazl`, `@types/yauzl` dev) and move `fast-xml-parser` to dependencies in `package.json`; add script `equivalence:epub-qa` (`node scripts/equivalence-epub-qa.ts`)
-- [ ] T002 [P] Carry over `development-book/publish/css/epub.css` byte-for-byte to `assets/css/epub.css`; record its SHA-256 in `docs/decision-log.md`
-- [ ] T003 [P] Add `epubcheck` to the CI check job in `.github/workflows/ci.yml` (`sudo apt-get install -y epubcheck`)
+- [X] T001 Add `yazl@^3.3`, `yauzl@^3.4`, `unicode-name@^1.2` (+ `@types/yazl`, `@types/yauzl` dev) and move `fast-xml-parser` to dependencies in `package.json`; add script `equivalence:epub-qa` (`node scripts/equivalence-epub-qa.ts`)
+- [X] T002 [P] Carry over `development-book/publish/css/epub.css` byte-for-byte to `assets/css/epub.css`; record its SHA-256 in `docs/decision-log.md`
+- [X] T003 [P] Add `epubcheck` to the CI check job in `.github/workflows/ci.yml` (`sudo apt-get install -y epubcheck`)
 
 ---
 

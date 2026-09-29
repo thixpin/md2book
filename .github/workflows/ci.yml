@@ -17,6 +17,8 @@ jobs:
       - run: npm ci
       # The web build renders generated back covers with Chromium (spec 002).
       - run: npx playwright install --with-deps chromium
+      # EPUB validation in the EPUB tests (spec 003).
+      - run: sudo apt-get install -y epubcheck
       - run: npm run check
 
   browser:

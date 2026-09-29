@@ -1,0 +1,52 @@
+html, body { margin: 0; padding: 0; }
+
+/* Two families: Noto Sans Myanmar (body 400, section headings 600, titles 700) and Noto Sans Mono (code). Each file covers Myanmar and Latin. */
+@font-face { font-family: "Noto Sans Myanmar"; font-weight: 400; font-style: normal; src: url("../fonts/NotoSansMyanmar-Regular.ttf"); }
+@font-face { font-family: "Noto Sans Myanmar"; font-weight: 600; font-style: normal; src: url("../fonts/NotoSansMyanmar-SemiBold.ttf"); }
+@font-face { font-family: "Noto Sans Myanmar"; font-weight: 700; font-style: normal; src: url("../fonts/NotoSansMyanmar-Bold.ttf"); }
+@font-face { font-family: "Noto Sans Myanmar"; font-weight: 400; font-style: italic; src: url("../fonts/NotoSansMyanmar-Italic.ttf"); }
+@font-face { font-family: "Noto Sans Myanmar"; font-weight: 700; font-style: italic; src: url("../fonts/NotoSansMyanmar-BoldItalic.ttf"); }
+@font-face { font-family: "Noto Sans Mono"; font-weight: 400; font-style: normal; src: url("../fonts/NotoSansMono-Regular.ttf"); }
+@font-face { font-family: "Noto Sans Mono"; font-weight: 700; font-style: normal; src: url("../fonts/NotoSansMono-Bold.ttf"); }
+
+body {
+  font-size: 1em;
+  line-height: 1.5;
+  padding: 0 0.6em;
+  text-align: left;
+}
+
+p { text-indent: 1.4em; }
+
+.cover-body { text-align: center; padding: 0; }
+.cover-body img { max-width: 100%; max-height: 100%; height: auto; }
+
+.title-page { text-align: center; margin-top: 25%; }
+.title-page .book-title { font-family: "Noto Sans Myanmar", sans-serif; font-size: 2em; font-weight: bold; margin: 0 0 0.6em 0; }
+.title-page .book-subtitle { font-size: 1.05em; margin: 0 0 2em 0; }
+.title-page .book-author { font-size: 1.15em; margin: 0; }
+.title-page .book-publisher { font-size: 0.9em; margin-top: 3em; }
+
+.copyright-page { font-size: 0.85em; margin-top: 30%; }
+.copyright-page p { text-indent: 0; margin: 0 0 0.7em 0; }
+
+.chapter-head { text-align: center; margin: 2.5em 0 2em 0; }
+.chapter-head .chapter-number { font-size: 0.95em; font-weight: 600; text-indent: 0; margin: 0 0 0.4em 0; }
+.chapter-head h1 { font-size: 1.5em; font-weight: bold; line-height: 1.35; margin: 0; }
+
+nav#toc ol { list-style: none; padding: 0; margin: 0; }
+nav#toc li { margin: 0.35em 0; text-indent: 0; }
+nav#toc a { text-decoration: none; color: inherit; }
+nav#toc h1 { font-size: 1.4em; text-align: center; margin: 1em 0; }
+nav#toc li.toc-part { margin-top: 1.2em; }
+nav#toc .toc-part-title { display: block; font-weight: bold; font-size: 1.05em; margin-bottom: 0.3em; }
+nav#toc li.toc-part ol { padding-left: 1.2em; }
+
+.end-image-body { text-align: center; padding: 0; }
+.end-image { margin: 0; padding: 0; }
+.end-image img { display: block; margin: 0 auto; width: auto; height: auto; max-width: 100%; max-height: 100vh; }
+
+.end-page { text-align: center; margin-top: 30%; font-size: 0.95em; }
+
+pre { font-size: 0.78em; }
+pre.wide, pre.xwide { font-size: 0.7em; }
