@@ -5,10 +5,10 @@ import { PY_WS } from "./stats.ts";
 
 const MAX_ISSUES = 200;
 const SPECIALS: [string, string][] = [
-  ["�", "U+FFFD replacement char"],
-  ["​", "zero-width space"],
-  [" ", "no-break space"],
-  ["﻿", "BOM"],
+  ["\uFFFD", "U+FFFD replacement char"],
+  ["\u200B", "zero-width space"],
+  ["\u00A0", "no-break space"],
+  ["\uFEFF", "BOM"],
 ];
 const NWS = `[^${PY_WS}]`;
 const WS = `[${PY_WS}]`;
