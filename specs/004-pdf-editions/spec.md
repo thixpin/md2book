@@ -25,6 +25,8 @@ into `data-model.md` → Reference constants during planning.
 - Q: How close must the page count of `book-01` be to the Python PDF's? → A: Within ±2%.
 - Q: Which line height do code and terminal blocks use in the PDF editions? → A: 1.7, as in the
   EPUB and web editions (a recorded difference from the reference's 1.4).
+- Planning finding: ±2% of `book-01`'s 12 pages is less than one page, so SC-001 allows at least
+  ±1 page and adds a 20-chapter book (research R-06).
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -225,8 +227,8 @@ the PDF's known facts; check the sample images.
 - **FR-015**: Missing fonts, a missing cover, a missing typesetting browser, or a failed render
   MUST stop the build with a one-line message and a non-zero exit; no partial PDF is left at the
   output path.
-- **FR-016**: Two builds of the same input MUST produce PDFs whose page count, page text and page
-  images are identical; any embedded creation date is the only permitted difference.
+- **FR-016**: Two builds of the same input MUST produce byte-identical PDFs; the PDF carries no
+  creation or modification date (Constitution VII).
 - **FR-017**: The build MUST NOT access the network; the reference's `print.css` and `printed.css`
   MUST be carried over, with every deliberate change recorded in `docs/decision-log.md`.
 - **FR-018**: Code and terminal blocks in both PDF editions MUST use line height 1.7, as the EPUB
@@ -246,10 +248,11 @@ the PDF's known facts; check the sample images.
 
 ### Measurable Outcomes
 
-- **SC-001**: For `book-01`, compared with the Python toolchain's PDF: page size identical, page
-  count within ±2%, all N chapter openings detected, each on a right-hand page when
-  recto start is on. The page-count comparison measures engine drift only: it uses a build with
-  the reference's 1.4 code line height; the pages added by FR-018 are reported separately and
+- **SC-001**: Compared with the Python toolchain's PDF of the same book: page size identical,
+  page count within ±2% but at least ±1 page (measured on `book-01` and on a 20-chapter book both
+  toolchains build), all N chapter openings detected, each on a right-hand page when recto start
+  is on. The page-count comparison measures engine drift only: it uses a build with the
+  reference's 1.4 code line height; the pages added by FR-018 are reported separately and
   recorded in the decision log.
 - **SC-002**: Extracted text of the Burmese and English fixtures and `book-01` has 0 U+FFFD and no
   stray characters absent from the manuscript, in both editions.

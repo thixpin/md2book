@@ -1,0 +1,139 @@
+# Research: PDF Editions
+
+Measured on 2026-09-29 with Playwright 1.63 (Chromium 153), `pagedjs` 0.4.3, `pdfjs-dist` 6.3.289,
+`pdf-lib` 1.17.1 and `@napi-rs/canvas` 1.0.9. Baselines: the Python toolchain at `d235dbd`,
+rebuilt in a temporary copy: `book-01` (1 chapter, 12 pages) and a 20-chapter book made from
+`book-01`'s chapter with 4 parts and `recto_chapter_start: true` (164 pages). Both toolchains got
+the same print HTML (the reference's `book-print.html`) so layout engines were compared, not
+pipelines. Spike scripts stayed in the session scratchpad; the findings below are what carries over.
+
+## R-01 Layout engine (plan-input R2)
+
+- **Decision**: Paged.js (`pagedjs` pinned to exactly `0.4.3`) running inside headless Chromium
+  (Playwright, already a dependency), then `page.pdf({ preferCSSPageSize: true,
+  printBackground: true })` after Paged.js's `after` hook and `document.fonts.ready`.
+- **Evidence**:
+  - Native Chromium printing (no Paged.js) supports page size, `:left`/`:right` margins,
+    `@bottom-center` folios and named pages, but not `string-set`/`string()` (no running
+    headers) and not `target-counter()` (no contents page numbers). Rejected.
+  - Paged.js: contents page numbers identical to the reference for all 20 chapters; right-page
+    running header (`string(chaptertitle)` from `content()`) works; mirrored margins, recto starts
+    with blank pages, `break-after: avoid`, `break-inside: avoid` and the dotted leader work.
+- **Gaps and workarounds** (all md2book additions, recorded in the decision log):
+  1. `@page chapter-a:nth(1 of chapter-a)` is ignored → a Paged.js handler (`afterPageLayout`)
+     adds `chapter-first` to the page that contains `.chapter-head`; CSS
+     `.pagedjs_page.chapter-first .pagedjs_margin { visibility: hidden }`.
+  2. `string-set: booktitle attr(data-title)` on `body` is ignored → the build writes
+     `@page :left { @top-left { content: "<title>" } }` with the title as a CSS string
+     (backslash, quote and line breaks escaped).
+  3. That rule outranks `@page :blank` → `.pagedjs_page.pagedjs_blank_page .pagedjs_margin
+     { visibility: hidden }`.
+  4. Paged.js marks an element split across pages with `data-align-last-split-element="justify"`
+     so its last line stays justified; on a chapter `section` every child inherits it (headings,
+     label and last lines justified) → `[data-align-last-split-element='justify']:not(p, li)
+     { text-align-last: auto }`. After the fix, the chapter opening matches the reference.
+  5. A code block split across pages gets a closed bottom border (reference: open). Accepted and
+     recorded.
+- **Maintenance risk**: `pagedjs` 0.4.3 was last published in 2024. It is pinned exactly; its
+  browser bundle `dist/paged.polyfill.js` (904 KB, no runtime Node dependencies used) is served into
+  the page from `node_modules`. The four workarounds above are covered by tests, so an upgrade or a
+  switch to native Chromium features can be checked against them.
+
+## R-02 Copied text / ToUnicode (plan-input R3)
+
+- **Decision**: no ToUnicode rewrite. Chromium (Skia) writes `/Span << /ActualText … >> BDC`
+  marked content for every cluster whose glyphs do not map one-to-one to characters (2,843 spans
+  in `book-01`); extractors that honour ActualText get logical-order Burmese.
+- **Evidence**: `pdftotext` (poppler) on our PDF gives `ကျွန်တော် ဘယ်လောက်ပေးရမလဲ။`
+  exactly; the reference PDF's text is visual order with substitutes (`ကျဝန်ေတာ်`, `နှuန်း`).
+  Zero U+FFFD in both. `pdfjs` ignores ActualText (glyph text has U+0000); PDFium (WASM) and
+  PyMuPDF honour it but duplicate fragments at span edges.
+- **Consequence**: the report's fixed line about "visual glyph order" is replaced by one saying
+  extracted Burmese is in logical order, and the sentence "zero-width spaces are extracted as
+  U+200B" by one saying they are not: Chromium keeps the syllable-break U+200B out of the PDF text
+  (0 in the 163-page book), so copied text has none (decision log).
+
+## R-03 Burmese line breaking (plan-input R4)
+
+- **Decision**: port `add_syllable_breaks` unchanged (U+200B before syllable-initial consonants,
+  outside tags, `pre` and `code`), always on; no config flag.
+- **Evidence**: without it, Chromium's line breaker leaves visibly large gaps in justified Burmese
+  (for example `program   တစ်ခု   နားလည်လောက်အောင်   တိတိကျကျ`); with it the pages match the
+  reference. The regex matches only Myanmar characters, so English books are unaffected.
+  Removing the breaks does not change the ActualText behaviour (R-02).
+
+## R-04 Reading PDFs in QA (plan-input R5)
+
+- **Decision**:
+  - **Text**: `pdfjs-dist` text items with marked content, merged with the ActualText strings
+    read from each page's content streams via `pdf-lib`: a span's text is its ActualText,
+    placed at its first glyph; items are grouped into lines by baseline (`transform[5]`, 2 pt
+    tolerance) and lines ordered top to bottom. Both the hex (`<FEFF…>`) and literal (`(ff)`)
+    ActualText forms are decoded; content streams must be FlateDecode (anything else is an error).
+    Measured on the 163-page book: the characters of every page equal `pdftotext`'s except
+    one line-end hyphen that `pdftotext` drops; chapter openings give the lines `အခန်း (၁)`,
+    `Synthetic Chapter 1`; 0 U+0000, 0 U+FFFD.
+  - **Sample renders**: `pdfjs-dist` page render at 110/72 scale on its canvas factory
+    (`@napi-rs/canvas`, already an optional dependency of `pdfjs-dist`, declared directly),
+    written as PNG. 8 pages in 1.2 s.
+  - **Fonts and page size**: `pdf-lib` (`/Resources /Font → /BaseFont`; MediaBox width and
+    height). Names differ from the reference by renderer (`AAAAAA+NotoSansMyanmar-Bold` vs
+    `NDPTJD+Noto-Sans-Myanmar-Bold`) and ours has no Verdana fallback; recorded, not a bug.
+- **Alternatives**: `mupdf` (AGPL, rejected for an MIT package); `@hyzyla/pdfium` (duplicates
+  text at span edges); `pdftotext` (system binary; used only as a development oracle in tests
+  when on PATH, never at runtime).
+
+## R-05 Page size and metadata
+
+- **Decision**: after `page.pdf`, a `pdf-lib` pass sets every page's MediaBox and CropBox to exactly
+  481.89 × 680.31 pt (170 × 240 mm), anchored at the top edge where Chromium lays out; removes
+  `/CreationDate` and `/ModDate`; sets `/Producer` and `/Creator` to `md2book`; saves without
+  object streams.
+- **Evidence**: Chromium rounds the page to 481.92 × 679.92 pt (239.9 mm) whatever size is
+  requested (CSS mm, CSS pt, `page.pdf` width/height). After the pass the size reads
+  170.0 × 240.0 mm and two builds are byte-identical; ActualText extraction is unchanged.
+
+## R-06 Page-count drift (plan-input R6)
+
+- **Measured**: 20-chapter book 163 pages vs the reference's 164 (−0.6%); `book-01` 11 vs 12
+  (one page, −8%, because ±2% of 12 is less than a page). Contents numbers identical for all 20
+  chapters. Hence SC-001's "±2%, at least ±1 page" (spec clarification). The equivalence script
+  measures this with the reference's code line height 1.4 and reports the effect of 1.7 apart.
+
+## R-07 Performance (plan-input R7)
+
+- **Measured**: Paged.js layout + PDF of the 163-page book in 3.8 s (whole book in one document;
+  no per-chapter merging). SC-005 (PDF + EPUB + QA of 20 chapters < 2 minutes) has wide margin;
+  QA sample rendering adds about 1–2 s.
+
+## R-08 Stylesheets
+
+- **Decision**: carry `publish/css/print.css` and `printed.css` byte-for-byte to
+  `assets/css/print.css` and `assets/css/printed.css` (hashes in the decision log), then add,
+  each marked as an md2book addition and guarded by a test:
+  - `print.css`: `pre { line-height: 1.7; }` (FR-018);
+  - `printed.css`: the three terminal-dot icons (inner dot, minus, diagonal) as `::after` marks
+    on `.terminal-dot:nth-child(1..3)`, black on the hollow dot (FR-008);
+  - a separate `assets/css/paged.css` with the Paged.js workarounds of R-01, and
+    `assets/paged-handler.js` with the chapter-first handler.
+  The configured font set is applied with `substituteFonts` (the carried `print.css` names the
+  `my-sans` files and families like `epub.css`). The generated per-book rules (left header title;
+  `running_headers: false` → the reference's `content: none` rule) are appended last.
+
+## R-09 Serving the document to Chromium
+
+- **Decision**: the print HTML is loaded from a virtual origin (`http://md2book.local/`) whose
+  requests are answered by Playwright's `page.route` from memory and disk: the stylesheets, the
+  Paged.js bundle and handler, the set's font files, the cover and the end image. Any request for
+  an unknown path fails the build (FR-007, FR-015). The intermediate HTML written to `src/`
+  references those root-relative paths.
+- **Rationale**: Paged.js fetches stylesheets and fonts need CORS-clean loads; `file://` pages
+  would need Chromium flags. Worked unchanged for the whole spike.
+
+## R-10 Front matter, contents and chapter markup
+
+- **Decision**: reuse `frontMatterHtml` (feature 003, configurable licence, typeface and
+  strings), `tocListHtml(parts, chapters, "#{slug}")` and the rendered chapter HTML; chapter
+  sections `class="chapter group-a|group-b[ recto]" id="chNN"` as the reference; `fit_pre_blocks`
+  ported with the reference constants (123 mm, 8.3/6.0 pt, 0.6 em; longest line in code points of
+  the tag-stripped, unescaped text); `<html lang>` from the config language.
