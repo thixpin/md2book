@@ -57,15 +57,18 @@ describe("printStylesheets", () => {
     expect(sha256(carried.replace(/\n+$/, "\n"))).toBe(
       "91828a7314c79987b52479709650f2e6d72f69c1f76be231ffb6991889b0d4b2",
     );
-    // Close (×), minimise (−) and zoom (+), dark on a grey dot, like the macOS window controls.
+    // Close (×), minimise (−) and zoom (+), dark on a grey dot, like the macOS window controls;
+    // each icon is a centred vector image.
+    const icon = (path: string) =>
+      "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E" +
+      `%3Cpath d='${path}' stroke='%232b2b2b' stroke-width='1.3' stroke-linecap='round' fill='none'/%3E%3C/svg%3E\")`;
     expect(added).toBe(
-      ".terminal-dot, .terminal-dot + .terminal-dot, .terminal-dot + .terminal-dot + .terminal-dot { position: relative; background: #d4d4d4; border-color: #6e6e6e; } " +
-        ".terminal-dot::before, .terminal-dot::after { position: absolute; left: 50%; top: 50%; width: 0.42em; height: 0.1em; background: #2b2b2b; transform: translate(-50%, -50%); } " +
-        '.terminal-dot:nth-child(1)::before { content: ""; transform: translate(-50%, -50%) rotate(45deg); } ' +
-        '.terminal-dot:nth-child(1)::after { content: ""; transform: translate(-50%, -50%) rotate(-45deg); } ' +
-        '.terminal-dot:nth-child(2)::after { content: ""; } ' +
-        '.terminal-dot:nth-child(3)::before { content: ""; } ' +
-        '.terminal-dot:nth-child(3)::after { content: ""; transform: translate(-50%, -50%) rotate(90deg); }',
+      ".terminal-dot, .terminal-dot + .terminal-dot, .terminal-dot + .terminal-dot + .terminal-dot { " +
+        "width: 10px; height: 10px; background-color: #d4d4d4; border-color: #6e6e6e; " +
+        "background-position: center; background-repeat: no-repeat; background-size: 100% 100%; } " +
+        `.terminal-bar .terminal-dot:nth-child(1) { background-image: ${icon("M3.2 3.2L6.8 6.8M6.8 3.2L3.2 6.8")}; } ` +
+        `.terminal-bar .terminal-dot:nth-child(2) { background-image: ${icon("M2.8 5H7.2")}; } ` +
+        `.terminal-bar .terminal-dot:nth-child(3) { background-image: ${icon("M2.8 5H7.2M5 2.8V7.2")}; }`,
     );
   });
 

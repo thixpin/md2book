@@ -138,7 +138,8 @@ pipelines. Spike scripts stayed in the session scratchpad; the findings below ar
   - `print.css`: `pre { line-height: 1.7; }` (FR-018) and `h3, h4, h5, h6 { break-after: avoid; }`
     (FR-019, R-11);
   - `printed.css`: the three terminal window-control icons, close (×), minimise (−) and zoom (+), as
-    `::before`/`::after` bars on `.terminal-dot:nth-child(1..3)`, dark on a grey dot (FR-008);
+    centred SVG background images on `.terminal-bar .terminal-dot:nth-child(1..3)`, dark on a grey
+    dot (FR-008; CSS bars were pushed off-centre by pixel snapping at this size);
   - `print.css`: more line spacing between contents entries (author request);
   - a separate `assets/css/paged.css` with the Paged.js workarounds of R-01, and
     `assets/paged-handler.js` with the chapter-first handler.

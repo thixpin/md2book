@@ -17,9 +17,9 @@ md2book additions (each marked `/* md2book: … */` and guarded by a unit test):
   (FR-019);
 - `print.css`: `.toc-page li:not(.toc-part) { line-height: 2; margin-bottom: 1.2mm; }` (author
   request: room between contents entries);
-- `printed.css`: the dots are grey (`#d4d4d4`, border `#6e6e6e`) and `.terminal-dot` children
-  1, 2, 3 carry dark (`#2b2b2b`) bars from `::before`/`::after`: close (×), minimise (−) and
-  zoom (+), like the macOS window controls;
+- `printed.css`: the dots are 10 px grey circles (`#d4d4d4`, border `#6e6e6e`; whole pixels keep
+  them round) and `.terminal-bar .terminal-dot` children 1, 2, 3 carry a centred SVG icon drawn
+  in `#2b2b2b`: close (×), minimise (−) and zoom (+), like the macOS window controls;
 - `paged.css`:
   - `.pagedjs_page.chapter-first .pagedjs_margin { visibility: hidden; }`
   - `.pagedjs_page.pagedjs_blank_page .pagedjs_margin { visibility: hidden; }`
