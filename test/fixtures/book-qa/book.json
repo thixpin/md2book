@@ -1,0 +1,12 @@
+{
+  "title": "QA စမ်းသပ်",
+  "author": "Fixture Author",
+  "year": "2026",
+  "isbn": "PLACEHOLDER-ISBN",
+  "language": "my",
+  "identifier": "urn:uuid:00000000-0000-4000-8000-000000000003",
+  "output_name": "book-qa",
+  "cover": "cover/cover.png",
+  "chapter_glob": "chapters/chapter-*.md",
+  "code_root": "."
+}

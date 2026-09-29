@@ -7,24 +7,40 @@ import { setFiles, type FontSet } from "../fonts/manifest.ts";
 const ASSETS = fileURLToPath(new URL("../../assets/", import.meta.url));
 const read = (path: string) => readFileSync(join(ASSETS, path), "utf8");
 
-/** Reference font names in the carried CSS (my-sans), replaced for other sets (research R-02). */
-const REFERENCE_FILES = {
+/** Font files named in the carried CSS (the my-sans set), by role (research R-02, spec 003 R-07). */
+const REFERENCE_FILES: Record<string, string> = {
   "body-regular": "NotoSansMyanmar-Regular.ttf",
+  "body-semibold": "NotoSansMyanmar-SemiBold.ttf",
   "body-bold": "NotoSansMyanmar-Bold.ttf",
+  "body-italic": "NotoSansMyanmar-Italic.ttf",
+  "body-bolditalic": "NotoSansMyanmar-BoldItalic.ttf",
   "mono-regular": "NotoSansMono-Regular.ttf",
-} as const;
+  "mono-bold": "NotoSansMono-Bold.ttf",
+};
 
-/** `common.css` + `web.css`, unchanged for my-sans; family and file names swapped otherwise. */
-export function stylesheet(set: FontSet): string {
-  let css = `${read("css/common.css")}\n${read("css/web.css")}`;
+/** Points the carried CSS at another set's files and family names; identity for my-sans. */
+export function substituteFonts(css: string, set: FontSet): string {
   if (set.id === "my-sans") return css;
-  for (const [role, reference] of Object.entries(REFERENCE_FILES)) {
-    const file = set.faces.find((face) => face.role === role)!.file;
-    css = css.replaceAll(`fonts/${reference}`, `fonts/${file}`);
+  for (const face of set.faces) {
+    const reference = REFERENCE_FILES[face.role];
+    if (reference) css = css.replaceAll(reference, face.file);
   }
   return css
     .replaceAll('"Noto Sans Myanmar"', `"${set.body_family}"`)
     .replaceAll('"Noto Sans Mono"', `"${set.mono_family}"`);
+}
+
+/** Web stylesheet: `common.css` + `web.css`, with the set's fonts. */
+export function stylesheet(set: FontSet): string {
+  return substituteFonts(`${read("css/common.css")}\n${read("css/web.css")}`, set);
+}
+
+/** EPUB stylesheets (`css/common.css`, `css/epub.css`), with the set's fonts. */
+export function epubStylesheets(set: FontSet): { common: string; epub: string } {
+  return {
+    common: substituteFonts(read("css/common.css"), set),
+    epub: substituteFonts(read("css/epub.css"), set),
+  };
 }
 
 export function readerScript(): string {

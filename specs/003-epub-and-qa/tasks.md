@@ -28,11 +28,11 @@ implementation. Offline; epubcheck assertions skip (with a note) when `epubcheck
 
 ## Phase 2: Foundational
 
-- [ ] T004 [P] Write `test/unit/book/load.test.ts`: `loadBook(config)` returns chapters (position slugs), parts, expanded and rendered (`html`, `plainText` set) for `book-mm`
-- [ ] T005 Implement `src/book/load.ts` `loadBook` to pass T004
-- [ ] T006 [P] Write `test/unit/web/stylesheets.test.ts`: `substituteFonts(css, set)` is identity for `my-sans`; for `en-serif` replaces `"Noto Sans Myanmar"` → `"Noto Serif"` and every `NotoSansMyanmar-{Regular,SemiBold,Bold,Italic,BoldItalic}.ttf` → the set's files (web and epub stylesheets); existing web stylesheet tests still pass
-- [ ] T007 Refactor `src/web/assets.ts`: export `substituteFonts(css, set)` (all five body roles + two mono roles) and `epubStylesheets(set)` returning `{common, epub}`; pass T006
-- [ ] T008 [P] Extend fixtures: `test/fixtures/book-mm/book.json` gets `end_image: "cover/end.png"` and `end_image_after: "chapter-02.md"` (add a 1×1 `cover/end.png`); create `test/fixtures/book-qa/` (English-free Burmese config, cover, one chapter seeded with exactly one instance of each Unicode issue of `contracts/qa-report.md`, one `PLACEHOLDER` value); keep all earlier tests green
+- [X] T004 [P] Write `test/unit/book/load.test.ts`: `loadBook(config)` returns chapters (position slugs), parts, expanded and rendered (`html`, `plainText` set) for `book-mm`
+- [X] T005 Implement `src/book/load.ts` `loadBook` to pass T004
+- [X] T006 [P] Write `test/unit/web/stylesheets.test.ts`: `substituteFonts(css, set)` is identity for `my-sans`; for `en-serif` replaces `"Noto Sans Myanmar"` → `"Noto Serif"` and every `NotoSansMyanmar-{Regular,SemiBold,Bold,Italic,BoldItalic}.ttf` → the set's files (web and epub stylesheets); existing web stylesheet tests still pass
+- [X] T007 Refactor `src/web/assets.ts`: export `substituteFonts(css, set)` (all five body roles + two mono roles) and `epubStylesheets(set)` returning `{common, epub}`; pass T006
+- [X] T008 [P] Extend fixtures: `test/fixtures/book-mm/book.json` gets `end_image: "cover/end.png"` and `end_image_after: "chapter-02.md"` (add a 1×1 `cover/end.png`); create `test/fixtures/book-qa/` (English-free Burmese config, cover, one chapter seeded with exactly one instance of each Unicode issue of `contracts/qa-report.md`, one `PLACEHOLDER` value); keep all earlier tests green
 
 ---
 
