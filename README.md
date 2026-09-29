@@ -5,14 +5,16 @@ web edition and a QA report, with first-class support for Myanmar
 (Burmese) script. The CLI is `md2book`.
 
 > **Status: early development.** This release contains the core
-> manuscript pipeline, `init` and `fonts`, the web edition (`web`,
-> `serve`), the EPUB (`epub`) and the QA report (`qa`, `all`). The `pdf`
-> and `cover` commands are reserved and print "not available yet". The
-> package is not on npm yet.
+> manuscript pipeline, `init` and `fonts`, the PDF (`build pdf`), the
+> EPUB (`build epub`), the web edition (`build web`, `serve`) and the QA
+> report (`qa`, `build all`). The `cover` command is reserved and prints
+> "not available yet". The package is not on npm yet.
 
 ## Requirements
 
 - Node.js 26 or newer (`.nvmrc` says `26`).
+- For the PDF and the web edition's generated images: Chromium, installed
+  once with `npx playwright install chromium`.
 
 ## Install from a clone
 
@@ -45,6 +47,27 @@ Add a cover image at `cover/cover.png`, then fetch the fonts:
 $ md2book fonts --config my-book/book.json
 ```
 
+## PDF
+
+```console
+$ md2book build pdf --config my-book/book.json
+$ md2book build pdf --config my-book/book.json --printed
+```
+
+`build pdf` writes the 170 × 240 mm book to
+`dist/<config name>/<output_name>-170x240.pdf`: cover, title page,
+copyright page, contents with page numbers, then the chapters, with
+running headers and page numbers. Page 1 is the first page of chapter
+one; Myanmar books number pages in Myanmar digits. Chapters start on a
+right-hand page with `recto_chapter_start: true`; `running_headers:
+false` removes the headers.
+
+`--printed` writes the print-shop interior,
+`<output_name>-170x240-printed.pdf`: no cover page (the title page is
+page 1) and no colour, so it prints cleanly in black and white. The
+print document is kept in `src/book-print.html` (or
+`src/book-printed.html`) for checking.
+
 ## EPUB and QA report
 
 ```console
@@ -56,15 +79,18 @@ $ md2book build all --config my-book/book.json
 `epub` writes a reflowable EPUB 3 of every chapter to
 `dist/<config name>/<output_name>.epub` (the unpacked files stay in
 `src/epub/`). `qa` writes `QA-REPORT.md`: manuscript counts, Unicode and
-Burmese text checks, typeface coverage, and EPUB checks when the EPUB
-exists. It reports problems and never changes your files. With
+Burmese text checks, typeface coverage, and PDF and EPUB checks when
+those exist. The PDF checks write sample pages to `qa-pages/`; add
+`--printed` to check the printed edition. QA reports problems and never
+changes your files. With
 [epubcheck](https://www.w3.org/publishing/epubcheck/) on your PATH, the
-report includes its result. `build all` runs `build epub`, then
+report includes its result. `build all` runs `build pdf`, `build epub`,
 `build web` (skipped with a note when `web_published_chapters` is not
-set), then `qa`.
+set) and `qa`; `build all --printed` builds and checks the printed PDF.
 
-An `end_image` shows after the last chapter only once the chapter named
-by `end_image_after` exists.
+An `end_image` shows after the last chapter (the PDF's last page, the
+EPUB's last document) only once the chapter named by `end_image_after`
+exists.
 
 ## Web edition
 
@@ -166,6 +192,7 @@ file. The full schema is in
 | `identifier`, `output_name`                       | yes      | `init` fills both                          |
 | `cover`                                           | yes      | PNG or JPEG; must exist                    |
 | `chapter_glob`                                    | yes      | e.g. `chapters/chapter-*.md`               |
+| `recto_chapter_start`, `running_headers`          | no       | PDF: right-hand chapter starts, headers    |
 | `language`                                        | no       | `my` (default) or `en`                     |
 | `font_set`                                        | no       | `sans` (default) or `serif`                |
 | `part_glob`                                       | no       | part files                                 |
@@ -180,12 +207,13 @@ file. The full schema is in
 The API mirrors the CLI:
 
 ```ts
-import { all, fonts, init, web } from "@thixpin/md2book";
+import { all, fonts, init, pdf, web } from "@thixpin/md2book";
 
 await init({ dir: "my-book", lang: "en", title: "T", author: "A" });
 await fonts({ config: "my-book/book.json" });
 const { dir } = await web({ config: "my-book/book.json" });
-const { epub, report } = await all({ config: "my-book/book.json" });
+const { file } = await pdf({ config: "my-book/book.json", printed: true });
+const { report } = await all({ config: "my-book/book.json" });
 ```
 
 ## Development
