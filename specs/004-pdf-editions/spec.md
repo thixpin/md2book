@@ -66,14 +66,17 @@ matter, contents numbers, headers, folios and chapter openings, and the extracte
    running header and no page number.
 5. **Given** the contents page, **When** it is read, **Then** it has the configured contents
    heading, entries nested by part when the book has parts, and each chapter entry shows, after
-   a dotted leader, the number of the page the chapter actually starts on.
+   a dotted leader, the number of the page the chapter actually starts on, counted from chapter
+   one (FR-022).
 6. **Given** any chapter, **When** its first page is found, **Then** it starts on a new page with
    no running header and no page number; with `recto_chapter_start: true` it starts on a
    right-hand (odd) page, with a blank page inserted before it when needed; blank pages have no
    header and no number.
-7. **Given** body pages, **When** their margins are read, **Then** left pages show the book title
-   top-left, right pages show the current chapter's title top-right, and page numbers sit
-   bottom-centre; with `running_headers: false` neither header appears (numbers stay).
+7. **Given** body pages, **When** their margins are read, **Then** the header shows the author at
+   the outside and the current chapter title at the inside, and the footer shows the page number
+   at the outside and the book title at the inside (outside = left on left pages, right on right
+   pages; FR-022, FR-023); with `running_headers: false` the header line is gone and the footer
+   stays.
 8. **Given** body text, **When** its type is measured, **Then** it is 11 pt, line height 1.55,
    justified, with a 6 mm first-line indent, no indent after headings and blocks, and no space
    between paragraphs **[REF §5]**.
@@ -275,14 +278,6 @@ starts the next page.
   MUST be carried over, with every deliberate change recorded in `docs/decision-log.md`.
 - **FR-018**: Code and terminal blocks in both PDF editions MUST use line height 1.7, as the EPUB
   and web editions do (a recorded difference from the reference's 1.4).
-- **FR-023**: Running heads and feet MUST follow the author's layout in the PDF and the web reader:
-  header with the author at the outside and the current chapter title at the inside, footer with
-  the page number at the outside and the book title at the inside, all in the page number's type
-  (9 pt in the PDF); `running_headers: false` removes the header line only.
-- **FR-022**: Page numbers (folios and contents entries) MUST count from 1 on chapter one's first
-  page, leave the front matter unnumbered, sit at the bottom outside corner (left pages left, right
-  pages right), and use the digits of `strings.chapter_digits` (Myanmar or ASCII), as the web
-  reader does (a recorded difference from the reference's centred, whole-document numbers).
 - **FR-019**: In both PDF editions, every section heading (levels 2–6 in the chapter body) MUST
   either have at least 2 lines of its following content on the same page or start the next page
   with that content (User Story 5).
@@ -290,6 +285,14 @@ starts the next page.
   first layout and on every re-pagination (text size, window size, orientation).
 - **FR-021**: The rule MUST NOT change the manuscript or the rendered chapter HTML used by the
   EPUB; it is layout only.
+- **FR-022**: Page numbers (folios and contents entries) MUST count from 1 on chapter one's first
+  page, leave the front matter unnumbered, sit at the bottom outside corner (left pages left, right
+  pages right), and use the digits of `strings.chapter_digits` (Myanmar or ASCII), as the web
+  reader does (a recorded difference from the reference's centred, whole-document numbers).
+- **FR-023**: Running heads and feet MUST follow the author's layout in the PDF and the web reader:
+  header with the author at the outside and the current chapter title at the inside, footer with
+  the page number at the outside and the book title at the inside, all in the page number's type
+  (9 pt in the PDF); `running_headers: false` removes the header line only.
 
 ### Key Entities *(include if feature involves data)*
 
@@ -313,7 +316,8 @@ starts the next page.
   recorded in the decision log.
 - **SC-002**: Extracted text of the Burmese and English fixtures and `book-01` has 0 U+FFFD and no
   stray characters absent from the manuscript, in both editions.
-- **SC-003**: Every contents page number equals its chapter's detected start page, for every
+- **SC-003**: Every contents page number equals its chapter's detected start page (counted from
+  chapter one), for every
   fixture, in both editions.
 - **SC-004**: The printed edition contains no coloured pixels in terminal, code, table or callout
   areas of the sample renders (every pixel's colour channels differ by at most a small tolerance),

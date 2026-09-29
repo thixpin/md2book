@@ -15,7 +15,7 @@ Builds on feature 001 (`BookConfig`, `Chapter`, `Part`, `FontSet`), 003 (`Book`,
 ```text
 <!DOCTYPE html><html lang="{language}"><head><meta charset="utf-8"/>
 <title>{title}</title>{stylesheet links}{Paged.js scripts}</head>
-<body data-title="{title}">
+<body data-title="{title}" data-folio-digits="{strings.chapter_digits}">
 [<div class="cover-page"><img src="/book/cover{ext}" alt="Cover"/></div>]      screen only
 <section class="front">{title page}</section>
 <section class="front">{copyright page}</section>
@@ -25,8 +25,14 @@ Builds on feature 001 (`BookConfig`, `Chapter`, `Part`, `FontSet`), 003 (`Book`,
 </body></html>
 ```
 
+The last section ends with `<div class="md2book-end"></div>` (inside it: on its own the marker
+would start a new page); the render fails if it is not laid out. Newlines inside `<pre>` are
+each wrapped as `<span class="nl">\n</span>` (Paged.js stopped at text nodes holding several
+code lines).
+
 The reference joins these pieces with `\n`. `group-a` when the chapter's index is odd; `recto`
-when `recto_chapter_start` is true. Body = `fitPreBlocks(addSyllableBreaks(chapter.html))`.
+when `recto_chapter_start` is true. Body =
+`isolateCodeNewlines(fitPreBlocks(addSyllableBreaks(chapter.html)))`.
 
 ## Served paths (virtual origin `http://md2book.local/`)
 
@@ -42,8 +48,14 @@ Any other path → build error `md2book: pdf: unexpected request <path>`.
 
 ## Generated rules (`book.css`, appended last)
 
-- `@page :left { @top-left { content: "{title as CSS string}"; } }`
-- when `running_headers` is false: `@page :left{@top-left{content:none}} @page :right{@top-right{content:none}}`
+- running heads and feet (FR-023): left pages `@top-left` author, `@top-right`
+  `string(chaptertitle)`, `@bottom-left` `var(--md2book-folio)`, `@bottom-right` book title; right
+  pages mirrored; all 9 pt `#777`, the header 7.5 mm above the text; `running_headers: false`
+  sets both header boxes to `content: none`;
+- no margin boxes on `:blank`, `front` and `cover` pages; no `@bottom-center`;
+- `#ch01 { counter-reset: page 1; }` and `.toc-page li a::after { content:
+  target-counter(attr(href url), page[, myanmar]); }` (FR-022); `assets/paged-handler.js` writes
+  `--md2book-folio` on every page from chapter one on.
 
 ## PdfFacts (QA read-back)
 
