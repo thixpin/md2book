@@ -75,12 +75,23 @@ describe("reader behaviour (SC-004)", () => {
   it("turns forward and back with one swipe each on a phone", async () => {
     const page = await open(`${mm.url}chapters/ch01.html`, phone);
     const start = await indicator(page);
-    const y = 400;
-    await swipe(page, 330, 60, y);
+    // A height where both swipe ends are over plain text: gestures that start on a table or code
+    // block are left to it (it may scroll sideways).
+    const plainAt = () =>
+      page.evaluate(() => {
+        for (let y = 150; y < innerHeight - 150; y += 10) {
+          const clear = [60, 330].every(
+            (x) => !document.elementFromPoint(x, y)?.closest("pre, table, .terminal"),
+          );
+          if (clear) return y;
+        }
+        return 400;
+      });
+    await swipe(page, 330, 60, await plainAt());
     await page.waitForTimeout(800);
     const next = await indicator(page);
     expect(next).not.toBe(start);
-    await swipe(page, 60, 330, y);
+    await swipe(page, 60, 330, await plainAt());
     await page.waitForTimeout(800);
     expect(await indicator(page)).toBe(start);
     await page.context().close();
@@ -169,7 +180,7 @@ describe("reader behaviour (SC-004)", () => {
 
   it("prints ASCII folios in an English book", async () => {
     const page = await open(`${en.url}chapters/ch01.html`);
-    const folios = await page.$$eval("[data-page-number]:not([hidden])", (els) =>
+    const folios = await page.$$eval("[data-page-number]:not([hidden]) .outside", (els) =>
       els.map((el) => el.textContent ?? ""),
     );
     expect(folios.join("")).toMatch(/^[0-9]+$/);

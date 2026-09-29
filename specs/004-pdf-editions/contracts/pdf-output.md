@@ -60,7 +60,7 @@ next block (or the whole of an unbreakable block), otherwise it starts the next 
 | other left page | author top left, chapter title top right | page number bottom left, book title bottom right |
 | other right page | chapter title top left, author top right | book title bottom left, page number bottom right |
 
-All four in 9 pt, #333 (author request: author and page number outside, chapter and book title
+All four in 9 pt grey (#777), the header 7.5 mm above the text block (author request: author and page number outside, chapter and book title
 inside). `running_headers: false` removes the header line; the footer stays.
 
 Numbering (FR-022): page 1 is chapter one's first page; the front matter has no numbers; digits

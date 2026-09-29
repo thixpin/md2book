@@ -38,6 +38,12 @@
     left: reader.querySelector('[data-page-number="left"]'),
     right: reader.querySelector('[data-page-number="right"]'),
   };
+  // md2book: running heads (spec 004 FR-023), placed like the folios.
+  const heads = {
+    left: reader.querySelector('[data-page-head="left"]'),
+    right: reader.querySelector('[data-page-head="right"]'),
+  };
+  const bookAuthor = reader.dataset.author || "";
   // The toolbar lives in the page header, outside the reader.
   const bookmarkToggle = document.querySelector("[data-bookmark-toggle]");
   const fullscreenToggle = document.querySelector("[data-fullscreen-toggle]");
@@ -282,8 +288,10 @@
     copy.querySelectorAll("[id]").forEach((node) => node.removeAttribute("id"));
     const number = document.createElement("span");
     number.className = "page-number";
-    el.replaceChildren(copy, number);
-    return { el, copy, number, originX };
+    const head = document.createElement("span");
+    head.className = "page-head";
+    el.replaceChildren(copy, number, head);
+    return { el, copy, number, head, originX };
   }
 
   // Points a prepared surface at a page. Nothing is created or laid out:
@@ -294,6 +302,7 @@
     const cover = back || (exists && pageIndex === coverPage());
     surface.copy.style.visibility = exists && !cover ? "" : "hidden";
     surface.number.style.visibility = exists && pageIndex >= frontPages && pageIndex < bodyEnd ? "" : "hidden";
+    surface.head.style.visibility = exists && hasHead(pageIndex) ? "" : "hidden";
     paintPaper(surface.el, cover
       ? coverPaint(surfaces.g, surface.originX, surface.el.paper.side, back ? backCoverSrc : coverSrc)
       : surface.el.paper);
@@ -302,21 +311,43 @@
     surface.copy.style.transform =
       `translateX(${-(firstVisible - pageShift) * (pageWidth + pageGap) - surface.originX}px)`;
     placeFolio(surface.number, pageIndex, surface.originX);
+    placeHead(surface.head, pageIndex, surface.originX);
   }
 
-  // Puts a page number at its page's outer bottom corner: aligned with the
-  // text block's outer edge, inside the bottom padding where no text flows.
-  // `originX` is the window x of the left edge of the element it is drawn in.
+  // md2book (spec 004 FR-023): the foot of each page is the page number at the outer corner and
+  // the book title at the inner one; its head is the author outside and the chapter title inside.
+  // Both span the text block, in the padding where no text flows. `originX` is the window x of
+  // the left edge of the element they are drawn in.
   function placeFolio(el, pageIndex, originX) {
+    placeLine(el, pageIndex, originX, burmeseDigits(pageLabel(pageIndex)), bookTitle, false);
+  }
+
+  function placeHead(el, pageIndex, originX) {
+    placeLine(el, pageIndex, originX, bookAuthor, chapterAt(pageIndex)?.shortTitle ?? "", true);
+  }
+
+  // Numbered pages carry a head, except a chapter's first page, whose own head shows the titles.
+  const hasHead = (page) =>
+    page >= frontPages && page < bodyEnd && !chapterStarts.some((start) => start.page === page);
+
+  function placeLine(el, pageIndex, originX, outside, inside, top) {
     const styles = getComputedStyle(flow);
     const onLeft = pagesPerView === 2 && pageIndex % 2 === 0;
-    const x = onLeft
+    const left = onLeft
       ? parseFloat(styles.paddingLeft)
-      : windowEl.clientWidth - parseFloat(styles.paddingRight);
-    const bottom = windowEl.clientHeight - parseFloat(styles.paddingBottom) * 0.36;
-    el.textContent = burmeseDigits(pageLabel(pageIndex));
-    el.style.transform = `translate(${x - originX}px, ${bottom}px) ` +
-      `translate(${onLeft ? 0 : -100}%, -100%)`;
+      : windowEl.clientWidth - parseFloat(styles.paddingRight) - pageWidth;
+    const y = top
+      ? parseFloat(styles.paddingTop) * 0.36
+      : windowEl.clientHeight - parseFloat(styles.paddingBottom) * 0.36;
+    const outer = document.createElement("span");
+    outer.className = "outside";
+    outer.textContent = outside;
+    const inner = document.createElement("span");
+    inner.className = "inside";
+    inner.textContent = inside;
+    el.replaceChildren(...(onLeft ? [outer, inner] : [inner, outer]));
+    el.style.width = `${pageWidth}px`;
+    el.style.transform = `translate(${left - originX}px, ${y}px) translateY(${top ? 0 : -100}%)`;
   }
 
   // The turning sheet (hinged strips) and the page under it keep their own
@@ -601,11 +632,16 @@
     bookState = pagesPerView === 2 && turn === 0 ? "closed" : "open";
     const slots = pagesPerView === 2 ? ["left", "right"] : ["right"];
     numbers.left.hidden = numbers.right.hidden = true;
+    heads.left.hidden = heads.right.hidden = true;
     slots.forEach((slot, offset) => {
       const page = firstPage + offset;
       if (page >= pageCount || page < frontPages || page >= bodyEnd) return;
       placeFolio(numbers[slot], page, 0);
       numbers[slot].hidden = false;
+      if (hasHead(page)) {
+        placeHead(heads[slot], page, 0);
+        heads[slot].hidden = false;
+      }
     });
     storage.write(positionKey, { page: firstPage, pageCount });
     syncAddress(Math.min(firstPage + pagesPerView - 1, pageCount - 1));

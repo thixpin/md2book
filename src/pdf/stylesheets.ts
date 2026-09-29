@@ -26,10 +26,10 @@ function cssString(text: string): string {
  */
 function bookCss(config: BookConfig): string {
   const style = config.strings.chapter_digits === "myanmar" ? ", myanmar" : "";
-  const type = "font-size: 9pt; color: #333;";
+  const type = "font-size: 9pt; color: #777;";
   const head = config.running_headers
     ? (content: string) =>
-        `content: ${content}; ${type} vertical-align: bottom; padding-bottom: 3mm;`
+        `content: ${content}; ${type} vertical-align: bottom; padding-bottom: 7.5mm;`
     : () => "content: none;";
   // assets/paged-handler.js writes each page's number as --md2book-folio.
   const foot = (content: string) =>

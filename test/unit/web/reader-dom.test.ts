@@ -48,6 +48,7 @@ const HOOKS = [
   "span.flow-end",
   ".book-gutter",
   "span.page-number[data-page-number]",
+  "span.page-head[data-page-head]",
   ".book-cover[data-book-cover]",
   ".cover-face[data-cover-front]",
   ".cover-face.cover-back",

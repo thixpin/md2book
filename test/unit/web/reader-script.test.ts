@@ -52,6 +52,30 @@ export const READER_EDITS: [string, string][] = [
     '    book.classList.remove("needs-filler");\n    for (const heading of flow.querySelectorAll(".keep-with-next")) heading.classList.remove("keep-with-next");\n    layOut();\n    keepHeadingsWithContent(layOut);\n',
     '    book.classList.remove("needs-filler");\n    layOut();\n',
   ],
+  [
+    '  const numbers = {\n    left: reader.querySelector(\'[data-page-number="left"]\'),\n    right: reader.querySelector(\'[data-page-number="right"]\'),\n  };\n  // md2book: running heads (spec 004 FR-023), placed like the folios.\n  const heads = {\n    left: reader.querySelector(\'[data-page-head="left"]\'),\n    right: reader.querySelector(\'[data-page-head="right"]\'),\n  };\n  const bookAuthor = reader.dataset.author || "";\n',
+    "  const numbers = {\n    left: reader.querySelector('[data-page-number=\"left\"]'),\n    right: reader.querySelector('[data-page-number=\"right\"]'),\n  };\n",
+  ],
+  [
+    '    const number = document.createElement("span");\n    number.className = "page-number";\n    const head = document.createElement("span");\n    head.className = "page-head";\n    el.replaceChildren(copy, number, head);\n    return { el, copy, number, head, originX };',
+    '    const number = document.createElement("span");\n    number.className = "page-number";\n    el.replaceChildren(copy, number);\n    return { el, copy, number, originX };',
+  ],
+  [
+    '    surface.number.style.visibility = exists && pageIndex >= frontPages && pageIndex < bodyEnd ? "" : "hidden";\n    surface.head.style.visibility = exists && hasHead(pageIndex) ? "" : "hidden";\n',
+    '    surface.number.style.visibility = exists && pageIndex >= frontPages && pageIndex < bodyEnd ? "" : "hidden";\n',
+  ],
+  [
+    "    placeFolio(surface.number, pageIndex, surface.originX);\n    placeHead(surface.head, pageIndex, surface.originX);\n",
+    "    placeFolio(surface.number, pageIndex, surface.originX);\n",
+  ],
+  [
+    '  // md2book (spec 004 FR-023): the foot of each page is the page number at the outer corner and\n  // the book title at the inner one; its head is the author outside and the chapter title inside.\n  // Both span the text block, in the padding where no text flows. `originX` is the window x of\n  // the left edge of the element they are drawn in.\n  function placeFolio(el, pageIndex, originX) {\n    placeLine(el, pageIndex, originX, burmeseDigits(pageLabel(pageIndex)), bookTitle, false);\n  }\n\n  function placeHead(el, pageIndex, originX) {\n    placeLine(el, pageIndex, originX, bookAuthor, chapterAt(pageIndex)?.shortTitle ?? "", true);\n  }\n\n  // Numbered pages carry a head, except a chapter\'s first page, whose own head shows the titles.\n  const hasHead = (page) =>\n    page >= frontPages && page < bodyEnd && !chapterStarts.some((start) => start.page === page);\n\n  function placeLine(el, pageIndex, originX, outside, inside, top) {\n    const styles = getComputedStyle(flow);\n    const onLeft = pagesPerView === 2 && pageIndex % 2 === 0;\n    const left = onLeft\n      ? parseFloat(styles.paddingLeft)\n      : windowEl.clientWidth - parseFloat(styles.paddingRight) - pageWidth;\n    const y = top\n      ? parseFloat(styles.paddingTop) * 0.36\n      : windowEl.clientHeight - parseFloat(styles.paddingBottom) * 0.36;\n    const outer = document.createElement("span");\n    outer.className = "outside";\n    outer.textContent = outside;\n    const inner = document.createElement("span");\n    inner.className = "inside";\n    inner.textContent = inside;\n    el.replaceChildren(...(onLeft ? [outer, inner] : [inner, outer]));\n    el.style.width = `${pageWidth}px`;\n    el.style.transform = `translate(${left - originX}px, ${y}px) translateY(${top ? 0 : -100}%)`;\n  }\n',
+    "  // Puts a page number at its page's outer bottom corner: aligned with the\n  // text block's outer edge, inside the bottom padding where no text flows.\n  // `originX` is the window x of the left edge of the element it is drawn in.\n  function placeFolio(el, pageIndex, originX) {\n    const styles = getComputedStyle(flow);\n    const onLeft = pagesPerView === 2 && pageIndex % 2 === 0;\n    const x = onLeft\n      ? parseFloat(styles.paddingLeft)\n      : windowEl.clientWidth - parseFloat(styles.paddingRight);\n    const bottom = windowEl.clientHeight - parseFloat(styles.paddingBottom) * 0.36;\n    el.textContent = burmeseDigits(pageLabel(pageIndex));\n    el.style.transform = `translate(${x - originX}px, ${bottom}px) ` +\n      `translate(${onLeft ? 0 : -100}%, -100%)`;\n  }\n",
+  ],
+  [
+    "    numbers.left.hidden = numbers.right.hidden = true;\n    heads.left.hidden = heads.right.hidden = true;\n    slots.forEach((slot, offset) => {\n      const page = firstPage + offset;\n      if (page >= pageCount || page < frontPages || page >= bodyEnd) return;\n      placeFolio(numbers[slot], page, 0);\n      numbers[slot].hidden = false;\n      if (hasHead(page)) {\n        placeHead(heads[slot], page, 0);\n        heads[slot].hidden = false;\n      }\n    });",
+    "    numbers.left.hidden = numbers.right.hidden = true;\n    slots.forEach((slot, offset) => {\n      const page = firstPage + offset;\n      if (page >= pageCount || page < frontPages || page >= bodyEnd) return;\n      placeFolio(numbers[slot], page, 0);\n      numbers[slot].hidden = false;\n    });",
+  ],
 ];
 
 describe("carried reader script", () => {

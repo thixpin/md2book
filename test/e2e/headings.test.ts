@@ -90,3 +90,47 @@ describe.each([
     await context.close();
   });
 });
+
+describe("web reader running heads (spec 004 FR-023)", () => {
+  it("shows author and chapter title at the head, page number and book title at the foot", async () => {
+    const browser = await chromium.launch();
+    const context = await browser.newContext({ ...contextOptions(desktop), isMobile: false });
+    const page = await context.newPage();
+    await page.goto(`${site.url}chapters/ch01.html`);
+    await ready(page);
+    await page.keyboard.press("ArrowRight"); // past the chapter opening
+    await page.waitForTimeout(900);
+    const lines = await page.evaluate(() =>
+      [
+        ...document.querySelectorAll(
+          "[data-page-head]:not([hidden]), [data-page-number]:not([hidden])",
+        ),
+      ].map((el) => ({
+        kind: el.hasAttribute("data-page-head") ? "head" : "foot",
+        side: el.getAttribute("data-page-head") ?? el.getAttribute("data-page-number"),
+        order: [...el.children].map((child) => child.className),
+        outside: el.querySelector(".outside")!.textContent,
+        inside: el.querySelector(".inside")!.textContent,
+      })),
+    );
+    const heads = lines.filter((line) => line.kind === "head");
+    const feet = lines.filter((line) => line.kind === "foot");
+    expect(heads.length).toBeGreaterThan(0);
+    expect(feet.length).toBe(2);
+    for (const head of heads) {
+      expect(head.outside).toBe("Fixture Author");
+      expect(head.inside).toBe("ခေါင်းစဉ် စမ်းသပ် 1");
+    }
+    for (const foot of feet) {
+      expect(foot.outside).toMatch(/^[\u1040-\u1049]+$/);
+      expect(foot.inside).toBe("ခေါင်းစဉ် စမ်းသပ်");
+    }
+    // Outside is the left edge of a left page and the right edge of a right page.
+    for (const line of lines) {
+      expect(line.order).toEqual(
+        line.side === "left" ? ["outside", "inside"] : ["inside", "outside"],
+      );
+    }
+    await browser.close();
+  });
+});

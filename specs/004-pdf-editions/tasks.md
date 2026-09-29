@@ -133,6 +133,7 @@ is currently reserved and becomes real in US1.
 - [X] T043 [US1] Page numbers from chapter one, Myanmar digits for Myanmar books, folios in the outside corners (FR-022): `src/pdf/stylesheets.ts` (`book.css`), `assets/paged-handler.js` (`Folios`), `src/pdf/document.ts` (`data-folio-digits`); tests in `test/unit/pdf/stylesheets.test.ts`, `test/unit/pdf/print-document.test.ts`, `test/integration/pdf.test.ts`
 - [X] T044 [US2] Printed terminal icons as the macOS window controls (×, −, +), centred SVGs on round grey dots; more room between contents entries (`assets/css/printed.css`, `assets/css/print.css`)
 - [X] T045 Smaller web chapter title (`assets/css/web.css`, author request)
+- [X] T046 [US1] Running heads and feet (FR-023) in the PDF (`src/pdf/stylesheets.ts`: author/chapter title in the header 7.5 mm above the text, page number/book title in the footer, 9 pt grey) and the web reader (`assets/web-reader.js` `placeLine`, `src/web/reader-dom.ts` head elements and `data-author`, `assets/css/web.css`); tests in `test/unit/pdf/stylesheets.test.ts`, `test/integration/pdf.test.ts`, `test/e2e/headings.test.ts`
 
 ## Phase 8: Polish
 

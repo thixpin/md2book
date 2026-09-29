@@ -330,3 +330,23 @@ pre { line-height: 1.7; }
    that WebKit leaves too low to the next page with keep-with-next. */
 .chapter-body h3, .chapter-body h4, .chapter-body h5, .chapter-body h6 { break-after: avoid; }
 .keep-with-next { break-before: column; -webkit-column-break-before: always; }
+
+/* md2book addition (docs/decision-log.md): running heads and feet as in the PDF (spec 004
+   FR-023). The foot (.page-number) holds the page number outside and the book title inside; the
+   head holds the author outside and the chapter title inside; both span the text block in the
+   folio's type. JavaScript places them. */
+.page-head { position: absolute; z-index: 2; top: 0; left: 0; color: var(--muted);
+  font-size: .72rem; line-height: 1; letter-spacing: .03em; opacity: .85; pointer-events: none; }
+.page-head[hidden] { display: none; }
+.turn-face .page-head, .turn-under .page-head { z-index: auto; }
+.page-number, .page-head { display: flex; justify-content: space-between; gap: 1rem;
+  white-space: nowrap; }
+/* Each part clips for the ellipsis, so its line box must hold Burmese stacks. */
+.page-number > span, .page-head > span { overflow: hidden; text-overflow: ellipsis;
+  line-height: 2; }
+.book.is-closed:not(.is-single) > [data-page-head="left"] { display: none; }
+/* Room between the running head and the text (author request). */
+.reader-flow { padding-top: 3.75rem; }
+@media (max-width: 40rem) {
+  .reader-flow { padding-top: 3.1rem; }
+}

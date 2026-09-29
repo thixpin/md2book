@@ -101,7 +101,7 @@ export function readerHtml(book: WebBook, openChapter: string): string {
 
   return (
     `<div class="reader-shell" data-reader data-book-key="${book.bookKey}" ` +
-    `data-book-title="${title}" data-open-chapter="${openChapter}" ` +
+    `data-book-title="${title}" data-author="${esc(config.author)}" data-open-chapter="${openChapter}" ` +
     `data-cover-src="/${book.coverName}" data-back-cover-src="/${book.backCoverName}" ` +
     `data-cover-ratio="${facts.ratio.toFixed(5)}" ` +
     `data-cover-edge="${edgeCss(facts.edge)}"${readerOptions(config)}>` +
@@ -113,6 +113,8 @@ export function readerHtml(book: WebBook, openChapter: string): string {
     '<div class="book-gutter" aria-hidden="true"></div>' +
     '<span class="page-number" data-page-number="left" aria-hidden="true" hidden></span>' +
     '<span class="page-number" data-page-number="right" aria-hidden="true" hidden></span>' +
+    '<span class="page-head" data-page-head="left" aria-hidden="true" hidden></span>' +
+    '<span class="page-head" data-page-head="right" aria-hidden="true" hidden></span>' +
     '<div class="book-cover" data-book-cover aria-hidden="true">' +
     '<div class="cover-face" data-cover-front></div><div class="cover-face cover-back"></div></div>' +
     '<div class="book-cover book-back-cover" data-book-back-cover aria-hidden="true"></div>' +

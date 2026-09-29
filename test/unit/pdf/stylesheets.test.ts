@@ -107,9 +107,9 @@ describe("printStylesheets", () => {
     expect(book.name).toBe("book.css");
     const css = book.css;
     const head = (content: string) =>
-      `content: ${content}; font-size: 9pt; color: #333; vertical-align: bottom; padding-bottom: 3mm;`;
+      `content: ${content}; font-size: 9pt; color: #777; vertical-align: bottom; padding-bottom: 7.5mm;`;
     const foot = (content: string) =>
-      `content: ${content}; font-size: 9pt; color: #333; vertical-align: top; padding-top: 4mm;`;
+      `content: ${content}; font-size: 9pt; color: #777; vertical-align: top; padding-top: 4mm;`;
     const title = '"Say \\"hi\\" \\\\ now\\a please"';
     // Outside: left edge of a left page, right edge of a right page.
     expect(css).toContain(

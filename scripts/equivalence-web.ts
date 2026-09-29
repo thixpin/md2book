@@ -18,9 +18,14 @@ import { skeleton } from "../test/helpers/html.ts";
 // Deliberate differences recorded in docs/decision-log.md.
 /** Removes the recorded additions (text-size button and panel, spec 002 FR-024) from our page. */
 function withoutAdditions(html: string): string {
-  return html
-    .replace(/<button[^>]*popovertarget="reader-text"[\s\S]*?<\/button>/, "")
-    .replace(/<div class="reader-panel" id="reader-text"[\s\S]*?<\/div><\/div>/, "");
+  return (
+    html
+      .replace(/<button[^>]*popovertarget="reader-text"[\s\S]*?<\/button>/, "")
+      .replace(/<div class="reader-panel" id="reader-text"[\s\S]*?<\/div><\/div>/, "")
+      // Running heads (spec 004 FR-023).
+      .replace(/<span class="page-head"[^>]*><\/span>/g, "")
+      .replace(/ data-author="[^"]*"/, "")
+  );
 }
 const ALLOWED_EXTRA = new Set(["fonts/LICENSE-OFL.txt"]);
 
