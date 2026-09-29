@@ -13,9 +13,9 @@ export interface CoverOptions {
   output?: string;
   /** Resolution (default 300). */
   dpi?: number;
-  /** Book config whose `language` and `font_set` pick the fonts. */
+  /** Book config whose `language` and `font_set` pick the fonts (default book.json). */
   config?: string;
-  /** Font set id instead of a config (default `my-sans`). */
+  /** Font set id instead of a config. */
   set?: string;
   /** Font cache root (overrides MD2BOOK_FONTS). */
   fontsDir?: string;
@@ -38,13 +38,13 @@ export async function runCover(
   const manifest = await loadManifest(manifestPath);
   let set: FontSet;
   let fix: string;
-  if (options.config) {
-    const { config } = await loadConfig(options.config, { requireCover: false });
+  if (options.set) {
+    set = fontSetById(manifest, options.set);
+    fix = `md2book fonts --set ${set.id}`;
+  } else {
+    const { config } = await loadConfig(options.config ?? "book.json", { requireCover: false });
     set = getFontSet(manifest, config.language, config.font_set);
     fix = `md2book fonts --config ${config.configPath}`;
-  } else {
-    set = fontSetById(manifest, options.set ?? "my-sans");
-    fix = `md2book fonts --set ${set.id}`;
   }
   const fontsDir = requireSet(set, options, fix);
   const file = resolve(options.output ?? join(dirname(html), "cover.png"));

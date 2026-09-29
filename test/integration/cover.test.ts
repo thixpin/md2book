@@ -1,5 +1,5 @@
 import { cpSync, existsSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
+import { join, resolve } from "node:path";
 import sharp from "sharp";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { runCli } from "../../src/cli.ts";
@@ -42,7 +42,10 @@ describe("md2book cover", { timeout: 120_000 }, () => {
   it("renders the page at 300 dpi to cover.png next to the HTML", async () => {
     const fontsDir = await fonts("my-sans");
     const dir = coverDir();
-    const result = await runCover({ html: join(dir, "cover.html"), fontsDir }, PRINT_MANIFEST);
+    const result = await runCover(
+      { html: join(dir, "cover.html"), set: "my-sans", fontsDir },
+      PRINT_MANIFEST,
+    );
     expect(result).toEqual({ file: join(dir, "cover.png"), width: 2008, height: 2835 });
     expect(await size(result.file)).toEqual([2008, 2835]);
   });
@@ -52,7 +55,7 @@ describe("md2book cover", { timeout: 120_000 }, () => {
     const dir = coverDir();
     const out = join(tempDir(), "out.png");
     await runCover(
-      { html: join(dir, "cover.html"), output: out, dpi: 150, fontsDir },
+      { html: join(dir, "cover.html"), output: out, dpi: 150, set: "my-sans", fontsDir },
       PRINT_MANIFEST,
     );
     expect(await size(out)).toEqual([1004, 1417]);
@@ -101,7 +104,7 @@ describe("md2book cover", { timeout: 120_000 }, () => {
     const fontsDir = await fonts("my-sans");
     const dir = coverDir();
     const html = join(dir, "two-pages.html");
-    await expect(runCover({ html, fontsDir }, PRINT_MANIFEST)).rejects.toThrow(
+    await expect(runCover({ html, set: "my-sans", fontsDir }, PRINT_MANIFEST)).rejects.toThrow(
       new BookError(html, "expected 1 page, got 2"),
     );
     expect(readdirSync(dir).filter((name) => name.endsWith(".png"))).toEqual(["mark.png"]);
@@ -115,7 +118,7 @@ describe("md2book cover", { timeout: 120_000 }, () => {
       html,
       '<!doctype html><style>@page { size: 50mm 50mm; margin: 0 }</style><img src="https://example.com/x.png">',
     );
-    await expect(runCover({ html, fontsDir }, PRINT_MANIFEST)).rejects.toThrow(
+    await expect(runCover({ html, set: "my-sans", fontsDir }, PRINT_MANIFEST)).rejects.toThrow(
       new BookError("cover", "unexpected request https://example.com/x.png"),
     );
   });
@@ -123,7 +126,7 @@ describe("md2book cover", { timeout: 120_000 }, () => {
   it("stops with the fonts command when the set is not cached", async () => {
     const dir = coverDir();
     const error = await runCover(
-      { html: join(dir, "cover.html"), fontsDir: tempDir() },
+      { html: join(dir, "cover.html"), set: "my-sans", fontsDir: tempDir() },
       PRINT_MANIFEST,
     ).catch((e: unknown) => e);
     expect((error as BookError).reason).toContain("run: md2book fonts --set my-sans");
@@ -139,7 +142,10 @@ describe("md2book cover", { timeout: 120_000 }, () => {
         stderr: (s) => io.push(s),
         manifestPath: PRINT_MANIFEST,
       });
-    expect(await cli(["cover", join(dir, "cover.html")])).toBe(0);
+    expect(await cli(["cover", join(dir, "cover.html")])).toBe(1);
+    expect(io.join("")).toBe(`md2book: ${resolve("book.json")}: cannot read config file\n`);
+    io.length = 0;
+    expect(await cli(["cover", join(dir, "cover.html"), "--set", "my-sans"])).toBe(0);
     expect(io.join("")).toBe(
       `Cover written: ${join(dir, "cover.png")} (2008 x 2835 px, 300 dpi)\n`,
     );

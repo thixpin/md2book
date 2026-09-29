@@ -20,12 +20,12 @@ A complete, small book that uses every manuscript format md2book supports. Copy 
 From this folder, after installing md2book (see the repository README):
 
 ```console
-$ md2book fonts --config book.json
-$ md2book cover cover/cover.html --config book.json
-$ md2book cover cover/end.html -o cover/end.png --dpi 150 --config book.json
-$ md2book build all --config book.json
-$ md2book build pdf --printed --config book.json
-$ md2book serve --config book.json
+$ md2book fonts
+$ md2book cover cover/cover.html
+$ md2book cover cover/end.html -o cover/end.png --dpi 150
+$ md2book build all
+$ md2book build pdf --printed
+$ md2book serve
 ```
 
 The editions go to `dist/book/`: `python-170x240.pdf`, `python-170x240-printed.pdf`,

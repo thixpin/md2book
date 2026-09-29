@@ -152,8 +152,11 @@ export async function runCli(argv: string[], deps: CliDeps = {}): Promise<number
     .argument("<file>", "cover HTML file")
     .option("-o, --output <png>", "PNG to write (default cover.png next to the HTML)")
     .option("--dpi <n>", "resolution in dots per inch", "300")
-    .option("--config <path>", "book config; its language and font_set pick the fonts")
-    .option("--set <id>", "font set id instead of a config (default my-sans)")
+    .option(
+      "--config <path>",
+      "book config (default book.json); its language and font_set pick the fonts",
+    )
+    .option("--set <id>", "font set id instead of a config")
     .option("--fonts <dir>", "font cache root (overrides MD2BOOK_FONTS)")
     .action(
       async (
