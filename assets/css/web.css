@@ -21,6 +21,9 @@ button { font: inherit; }
   color: var(--muted); font-size: .8rem; line-height: 1.4; }
 .site-header a { min-width: 0; overflow: hidden; color: inherit; text-decoration: none;
   text-overflow: ellipsis; white-space: nowrap; }
+/* md2book: the link clips its overflow (for the ellipsis), so its line box must
+   hold Burmese stacked glyphs; the 2rem toolbar still sets the header height. */
+.site-header a { line-height: 2; }
 .site-title { font-weight: 600; }
 .site-subtitle { margin-left: .6rem; opacity: .8; }
 main { min-height: calc(100vh - 8rem); padding: 1.2rem 1rem 2.5rem; }

@@ -50,4 +50,12 @@ describe("web assets", () => {
       ".book-name, .chapter-number { font-size: calc(.9rem * var(--text-scale, 1)); }",
     );
   });
+
+  it("gives the header title a line box tall enough for Burmese stacked glyphs", async () => {
+    const { sets } = await loadManifest(FIXTURE_MANIFEST);
+    const css = stylesheet(sets["my-sans"]);
+    const rules = [...css.matchAll(/\.site-header a \{([^}]*)\}/g)].map((m) => m[1]);
+    expect(rules.join(" ")).toContain("overflow: hidden");
+    expect(rules.at(-1)).toContain("line-height: 2;");
+  });
 });
