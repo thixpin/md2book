@@ -1,4 +1,5 @@
 import { execFileSync } from "node:child_process";
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 const ROOT = new URL("../..", import.meta.url).pathname;
@@ -40,6 +41,9 @@ describe("published package", { timeout: 120_000 }, () => {
     }
     expect(files.some((file) => /\.test\.|^test\/|^examples\//.test(file))).toBe(false);
     expect(pack.name).toBe("@thixpin/md2book");
-    expect(pack.version).toBe("0.1.0");
+    const { version } = JSON.parse(readFileSync(`${ROOT}package.json`, "utf8")) as {
+      version: string;
+    };
+    expect(pack.version).toBe(version);
   });
 });
