@@ -25,6 +25,9 @@ into `data-model.md` → Reference constants during planning.
 - Q: How close must the page count of `book-01` be to the Python PDF's? → A: Within ±2%.
 - Q: Which line height do code and terminal blocks use in the PDF editions? → A: 1.7, as in the
   EPUB and web editions (a recorded difference from the reference's 1.4).
+- Author request (added during planning): a section heading must never end a page (PDF) or a
+  page of the web reader with fewer than 2 lines of its following content below it; if it cannot
+  keep 2 lines, it moves to the next page with its content (User Story 5).
 - Planning finding: ±2% of `book-01`'s 12 pages is less than one page, so SC-001 allows at least
   ±1 page and adds a 20-chapter book (research R-06).
 
@@ -169,6 +172,35 @@ the PDF's known facts; check the sample images.
 
 ---
 
+### User Story 5 - Headings stay with their content, in PDF and web (Priority: P1)
+
+A reader never finds a section heading alone at the bottom of a page, or with a single line of its
+section under it, in the PDF or in the web reader.
+
+**Why this priority**: Author request; a stranded heading looks like a layout fault in a printed
+book and in the paged web reader alike.
+
+**Independent Test**: Build a fixture chapter whose headings fall at every position near a page
+foot (PDF) and a page foot of the web reader (in Chromium and WebKit, at several text sizes), and
+check each heading's page: it has at least 2 lines of its following content below it, or it
+starts the next page.
+
+**Acceptance Scenarios**:
+
+1. **Given** a section heading (levels 2 to 6 in the chapter body) that would fall at a page foot
+   with no line, or only one line, of its following content below it, **When** either PDF edition
+   is built, **Then** the heading starts the next page together with its content.
+2. **Given** a heading followed by a code block, list, table, terminal or callout, **When** the
+   book is paginated, **Then** the same rule holds: at least 2 lines of that block (or the whole
+   unbreakable block) are on the heading's page.
+3. **Given** the same chapter in the web reader, **When** it is paginated in Chromium or WebKit,
+   and again after the reader changes the text size or the window size, **Then** no page ends with
+   a heading followed by fewer than 2 lines of its content.
+4. **Given** a heading that already has 2 or more lines of content below it, **When** the book is
+   paginated, **Then** it stays where it is (no page is shortened needlessly).
+
+---
+
 ### Edge Cases
 
 - A book without parts: the contents is a flat list; with parts, part rows are bold and chapter
@@ -233,6 +265,13 @@ the PDF's known facts; check the sample images.
   MUST be carried over, with every deliberate change recorded in `docs/decision-log.md`.
 - **FR-018**: Code and terminal blocks in both PDF editions MUST use line height 1.7, as the EPUB
   and web editions do (a recorded difference from the reference's 1.4).
+- **FR-019**: In both PDF editions, every section heading (levels 2–6 in the chapter body) MUST
+  either have at least 2 lines of its following content on the same page or start the next page
+  with that content (User Story 5).
+- **FR-020**: The web reader MUST apply the same rule to its pages in Chromium and WebKit, on the
+  first layout and on every re-pagination (text size, window size, orientation).
+- **FR-021**: The rule MUST NOT change the manuscript or the rendered chapter HTML used by the
+  EPUB; it is layout only.
 
 ### Key Entities *(include if feature involves data)*
 
@@ -266,6 +305,9 @@ the PDF's known facts; check the sample images.
 - **SC-006**: A human side-by-side review of the Python and md2book sample renders (cover, title
   page, first chapter opening, a page with a terminal block) finds no layout regression; the
   result is recorded in the decision log.
+- **SC-007**: On the heading-position fixture, zero headings violate FR-019 in either PDF
+  edition, and zero violate FR-020 in Chromium and WebKit at the smallest, default and largest
+  text sizes.
 
 ## Assumptions
 

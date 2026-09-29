@@ -35,7 +35,7 @@ when `recto_chapter_start` is true. Body = `fitPreBlocks(addSyllableBreaks(chapt
 | `/index.html` | the print document |
 | `/css/common.css`, `/css/print.css`, `/css/printed.css`, `/css/paged.css`, `/css/book.css` | carried assets with `substituteFonts`; `book.css` = generated rules |
 | `/fonts/<file>` | the set's cached font files (`print.css` uses `../fonts/…`) |
-| `/pagedjs/paged.polyfill.js`, `/pagedjs/handler.js` | `pagedjs/dist/paged.polyfill.js`, `assets/paged-handler.js` |
+| `/pagedjs/paged.polyfill.js`, `/pagedjs/handler.js` | `pagedjs/dist/paged.polyfill.js` with the two md2book patches (research R-01), `assets/paged-handler.js` |
 | `/book/cover{ext}`, `/book/end{ext}` | config `cover`, gated `end_image` |
 
 Any other path → build error `md2book: pdf: unexpected request <path>`.
@@ -47,7 +47,7 @@ Any other path → build error `md2book: pdf: unexpected request <path>`.
 
 ## PdfFacts (QA read-back)
 
-`{ pages, sizeMm: [w, h] (page min(5, n−1)+1, one decimal), fonts (sorted BaseFont names),
+`{ pages, sizeMm: [w, h] (page min(5, n−1)+1, MediaBox `x2 − x1` and `y2 − y1`, one decimal), fonts (sorted BaseFont names),
 lines: string[][] (per page, top to bottom), text: string (all pages joined) }`.
 
 ## PdfChecks

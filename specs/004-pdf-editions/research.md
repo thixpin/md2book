@@ -1,6 +1,6 @@
 # Research: PDF Editions
 
-Measured on 2026-09-29 with Playwright 1.63 (Chromium 153), `pagedjs` 0.4.3, `pdfjs-dist` 6.3.289,
+Measured on 2026-09-29 with Playwright 1.63 (Chromium 153 and the bundled WebKit), `pagedjs` 0.4.3, `pdfjs-dist` 6.3.289,
 `pdf-lib` 1.17.1 and `@napi-rs/canvas` 1.0.9. Baselines: the Python toolchain at `d235dbd`,
 rebuilt in a temporary copy: `book-01` (1 chapter, 12 pages) and a 20-chapter book made from
 `book-01`'s chapter with 4 parts and `recto_chapter_start: true` (164 pages). Both toolchains got
@@ -34,10 +34,29 @@ pipelines. Spike scripts stayed in the session scratchpad; the findings below ar
      { text-align-last: auto }`. After the fix, the chapter opening matches the reference.
   5. A code block split across pages gets a closed bottom border (reference: open). Accepted and
      recorded.
+  6. A code block continued on the next page lost its line breaks and indentation (lines run
+     together): Paged.js's `isIgnorable` drops whitespace-only text nodes, which is where the
+     highlighter puts newlines and indentation. → patch: whitespace inside `<pre>` is not
+     ignorable. With it, the 20-chapter book is 164 pages, the reference's count exactly, and the
+     continued blocks read as in the reference.
+  7. Paged.js's `Following` handler rewrites every rule with a `+` selector into
+     `[data-following*=…]` rules in a stylesheet placed *before* the book's styles, so any sibling
+     rule that overrides a same-specificity base rule is lost: all three terminal dots were red
+     and the printed edition's hollow dots never applied. → patch: the rewrite is disabled, so
+     `+` rules stay native and in cascade order. Paragraph indents after headings, tables and
+     blocks still match the reference (the elements concerned never start a continuation page).
+- **Patching**: patches 6 and 7 are exact string replacements applied to the pinned bundle when it
+  is served (`src/pdf/paged.ts`); a unit test fails if either target text is not found exactly
+  once, so an upgrade cannot silently drop them.
+- **Start sequence** (fonts before layout): `PagedConfig = { auto: false }`; after load, await
+  `document.fonts.ready` and every face's `load()`, then `PagedPolyfill.preview()`, then wait for the
+  `after` hook, then `page.pdf`. Paged.js measures text while it paginates; starting it before the
+  book's fonts are ready could paginate with fallback metrics on a slow machine. Measured output is
+  byte-identical to the automatic start.
 - **Maintenance risk**: `pagedjs` 0.4.3 was last published in 2024. It is pinned exactly; its
   browser bundle `dist/paged.polyfill.js` (904 KB, no runtime Node dependencies used) is served into
-  the page from `node_modules`. The four workarounds above are covered by tests, so an upgrade or a
-  switch to native Chromium features can be checked against them.
+  the page from `node_modules`. The workarounds and patches are covered by tests, so an upgrade or
+  a switch to native Chromium features can be checked against them.
 
 ## R-02 Copied text / ToUnicode (plan-input R3)
 
@@ -89,16 +108,19 @@ pipelines. Spike scripts stayed in the session scratchpad; the findings below ar
   481.89 × 680.31 pt (170 × 240 mm), anchored at the top edge where Chromium lays out; removes
   `/CreationDate` and `/ModDate`; sets `/Producer` and `/Creator` to `md2book`; saves without
   object streams.
+- **Reading the size back**: page height = MediaBox `y2 − y1` (after normalisation `y1` is
+  negative, `h − 680.31`); reading `y2` alone gives 239.9 mm.
 - **Evidence**: Chromium rounds the page to 481.92 × 679.92 pt (239.9 mm) whatever size is
   requested (CSS mm, CSS pt, `page.pdf` width/height). After the pass the size reads
   170.0 × 240.0 mm and two builds are byte-identical; ActualText extraction is unchanged.
 
 ## R-06 Page-count drift (plan-input R6)
 
-- **Measured**: 20-chapter book 163 pages vs the reference's 164 (−0.6%); `book-01` 11 vs 12
-  (one page, −8%, because ±2% of 12 is less than a page). Contents numbers identical for all 20
-  chapters. Hence SC-001's "±2%, at least ±1 page" (spec clarification). The equivalence script
-  measures this with the reference's code line height 1.4 and reports the effect of 1.7 apart.
+- **Measured** (with the patches of R-01): 20-chapter book 164 pages, the reference's count
+  exactly (163 before patch 6); `book-01` 11 vs 12 before the patches (one page; ±2% of 12 is less
+  than a page), hence SC-001's "±2%, at least ±1 page" (spec clarification). Contents numbers
+  identical for all 20 chapters. The equivalence script measures this with the reference's code
+  line height 1.4 and reports the effect of 1.7 separately.
 
 ## R-07 Performance (plan-input R7)
 
@@ -111,7 +133,8 @@ pipelines. Spike scripts stayed in the session scratchpad; the findings below ar
 - **Decision**: carry `publish/css/print.css` and `printed.css` byte-for-byte to
   `assets/css/print.css` and `assets/css/printed.css` (hashes in the decision log), then add,
   each marked as an md2book addition and guarded by a test:
-  - `print.css`: `pre { line-height: 1.7; }` (FR-018);
+  - `print.css`: `pre { line-height: 1.7; }` (FR-018) and `h3, h4, h5, h6 { break-after: avoid; }`
+    (FR-019, R-11);
   - `printed.css`: the three terminal-dot icons (inner dot, minus, diagonal) as `::after` marks
     on `.terminal-dot:nth-child(1..3)`, black on the hollow dot (FR-008);
   - a separate `assets/css/paged.css` with the Paged.js workarounds of R-01, and
@@ -137,3 +160,19 @@ pipelines. Spike scripts stayed in the session scratchpad; the findings below ar
   sections `class="chapter group-a|group-b[ recto]" id="chNN"` as the reference; `fit_pre_blocks`
   ported with the reference constants (123 mm, 8.3/6.0 pt, 0.6 em; longest line in code points of
   the tag-stripped, unescaped text); `<html lang>` from the config language.
+
+## R-11 Headings keep 2 lines of their content (User Story 5)
+
+- **PDF**: a sweep of 28 heading positions near page feet (paragraph and code block after the
+  heading) gave 0 violations: each heading either kept ≥ 2 following lines or moved to the next
+  page. This comes from `break-after: avoid` on `h2` (carried `common.css`) and `orphans: 2`
+  (paragraphs; the initial value elsewhere). **Decision**: an md2book addition in `print.css`
+  extends `break-after: avoid` to `h3`–`h6`; the sweep becomes a fixture test.
+- **Web** (CSS columns, as the reader): Chromium 0 violations of 40; WebKit 8 of 40 (headings left
+  at a column foot with 0 or 1 lines after them: WebKit does not honour `break-after: avoid` in
+  columns). **Decision**: the reader, after every layout in `measure()`, checks each heading in
+  document order and, when fewer than 2 line boxes of the next element share its column, adds a
+  class `keep-with-next` (`break-before: column`) and re-measures from there; classes are cleared
+  before each re-pagination (text size, resize). With it WebKit gave 0 of 40. `web.css` also
+  extends `break-after: avoid` to `h3`–`h6`. Both are md2book additions (reader edit guarded by
+  `test/unit/web/reader-script.test.ts`).

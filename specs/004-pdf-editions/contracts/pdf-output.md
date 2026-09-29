@@ -13,7 +13,8 @@ Document and served paths: [data-model.md](../data-model.md) → PrintDocument, 
 
 md2book additions (each marked `/* md2book: … */` and guarded by a unit test):
 
-- `print.css`: `pre { line-height: 1.7; }` (FR-018);
+- `print.css`: `pre { line-height: 1.7; }` (FR-018); `h3, h4, h5, h6 { break-after: avoid; }`
+  (FR-019);
 - `printed.css`: `.terminal-dot` children 1, 2, 3 get a black `::after` mark centred in the
   hollow dot: a small filled dot, a horizontal minus and a diagonal line (bottom-left to top-right);
 - `paged.css`:
@@ -22,6 +23,27 @@ md2book additions (each marked `/* md2book: … */` and guarded by a unit test):
   - `[data-align-last-split-element='justify']:not(p, li) { text-align-last: auto; }`
 - `paged-handler.js`: a `Paged.Handler` whose `afterPageLayout(page)` adds `chapter-first` when the
   page contains `.chapter-head`.
+
+## Rendering sequence
+
+1. Load `/index.html` with `window.PagedConfig = { auto: false, after: () => { done = true } }`.
+2. Await `document.fonts.ready` and `load()` of every declared face.
+3. Call `window.PagedPolyfill.preview()`; wait for `done` (10-minute limit).
+4. `page.pdf({ preferCSSPageSize: true, printBackground: true })`, then normalise.
+
+The served Paged.js bundle carries two exact patches (research R-01): whitespace-only text inside
+`<pre>` is not ignorable; the `Following` sibling-rule rewrite is disabled.
+
+## Shared pagination rule (PDF and web, User Story 5)
+
+A section heading (`h2`–`h6` in a chapter body) is followed on its page by at least 2 lines of the
+next block (or the whole of an unbreakable block), otherwise it starts the next page.
+
+- PDF: `break-after: avoid` on `h2` (carried) and `h3`–`h6` (addition), with `orphans: 2`.
+- Web: `web.css` `h3`–`h6` `break-after: avoid` (addition, `h2` exists); `.keep-with-next
+  { break-before: column; }`; the reader's pass at the end of `measure()` adds `keep-with-next`
+  to a heading whose next element has fewer than 2 line boxes in the heading's column, in document
+  order, re-measuring after each change; it removes all `keep-with-next` classes before measuring.
 
 ## Pages
 

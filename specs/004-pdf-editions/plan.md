@@ -9,15 +9,18 @@
 
 ## Summary
 
-Add `md2book pdf [--printed]`, the PDF section of `md2book qa [--printed]`, and the PDF step of
-`md2book all [--printed]`. The build ports `build_pdf`: one print HTML document (cover, front
+Add `md2book pdf [--printed]`, the PDF section of `md2book qa [--printed]`, the PDF step of
+`md2book all [--printed]`, and the author's shared pagination rule (a section heading keeps at
+least 2 lines of its content on its page) for the PDF and the web reader. The build ports `build_pdf`: one print HTML document (cover, front
 matter, contents, chapter sections with fitted `pre` sizes and Burmese syllable breaks, optional
 end image) styled by the carried `common.css` + `print.css` (+ `printed.css`), laid out by Paged.js
 in headless Chromium and printed to PDF, then normalised with `pdf-lib` (exact 170 × 240 mm boxes,
 no dates). QA reads the PDF back with `pdfjs-dist` + `pdf-lib` (ActualText-aware text, fonts, size)
 and renders sample pages to PNG. The research spike ([research.md](./research.md)) measured every
 risk: the 20-chapter book is within −0.6% pages of the reference with identical contents numbers,
-extracted Burmese is correct, and the whole PDF takes about 4 s.
+extracted Burmese is correct, and the whole PDF takes about 4 s. Two Paged.js defects (continued
+code blocks losing line breaks; sibling rules losing the cascade) are fixed by exact patches to the
+pinned bundle, after which the 20-chapter book has the reference's page count exactly.
 
 ## Technical Context
 
@@ -32,6 +35,7 @@ streams, fonts, boxes), `pdfjs-dist` ^6.3 (Apache-2.0: text items, page renderin
 `<out>/src/book-printed.html`, `<out>/qa-pages/*.png`, `<out>/QA-REPORT.md`.
 
 **Testing**: Vitest unit + integration (offline; Chromium via Playwright as in the web slice);
+browser tests (`test/e2e`) for the web heading rule in Chromium and WebKit;
 `pdftotext` used as an extraction oracle only when on PATH (skipped with a note otherwise);
 equivalence script against the Python toolchain for SC-001 (maintainer, needs `DEVBOOK`).
 
@@ -60,7 +64,7 @@ No NEEDS CLARIFICATION items remain.
 | VI. Test-first | Tests precede each module; offline; `pdftotext` optional oracle. | Pass |
 | VII. Deterministic | `pdf-lib` pass removes dates and fixes boxes; spike showed byte-identical rebuilds; `src/` and `qa-pages/` rebuilt. | Pass |
 | VIII. Small surface | Adds `pdf()`; `qa()`/`all()` gain `printed`; no new config keys. | Pass |
-| IX. Web | Not affected. | N/A |
+| IX. Web | The reader gains the heading-keep pass (User Story 5); it only adds a layout class, keeps keyboard/screen-reader behaviour, and is covered by e2e tests in Chromium and WebKit. | Pass |
 
 **Post-design re-check**: unchanged; the Paged.js workarounds are CSS and one handler, no
 framework.
@@ -90,6 +94,7 @@ src/
 ├── pdf/
 │   ├── document.ts       # fitPreBlocks, addSyllableBreaks, printDocument (HTML string)
 │   ├── stylesheets.ts    # printStylesheets(set, config, printed): carried CSS + generated rules
+│   ├── paged.ts          # pagedBundle(): pinned paged.polyfill.js with the two exact patches
 │   ├── render.ts         # renderPdf(html, assets): Chromium + Paged.js via page.route → PDF bytes
 │   ├── normalise.ts      # normalisePdf(bytes): boxes, metadata, deterministic save
 │   ├── build.ts          # buildPdf(book, {out, printed, …}): src/ HTML, render, normalise, write
@@ -101,12 +106,18 @@ src/
 │   ├── report.ts         # PDF section (replaces "PDF not built." when the PDF exists)
 │   └── command.ts        # runQa/runAll gain `printed`; runAll = pdf → epub → qa
 ├── cli.ts                # `pdf` wired; `--printed` on pdf/qa/all; reserved: `cover` only
+assets/css/web.css         # + h3–h6 break-after: avoid; .keep-with-next { break-before: column }
+assets/web-reader.js       # + heading-keep pass at the end of measure() (READER_EDITS guard)
 └── index.ts              # + pdf(); qa/all accept printed
 test/
 ├── fixtures/book-mm, book-en   # existing (parts, terminals, tables, callouts, end image, English)
+├── fixtures/book-headings      # headings (h2–h4) at every offset near a page foot, then prose/code/list/table
+├── e2e/headings.test.ts        # web rule in Chromium and WebKit at 3 text sizes
 ├── unit/pdf/, unit/qa/pdf-*.test.ts
 └── integration/pdf.test.ts, pdf-qa.test.ts, pdf-perf.test.ts
-scripts/equivalence-pdf.ts       # SC-001 against development-book (book-01 + 20-chapter book)
+scripts/equivalence-pdf.ts       # SC-001 against development-book: book-01 and a 20-chapter book the
+                                 # script generates into the temporary Python copy (book-01's chapter
+                                 # ×20, 4 parts, recto starts), both built by both toolchains
 ```
 
 **Structure Decision**: `src/pdf` beside `src/epub` and `src/web`; PDF reading lives in `src/qa`

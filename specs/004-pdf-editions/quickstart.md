@@ -24,6 +24,10 @@ Expected:
   0 replacement characters ([contracts/qa-pdf.md](./contracts/qa-pdf.md));
 - `qa-pages/` holds the sample PNGs; open them to review the layout.
 
+Headings (User Story 5): `npm run test:e2e` runs the heading-position
+fixture in Chromium and WebKit; in the PDF, no page ends with a heading
+followed by fewer than 2 lines of its section.
+
 Rebuild and compare: two `md2book pdf` runs give the same bytes
 (`shasum` of the PDF).
 

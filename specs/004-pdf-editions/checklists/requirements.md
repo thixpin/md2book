@@ -34,3 +34,5 @@
 - Reference artefacts (`print.css`, `printed.css`, the `pre` sizing formula) are named because
   Constitution I requires equivalence with them; they are behaviour, not a technology choice.
 - Resolved 2026-09-29: SC-001 tolerance ±2% (engine drift only); FR-018 code line height 1.7.
+- Planning updates 2026-09-29: SC-001 floor of ±1 page; FR-016 byte-identical (Constitution VII);
+  User Story 5 / FR-019–021 / SC-007 (author request: headings keep 2 lines, PDF and web).
