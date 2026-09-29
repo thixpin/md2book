@@ -109,7 +109,7 @@ is currently reserved and becomes real in US1.
 
 ### Tests ⚠️
 
-- [ ] T031 [P] [US5] Write `test/integration/pdf-headings.test.ts`: build `book-headings` (screen and printed); for every page, any heading line (text of an `h2`–`h4` of the fixture) has ≥ 2 non-empty lines after it on the page (folio excluded) or is the first body line of its page; also assert at least one heading moved to a page top and one kept exactly 2 lines, so the fixture really covers the boundary (SC-007)
+- [X] T031 [P] [US5] Write `test/integration/pdf-headings.test.ts`: build `book-headings` (screen and printed); for every page, any heading line (text of an `h2`–`h4` of the fixture) has ≥ 2 non-empty lines after it on the page (folio excluded) or is the first body line of its page; also assert at least one heading moved to a page top and one kept exactly 2 lines, so the fixture really covers the boundary (SC-007)
 - [ ] T032 [P] [US5] Write `test/e2e/headings.test.ts` (Chromium and WebKit): build and serve `book-headings`; for text sizes 85%, 100% and 150%, for every heading in the reader flow, at least 2 line boxes of its next element are in the heading's page column or the heading starts its page; re-check after a text-size change and after a viewport resize (SC-007)
 - [ ] T033 [P] [US5] Extend `test/unit/web/reader-script.test.ts` (READER_EDITS) with the heading-keep edit and `test/unit/web/assets.test.ts` with `h3, h4, h5, h6 { break-after: avoid; }` and `.keep-with-next { break-before: column; }` in `web.css`
 
@@ -117,7 +117,7 @@ is currently reserved and becomes real in US1.
 
 - [ ] T034 [US5] Add to `assets/css/web.css` (md2book additions) `.chapter-body h3, .chapter-body h4, .chapter-body h5, .chapter-body h6 { break-after: avoid; }` and `.keep-with-next { break-before: column; -webkit-column-break-before: always; }`
 - [ ] T035 [US5] Add to `assets/web-reader.js`, at the end of `measure()`: remove every `keep-with-next`; then, in document order, for each `h2`–`h6` in the flow, count the distinct line tops of its next element's client rects that share the heading's page column; when fewer than 2 (and the next element has lines), add `keep-with-next` and re-measure the page count; update the READER_EDITS guard; pass T032 and T033
-- [ ] T036 [US5] Confirm T031 passes with the `print.css` addition from T009 (no further PDF change expected per research R-11); if it fails, fix in `assets/css/print.css` and record why in `docs/decision-log.md`
+- [X] T036 [US5] Confirm T031 passes with the `print.css` addition from T009 (no further PDF change expected per research R-11); if it fails, fix in `assets/css/print.css` and record why in `docs/decision-log.md`
 
 ---
 
