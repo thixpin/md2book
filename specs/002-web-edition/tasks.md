@@ -154,3 +154,18 @@ and US2 (reader parity tests), then US3 (sharing polish), then Polish (equivalen
 
 - Commit after each task or small group (single-line Conventional Commits, no AI co-author).
 - Never change reader constants or fixes (FR-022); `reference/` is never committed.
+
+---
+
+## Phase 8: User Story 5 - Change the text size (P2, added 2026-09-29)
+
+- [ ] T037 [P] [US5] Extend `test/unit/web/reader-dom.test.ts`: toolbar has a text-size button (`popovertarget="reader-text"`, label "Text size", Lucide `a-large-small` icon) and the reader has `#reader-text[popover]` with `[data-text-smaller]`, `[data-text-larger]` and an `output[data-text-size]` (aria-live)
+- [ ] T038 [P] [US5] Extend `test/unit/web/reader-script.test.ts` (diff guard) with the text-size edits so any other change to the carried script still fails
+- [ ] T039 [P] [US5] Extend `test/unit/web/assets.test.ts`: web stylesheet scales `.reader-flow`, `.chapter-head h1`, `.book-name`, `.chapter-number` by `var(--text-scale, 1)` and counter-scales `.reader-flow pre` by `/ var(--text-scale, 1)`
+- [ ] T040 [P] [US5] Write `test/e2e/text-size.test.ts` (SC-008): each step scales paragraph and h1 font sizes by its factor (±1%); pre sizes unchanged; same chapter after changing size; buttons disabled at 85% and 150%; `+`/`-` keys; size restored after reload; works with `localStorage` blocked; 44 px buttons on touch
+- [ ] T041 [US5] Add the toolbar button and `#reader-text` panel in `src/web/reader-dom.ts` and the icon in `src/web/icons.ts`
+- [ ] T042 [US5] Add the text-size rules to `assets/css/web.css`
+- [ ] T043 [US5] Add the text-size logic to `assets/web-reader.js` (steps, `--text-scale` on the reader root, `measure()` re-pagination, storage, keys, announcement)
+- [ ] T044 [US5] Update `scripts/equivalence-web.ts` to treat the text-size button and panel as a recorded addition; update `docs/decision-log.md` and `README.md`
+- [ ] T045 [US5] Run `npm run check`, `npm run test:e2e`, `npm run equivalence:web`; rebuild the demo
+

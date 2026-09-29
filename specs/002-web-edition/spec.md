@@ -24,6 +24,11 @@ the values this feature needs are copied into `data-model.md` → Reference cons
   generate an open-book icon (Lucide `book-open`) on a rounded square in the cover's edge colour.
   The reference writes no icon; this is a deliberate difference (decision log).
 
+### Session 2026-09-29 (text size)
+
+- Q: Should readers be able to change the text size, like Apple Books? → A: Yes, for body text and
+  titles; code blocks and terminals keep their size. An addition to the reference (decision log).
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Publish selected chapters as a web book (Priority: P1)
@@ -164,6 +169,36 @@ An author previews the web edition before deploying it.
 
 ---
 
+### User Story 5 - Change the text size (Priority: P2)
+
+A reader makes the text larger or smaller, like in Apple Books, so reading is comfortable on any
+screen.
+
+**Why this priority**: Comfort and accessibility; the book reads without it.
+
+**Independent Test**: In a browser, change the size with the control and the keyboard, and check
+text, titles, code and the reading position.
+
+**Acceptance Scenarios**:
+
+1. **Given** the book is open, **When** the reader opens the text-size control ("Aa" in the
+   toolbar) and chooses larger or smaller, **Then** body text, headings, chapter titles and the
+   chapter labels scale by one step, and the control shows the size (e.g. `110%`).
+2. **Given** any text size, **When** pages show code blocks or terminals, **Then** those keep their
+   size (inline code in sentences scales with the text).
+3. **Given** the size changes, **When** the book re-paginates, **Then** the reader stays at the same
+   place in the book (the same relative position) and page turning still works.
+4. **Given** the smallest (85%) or largest (150%) step, **When** the control is shown, **Then** the
+   button that would go further is disabled.
+5. **Given** a chosen size, **When** the reader returns later, **Then** the size is restored; **given**
+   `localStorage` is blocked, changing the size still works for the visit.
+6. **Given** the keyboard, **When** the reader presses `+` or `-` (outside text fields), **Then** the
+   size changes by one step; browser zoom shortcuts (Cmd/Ctrl) are left alone.
+7. **Given** assistive technology, **When** the size changes, **Then** the new size is announced, the
+   buttons have labels and are at least 44 px on touch screens.
+
+---
+
 ### Edge Cases
 
 - A published chapter that includes a snippet: the snippet is expanded as in feature 001.
@@ -220,13 +255,23 @@ An author previews the web edition before deploying it.
   travel, controls hide after 2500 ms, 30 search results with 30 characters of context).
 - **FR-021**: The reader script and web stylesheet MUST be carried over from the reference
   unchanged except for reading the page names, folio digits and font family names from the page
-  instead of hard-coding them; with the default Myanmar strings and `my-sans` fonts the output
+  instead of hard-coding them, and for the text-size feature (FR-024–FR-026); with the default Myanmar strings and `my-sans` fonts the output
   MUST be identical in behaviour to the reference.
 - **FR-022**: The reader MUST keep every fix listed in **[REF §10]** (style-apply retry,
   estimate-based pagination, distance-based back swipes, no flicker on large screens, delayed
   opening shadow, sinking page stacks, closed book centred).
 - **FR-023**: The reader MUST work without `localStorage` and without any framework, and its
   script MUST load deferred.
+
+**Text size**
+
+- **FR-024**: The reader MUST offer seven text-size steps (85%, 92%, 100%, 110%, 120%, 135%, 150%;
+  default 100%) through a toolbar control and the `+`/`-` keys, scaling body text, headings, chapter
+  titles and chapter labels, but not code blocks or terminals (User Story 5).
+- **FR-025**: A size change MUST re-paginate the book and keep the relative reading position; the
+  page-turn animation MUST use the same size.
+- **FR-026**: The chosen size MUST persist per storage prefix and MUST NOT break reading when
+  storage is unavailable.
 
 **Preview**
 
@@ -271,6 +316,9 @@ An author previews the web edition before deploying it.
   the whole output tree for a marker string placed in an unlisted fixture chapter).
 - **SC-006**: Building the web edition of a 20-chapter book takes under 30 seconds on the
   project's Linux CI runner.
+- **SC-008**: Browser tests confirm each text-size step scales paragraph and title sizes by the
+  step factor (±1%), leaves code and terminal sizes unchanged, keeps the reader in the same chapter,
+  and restores the size after a reload.
 - **SC-007**: A reader can open the book and reach chapter 1's first page in at most 2 actions
   (open + one turn, or one Contents choice).
 
