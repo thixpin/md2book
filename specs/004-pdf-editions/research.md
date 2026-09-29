@@ -53,7 +53,8 @@ pipelines. Spike scripts stayed in the session scratchpad; the findings below ar
   `document.fonts.ready` and every face's `load()`, then await `PagedPolyfill.preview()`
   (its `after` hook can fire before the last page exists), then `page.pdf`. Paged.js measures text while it paginates; starting it before the
   book's fonts are ready could paginate with fallback metrics on a slow machine. Measured output is
-  byte-identical to the automatic start.
+  byte-identical to the automatic start. Paged.js itself also loads every document font after adding the stylesheets
+  and before layout (`Chunker.loadFonts`), so the pre-load is a second guard, not the only one.
 - **Maintenance risk**: `pagedjs` 0.4.3 was last published in 2024. It is pinned exactly; its
   browser bundle `dist/paged.polyfill.js` (904 KB, no runtime Node dependencies used) is served into
   the page from `node_modules`. The workarounds and patches are covered by tests, so an upgrade or

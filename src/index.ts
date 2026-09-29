@@ -1,13 +1,23 @@
-// Public programmatic API (Constitution VIII): mirrors the CLI and exports only `init` and
-// `fonts`. Internal modules are never re-exported from here.
+// Public programmatic API (Constitution VIII): one function per CLI command. Internal modules
+// are never re-exported from here.
 import { runEpub, type EpubOptions } from "./epub/command.ts";
 import { runFonts, type FontsOptions } from "./fonts/command.ts";
+import { runPdf, type PdfOptions } from "./pdf/command.ts";
 import { runAll, runQa, type QaOptions } from "./qa/command.ts";
 import { runInit, type InitOptions } from "./init/init.ts";
 import { runServe, runWeb, type ServeOptions, type WebOptions } from "./web/command.ts";
 import type { Served } from "./web/serve.ts";
 
-export type { EpubOptions, FontsOptions, QaOptions, InitOptions, ServeOptions, Served, WebOptions };
+export type {
+  EpubOptions,
+  FontsOptions,
+  PdfOptions,
+  QaOptions,
+  InitOptions,
+  ServeOptions,
+  Served,
+  WebOptions,
+};
 
 /** `md2book init`: create book.json and chapters/chapter-01.md; resolves to the files written. */
 export function init(options: InitOptions): Promise<{ files: string[] }> {
@@ -32,6 +42,11 @@ export function serve(options: ServeOptions): Promise<Served> {
 /** `md2book build epub`: build the EPUB 3 of the whole book; resolves to the file written. */
 export function epub(options: EpubOptions): Promise<{ file: string }> {
   return runEpub(options);
+}
+
+/** `md2book build pdf`: build the screen or printed PDF; resolves to the file written. */
+export function pdf(options: PdfOptions): Promise<{ file: string }> {
+  return runPdf(options);
 }
 
 /** `md2book qa`: write QA-REPORT.md; resolves to the report file. */

@@ -65,7 +65,7 @@ is currently reserved and becomes real in US1.
 - [X] T017 [US1] Implement `printDocument` in `src/pdf/document.ts` to pass T014
 - [X] T018 [US1] Implement `src/qa/pdf-read.ts` `pdfFacts` (pdfjs-dist text items with marked content + pdf-lib content streams, fonts and boxes) to pass T016
 - [X] T019 [US1] Implement `src/pdf/build.ts` `buildPdf(book, { out, printed, fontsDir?, manifestPath? })`: require fonts, write `src/book-print.html` (rebuilt), serve assets per data-model.md, render, normalise, write via temp file + rename; pass T015
-- [ ] T020 [US1] Implement `src/pdf/command.ts` `runPdf` (logs `PDF written: <file>`); replace the reserved `build pdf` in `src/cli.ts` with the real command (`--config`, `--out`, `--printed`); export `pdf()` from `src/index.ts`; public-API test = `all, epub, fonts, init, pdf, qa, serve, web`; update `test/unit/cli.test.ts` (only `cover` reserved)
+- [X] T020 [US1] Implement `src/pdf/command.ts` `runPdf` (logs `PDF written: <file>`); replace the reserved `build pdf` in `src/cli.ts` with the real command (`--config`, `--out`, `--printed`); export `pdf()` from `src/index.ts`; public-API test = `all, epub, fonts, init, pdf, qa, serve, web`; update `test/unit/cli.test.ts` (only `cover` reserved)
 
 **Checkpoint**: the screen PDF is complete and verifiable on its own.
 

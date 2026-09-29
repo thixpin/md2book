@@ -6,6 +6,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { loadBook } from "../../src/book/load.ts";
 import type { BookConfig } from "../../src/config/load.ts";
 import { loadConfig } from "../../src/config/load.ts";
+import { runCli } from "../../src/cli.ts";
 import { BookError } from "../../src/errors.ts";
 import { getFontSet, loadManifest } from "../../src/fonts/manifest.ts";
 import { buildPdf } from "../../src/pdf/build.ts";
@@ -178,6 +179,27 @@ describe("buildPdf (screen edition)", { timeout: 120_000 }, () => {
       const reference = execFileSync("pdftotext", ["-f", n, "-l", n, file, "-"]).toString();
       expect(strip(lines.join("")), `page ${n}`).toBe(strip(reference));
     }
+  });
+
+  it("runs as md2book build pdf [--printed] and reports the end image", async () => {
+    const config = await bookMm();
+    vi.stubEnv("MD2BOOK_FONTS", await fixtureFontCache(config, true));
+    const out = join(tempDir(), "book");
+    for (const [flags, name] of [
+      [[], "book-mm-170x240.pdf"],
+      [["--printed"], "book-mm-170x240-printed.pdf"],
+    ] as const) {
+      const lines: string[] = [];
+      const argv = ["build", "pdf", "--config", fixture("book-mm", "book.json"), "--out", out];
+      const code = await runCli([...argv, ...flags], {
+        stdout: (s) => lines.push(s),
+        stderr: (s) => lines.push(s),
+        manifestPath: PRINT_MANIFEST,
+      });
+      expect(code).toBe(0);
+      expect(lines.join("")).toBe(`End image: included\nPDF written: ${join(out, name)}\n`);
+    }
+    vi.unstubAllEnvs();
   });
 
   it("stops with the fonts command when the font set is missing", async () => {

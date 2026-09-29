@@ -5,6 +5,7 @@ import { runInit } from "./init/init.ts";
 import { promptMissing, type InitAnswers } from "./init/prompts.ts";
 import { runServe, runWeb, webWrittenLine } from "./web/command.ts";
 import { runEpub } from "./epub/command.ts";
+import { runPdf } from "./pdf/command.ts";
 import { runAll, runQa } from "./qa/command.ts";
 
 export interface CliDeps {
@@ -76,6 +77,16 @@ export async function runCli(argv: string[], deps: CliDeps = {}): Promise<number
   const build = program.command("build").description("Build an edition of the book.");
 
   build
+    .command("pdf")
+    .description("Build the 170 × 240 mm PDF (screen edition, or --printed for the print shop).")
+    .requiredOption("--config <path>", "book config")
+    .option("--out <dir>", "output directory (default dist/<config name>/)")
+    .option("--printed", "print-shop interior: no cover page, no colour")
+    .action(async (options: { config: string; out?: string; printed?: boolean }) => {
+      await runPdf(options, deps.manifestPath, (line) => stdout(`${line}\n`));
+    });
+
+  build
     .command("epub")
     .description("Build the reflowable EPUB 3 of the whole book.")
     .requiredOption("--config <path>", "book config")
@@ -129,19 +140,13 @@ export async function runCli(argv: string[], deps: CliDeps = {}): Promise<number
       );
     });
 
-  for (const [parent, name] of [
-    [build, "pdf"],
-    [program, "cover"],
-  ] as const) {
-    const label = parent === build ? `build ${name}` : name;
-    parent
-      .command(name)
-      .allowUnknownOption()
-      .allowExcessArguments()
-      .action(() => {
-        throw new BookError(label, "not available yet");
-      });
-  }
+  program
+    .command("cover")
+    .allowUnknownOption()
+    .allowExcessArguments()
+    .action(() => {
+      throw new BookError("cover", "not available yet");
+    });
 
   try {
     await program.parseAsync(argv, { from: "user" });

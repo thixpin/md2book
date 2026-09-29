@@ -12,21 +12,18 @@ function capture() {
 }
 
 describe("runCli", () => {
-  it.each([
-    [["cover"], "cover"],
-    [["build", "pdf"], "build pdf"],
-  ])("reserved command %j prints 'not available yet' and exits 1", async (argv, name) => {
+  it("reserved command cover prints 'not available yet' and exits 1", async () => {
     const io = capture();
-    const code = await runCli(argv, io.deps);
+    const code = await runCli(["cover", "--config", "book.json"], io.deps);
     expect(code).toBe(1);
-    expect(io.err.join("")).toBe(`md2book: ${name}: not available yet\n`);
+    expect(io.err.join("")).toBe("md2book: cover: not available yet\n");
   });
 
-  it("says 'not available yet' even when options are passed to a reserved command", async () => {
+  it("requires --config for build pdf", async () => {
     const io = capture();
-    const code = await runCli(["build", "pdf", "--config", "book.json", "--printed"], io.deps);
-    expect(code).toBe(1);
-    expect(io.err.join("")).toBe("md2book: build pdf: not available yet\n");
+    const code = await runCli(["build", "pdf", "--printed"], io.deps);
+    expect(code).not.toBe(0);
+    expect(io.err.join("")).toContain("--config <path>");
   });
 
   it.each(["epub", "web", "all", "pdf"])(
