@@ -71,8 +71,8 @@ Write your first chapter here.
 ```
 
 Add `chapters/chapter-02.md` and so on; files are read in name order.
-See [Writing chapters](writing.md) for parts, code includes and
-callouts.
+See [Writing chapters](writing.md) for parts and code includes, and
+[Markdown syntax](markdown.md) for everything a chapter can contain.
 
 ## 5. Build
 

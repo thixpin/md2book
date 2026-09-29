@@ -9,7 +9,9 @@ Myanmar (Burmese) script.
 - [Getting started](getting-started.md): install md2book and build a
   first book, step by step.
 - [Writing chapters](writing.md): chapter files, headings, parts, code
-  includes, callouts and the other Markdown extras.
+  includes and the closing image.
+- [Markdown syntax](markdown.md): everything chapters can use, and
+  what they cannot.
 - [Covers](cover.md): design a cover in HTML and CSS and render it to a
   PNG with the book's fonts.
 - [Usage examples](examples.md): recipes for common jobs, from a

@@ -68,61 +68,12 @@ region's common indentation is removed. The code block's language comes
 from the file extension (`.ts`, `.js`, `.json`, `.py`, `.sh`). A missing
 file or region, or a region that is never closed, stops the build.
 
-## Code blocks
+## Markdown
 
-Fenced code blocks are syntax-highlighted by their language:
-
-````markdown
-```python
-print("မင်္ဂလာပါ")
-```
-````
-
-Long lines are set in a smaller monospace size so they fit the page;
-lines longer still wrap rather than overflow.
-
-## Terminal sessions
-
-A `console` block (or `terminal`, `shell-session`) is drawn as a
-terminal window. Lines starting with `$ ` are commands, highlighted as
-shell; the others are output.
-
-````markdown
-```console
-$ python3 hello.py
-Hello
-```
-````
-
-## Tables
-
-Pipe tables:
-
-```markdown
-| Type  | Example |
-| ----- | ------- |
-| `int` | `42`    |
-```
-
-## Callouts
-
-GitHub-style alerts become boxed notes. The marker is not
-case-sensitive, and the titles come from `strings.callout_titles`.
-
-```markdown
-> [!NOTE]
-> A side remark.
-
-> [!WARNING]
-> Something that can go wrong.
-
-> [!TRY]
-> An exercise for the reader.
-```
-
-## Scene breaks
-
-A line with `---` between paragraphs is a scene break.
+Chapters use CommonMark with tables, strikethrough, callouts, and
+highlighted code and terminal blocks. [Markdown syntax](markdown.md)
+lists everything that is supported, and what is not (images inside
+chapters, footnotes, task lists).
 
 ## Closing image
 

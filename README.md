@@ -80,8 +80,8 @@ The full documentation is on the website,
 in [`docs/`](docs/README.md):
 
 - [Getting started](docs/getting-started.md)
-- [Writing chapters](docs/writing.md): headings, parts, code includes,
-  callouts
+- [Writing chapters](docs/writing.md): headings, parts, code includes
+- [Markdown syntax](docs/markdown.md): supported and unsupported syntax
 - [Covers](docs/cover.md)
 - [Usage examples](docs/examples.md)
 - [Commands](docs/commands.md): every command and option

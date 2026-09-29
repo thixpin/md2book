@@ -23,6 +23,7 @@ export default defineConfig({
         items: [
           { text: "Getting started", link: "/getting-started" },
           { text: "Writing chapters", link: "/writing" },
+          { text: "Markdown syntax", link: "/markdown" },
           { text: "Covers", link: "/cover" },
           { text: "Usage examples", link: "/examples" },
         ],
