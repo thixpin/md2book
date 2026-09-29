@@ -14,6 +14,9 @@ jobs:
     # The Linux runner SC-007 refers to; also the merge gate (constitution: tests, lint, format),
     # with the tests run once under the coverage thresholds (spec 005 FR-016).
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # Codecov upload without a token
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -29,6 +32,12 @@ jobs:
       - run: npm run lint
       - run: npm run format:check
       - run: npm run coverage
+      # The README badge; an upload problem never fails the build.
+      - uses: codecov/codecov-action@v5
+        with:
+          files: coverage/lcov.info
+          use_oidc: true
+          fail_ci_if_error: false
 
   browser:
     # Reader behaviour and the device matrix (spec 002 SC-003, SC-004); headings in Chromium and

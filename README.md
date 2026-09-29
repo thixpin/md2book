@@ -1,10 +1,15 @@
 # @thixpin/md2book
 
+[![npm](https://img.shields.io/npm/v/@thixpin/md2book)](https://www.npmjs.com/package/@thixpin/md2book)
+[![downloads](https://img.shields.io/npm/dw/@thixpin/md2book)](https://www.npmjs.com/package/@thixpin/md2book)
+[![codecov](https://img.shields.io/codecov/c/github/thixpin/md2book?logo=codecov&label=codecov)](https://codecov.io/gh/thixpin/md2book)
+[![License](https://img.shields.io/npm/l/@thixpin/md2book?label=License)](LICENSE)
+
 Turn a Markdown book manuscript into a print-ready PDF, an EPUB 3, a
 web edition and a QA report, with first-class support for Myanmar
 (Burmese) script. The CLI is `md2book`.
 
-> **Status: early development (0.1.0).** `init`, `fonts`, the PDF
+> **Status: early development.** `init`, `fonts`, the PDF
 > (`build pdf`), the EPUB (`build epub`), the web edition (`build web`,
 > `serve`), the QA report (`qa`, `build all`) and `cover`.
 
