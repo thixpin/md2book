@@ -280,6 +280,11 @@ project and runs the CLI from it. Design notes live in `specs/` and deliberate
 differences from the original Python toolchain in
 [`docs/decision-log.md`](docs/decision-log.md).
 
+## Contributing and security
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) to report a bug or send a change, and
+[SECURITY.md](SECURITY.md) to report a vulnerability privately.
+
 ## Licence
 
 MIT for the package. The fonts are licensed under the SIL Open Font

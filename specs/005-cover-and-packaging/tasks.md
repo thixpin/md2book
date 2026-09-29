@@ -61,7 +61,7 @@ implementation. Rendering tests are offline and use the print font fixture.
 
 ## Phase 5b: Repository health (author requests)
 
-- [ ] T016 [P] Add `SECURITY.md`, `CONTRIBUTING.md`, `.github/ISSUE_TEMPLATE/bug_report.yml`, `.github/ISSUE_TEMPLATE/feature_request.yml` and `.github/ISSUE_TEMPLATE/config.yml` (FR-015); link them from `README.md`
+- [X] T016 [P] Add `SECURITY.md`, `CONTRIBUTING.md`, `.github/ISSUE_TEMPLATE/bug_report.yml`, `.github/ISSUE_TEMPLATE/feature_request.yml` and `.github/ISSUE_TEMPLATE/config.yml` (FR-015); link them from `README.md`
 - [X] T017 Add a coverage check (FR-016): `@vitest/coverage-v8` dev dependency, `npm run coverage` (unit + integration), thresholds just below today's measured values in `vitest.config.ts`, run in the CI `check` job
 
 ## Phase 6: Polish
