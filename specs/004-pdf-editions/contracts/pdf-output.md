@@ -57,10 +57,17 @@ next block (or the whole of an unbreakable block), otherwise it starts the next 
 | title, copyright, contents, end image | none | none |
 | chapter opening | none | none |
 | blank (recto padding) | none | none |
-| other left page | book title, top left, 8.5 pt | bottom centre, 9 pt |
-| other right page | current chapter title, top right, 8.5 pt | bottom centre, 9 pt |
+| other left page | book title, top left, 8.5 pt | bottom left, 9 pt |
+| other right page | current chapter title, top right, 8.5 pt | bottom right, 9 pt |
 
 `running_headers: false` removes both headers; folios stay.
+
+Numbering (FR-022): page 1 is chapter one's first page; the front matter has no numbers; digits
+follow `strings.chapter_digits`. `book.css` sets `#ch01 { counter-reset: page 1; }` (for the
+contents' `target-counter`, in Myanmar digits via the `myanmar` counter style) and shows
+`var(--md2book-folio)` in `@bottom-left` (left pages) and `@bottom-right` (right pages);
+`assets/paged-handler.js` writes `--md2book-folio` on every page from chapter one on, because a
+`counter-reset` on one Paged.js page box does not reach the following boxes in Chromium.
 
 ## Normalisation (after printing)
 

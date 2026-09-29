@@ -165,6 +165,14 @@ pipelines. Spike scripts stayed in the session scratchpad; the findings below ar
   ported with the reference constants (123 mm, 8.3/6.0 pt, 0.6 em; longest line in code points of
   the tag-stripped, unescaped text); `<html lang>` from the config language.
 
+## R-12 Page numbers from chapter one (FR-022)
+
+- Paged.js turns `#ch01 { counter-reset: page 1 }` into a reset on that page's box. Its
+  `target-counter` (contents) honours it, but Chromium scopes the reset to that box: the following
+  boxes kept counting from the cover (page 6 of the demo showed 5, not 2). **Decision**: the page
+  handler writes each page's number (from chapter one, in the book's digits) as a CSS variable
+  that the folio margin boxes display; the contents keep `target-counter(…, page, myanmar)`.
+
 ## R-11 Headings keep 2 lines of their content (User Story 5)
 
 - **PDF**: a sweep of 28 heading positions near page feet (paragraph and code block after the

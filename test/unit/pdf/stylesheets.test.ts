@@ -103,8 +103,30 @@ describe("printStylesheets", () => {
   it("writes the book title into the left running header as a CSS string", async () => {
     const book = (await sheets(false, { title: 'Say "hi" \\ now\nplease' })).at(-1)!;
     expect(book.name).toBe("book.css");
-    expect(book.css).toBe(
-      '@page :left { @top-left { content: "Say \\"hi\\" \\\\ now\\a please"; } }\n',
+    expect(book.css.split("\n")[0]).toBe(
+      '@page :left { @top-left { content: "Say \\"hi\\" \\\\ now\\a please"; } }',
+    );
+  });
+
+  it("numbers pages from chapter one in the outside corners, in the book's digits", async () => {
+    const mm = (await sheets(false)).at(-1)!.css;
+    expect(mm).toContain("@page { @bottom-center { content: none; } }");
+    expect(mm).toContain("@page :left { @bottom-left { content: var(--md2book-folio);");
+    expect(mm).toContain("@page :right { @bottom-right { content: var(--md2book-folio);");
+    for (const page of [":blank", "front", "cover"]) {
+      expect(mm).toContain(
+        `@page ${page} { @bottom-left { content: none; } @bottom-right { content: none; } }`,
+      );
+    }
+    expect(mm).toContain("#ch01 { counter-reset: page 1; }");
+    expect(mm).toContain(
+      ".toc-page li a::after { content: target-counter(attr(href url), page, myanmar); }",
+    );
+    const en = (
+      await sheets(false, { strings: { ...(await bookMm()).strings, chapter_digits: "ascii" } })
+    ).at(-1)!.css;
+    expect(en).toContain(
+      ".toc-page li a::after { content: target-counter(attr(href url), page); }",
     );
   });
 

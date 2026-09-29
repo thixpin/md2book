@@ -13,7 +13,7 @@ import { BookError } from "../../src/errors.ts";
 import { getFontSet, loadManifest } from "../../src/fonts/manifest.ts";
 import { buildPdf } from "../../src/pdf/build.ts";
 import { pdfFacts, type PdfFacts } from "../../src/qa/pdf-read.ts";
-import { bookEn, bookMm } from "../helpers/fixture-config.ts";
+import { bookEn, bookHeadings, bookMm } from "../helpers/fixture-config.ts";
 import { PRINT_MANIFEST } from "../helpers/fonts.ts";
 import { hashTree } from "../helpers/hash.ts";
 import { fixture, tempDir } from "../helpers/temp.ts";
@@ -54,7 +54,12 @@ async function patched(name: string, patch: Record<string, unknown>): Promise<Bo
   return (await loadConfig(path)).config;
 }
 
-const isFolio = (line: string | undefined) => /^\d+$/.test(line?.trim() ?? "");
+const isFolio = (line: string | undefined) => /^[0-9\u1040-\u1049]+$/.test(line?.trim() ?? "");
+/** A page number as the book prints it (Myanmar digits for book-mm). */
+const myanmar = (n: number) =>
+  String(n).replace(/[0-9]/g, (d) => String.fromCharCode(0x1040 + Number(d)));
+const fromMyanmar = (text: string) =>
+  Number(text.replace(/[\u1040-\u1049]/g, (d) => String(d.charCodeAt(0) - 0x1040)));
 
 /** Page number (1-based) where each chapter opens: its label line directly above its title. */
 function openings(facts: PdfFacts, book: Awaited<ReturnType<typeof loadBook>>): number[] {
@@ -99,10 +104,12 @@ describe("buildPdf (screen edition)", { timeout: 120_000 }, () => {
 
     const opens = openings(facts, book);
     expect(opens.every((page) => page > 0)).toBe(true);
+    // Page 1 is chapter one's first page; the front matter is not numbered.
+    const number = (physical: number) => physical - opens[0]! + 1;
     for (const [i, ch] of book.chapters.entries()) {
       const entry = pages.flat().find((line) => line.startsWith(ch.fullTitle));
       expect(entry, ch.fullTitle).toBeDefined();
-      expect(Number(entry!.slice(ch.fullTitle.length).trim())).toBe(opens[i]);
+      expect(entry!.slice(ch.fullTitle.length).trim()).toBe(myanmar(number(opens[i]!)));
       expect(opens[i]! % 2).toBe(1); // recto start: a right-hand page
       const opening = pages[opens[i]! - 1]!;
       expect(opening[0]!.trim()).toBe(ch.label); // no running header
@@ -114,10 +121,32 @@ describe("buildPdf (screen edition)", { timeout: 120_000 }, () => {
       const chapter = [...opens.keys()].filter((i) => opens[i]! <= n).at(-1);
       if (lines.length === 0 || n <= 4 || opens.includes(n) || chapter === undefined) continue;
       if (lines.length === 1 && !isFolio(lines[0])) continue; // the end image page has no text
-      expect(lines.at(-1)!.trim(), `folio on page ${n}`).toBe(String(n));
+      expect(lines.at(-1)!.trim(), `folio on page ${n}`).toBe(myanmar(number(n)));
       const header = n % 2 === 0 ? config.title : book.chapters[chapter]!.title;
       expect(lines[0]!.trim(), `header on page ${n}`).toBe(header);
     }
+  });
+
+  it("puts the folio in the outside corner: bottom left on left pages, bottom right on right", async () => {
+    const { file, facts } = await build(await bookHeadings());
+    const doc = await getDocument({ data: new Uint8Array(readFileSync(file)), verbosity: 0 })
+      .promise;
+    let checked = 0;
+    for (const [index, lines] of facts.lines.entries()) {
+      if (!isFolio(lines.at(-1))) continue;
+      const items = (await (await doc.getPage(index + 1)).getTextContent()).items;
+      // The folio is the lowest text on the page.
+      const [x] = items
+        .flatMap((item) => ("transform" in item ? [item.transform as number[]] : []))
+        .map((t) => [t[4]!, t[5]!] as const)
+        .sort((a, b) => a[1] - b[1])[0]!;
+      const left = (index + 1) % 2 === 0;
+      // Outside margin 18 mm (51 pt) on a 481.89 pt page.
+      if (left) expect(x, `page ${index + 1}`).toBeLessThan(80);
+      else expect(x, `page ${index + 1}`).toBeGreaterThan(400);
+      checked++;
+    }
+    expect(checked).toBeGreaterThan(1);
   });
 
   it("drops both running headers with running_headers: false, keeping the folios", async () => {
@@ -302,7 +331,7 @@ describe("buildPdf (printed edition)", { timeout: 120_000 }, () => {
     const opens = openings(facts, book);
     for (const [i, ch] of book.chapters.entries()) {
       const entry = facts.lines.flat().find((line) => line.startsWith(ch.fullTitle));
-      expect(Number(entry!.slice(ch.fullTitle.length).trim())).toBe(opens[i]);
+      expect(fromMyanmar(entry!.slice(ch.fullTitle.length).trim())).toBe(opens[i]! - opens[0]! + 1);
       expect(opens[i]! % 2).toBe(1);
     }
     for (const bad of [0x0000, 0xfffd]) expect(facts.text).not.toContain(String.fromCharCode(bad));

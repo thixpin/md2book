@@ -128,6 +128,12 @@ is currently reserved and becomes real in US1.
 
 ---
 
+## Author changes during implementation
+
+- [X] T043 [US1] Page numbers from chapter one, Myanmar digits for Myanmar books, folios in the outside corners (FR-022): `src/pdf/stylesheets.ts` (`book.css`), `assets/paged-handler.js` (`Folios`), `src/pdf/document.ts` (`data-folio-digits`); tests in `test/unit/pdf/stylesheets.test.ts`, `test/unit/pdf/print-document.test.ts`, `test/integration/pdf.test.ts`
+- [X] T044 [US2] Printed terminal icons as the macOS window controls (×, −, +), centred SVGs on round grey dots; more room between contents entries (`assets/css/printed.css`, `assets/css/print.css`)
+- [X] T045 Smaller web chapter title (`assets/css/web.css`, author request)
+
 ## Phase 8: Polish
 
 - [X] T039 [P] Write `scripts/equivalence-pdf.ts` (SC-001): copy `development-book` to a temp dir; generate a 20-chapter book there from `book-01`'s chapter (4 parts, `recto_chapter_start: true`); build `book-01` and it with Python `build.py pdf` and with ours (with an internal extra stylesheet `pre { line-height: 1.4; }` for the page-count comparison, and again without it to report FR-018's extra pages); compare page size, page count within ±2% but at least ±1 page, N of N chapter openings on right-hand pages, 0 U+FFFD, stray characters only from the manuscript

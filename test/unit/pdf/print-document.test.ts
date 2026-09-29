@@ -25,7 +25,7 @@ describe("printDocument", () => {
         "<script>window.PagedConfig = { auto: false };</script>" +
         '<script src="/pagedjs/paged.polyfill.js"></script>' +
         '<script src="/pagedjs/handler.js"></script></head>',
-      '<body data-title="မြန်မာ စမ်းသပ်စာအုပ်">',
+      '<body data-title="မြန်မာ စမ်းသပ်စာအုပ်" data-folio-digits="myanmar">',
       '<div class="cover-page"><img src="/book/cover.png" alt="Cover"/></div>',
       `<section class="front">${titlePage}</section>`,
       `<section class="front">${copyrightPage}</section>`,
@@ -68,7 +68,9 @@ describe("printDocument", () => {
     const config = { ...(await bookMm()), title: 'A & B "C"' };
     const html = printDocument(await loadBook(config), { printed: true, stylesheets: [] });
     expect(html).toContain("<title>A &amp; B &quot;C&quot;</title>");
-    expect(html).toContain('<body data-title="A &amp; B &quot;C&quot;">');
+    expect(html).toContain(
+      '<body data-title="A &amp; B &quot;C&quot;" data-folio-digits="myanmar">',
+    );
   });
 });
 

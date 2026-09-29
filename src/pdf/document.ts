@@ -94,7 +94,7 @@ export function printDocument(book: Book, options: PrintDocumentOptions): string
   const pieces = [
     `<!DOCTYPE html><html lang="${config.language}"><head><meta charset="utf-8"/>`,
     `<title>${title}</title>${head}</head>`,
-    `<body data-title="${title}">`,
+    `<body data-title="${title}" data-folio-digits="${config.strings.chapter_digits}">`,
   ];
   if (!options.printed) {
     pieces.push(

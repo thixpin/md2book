@@ -28,6 +28,10 @@ into `data-model.md` → Reference constants during planning.
 - Author request (added during planning): a section heading must never end a page (PDF) or a
   page of the web reader with fewer than 2 lines of its following content below it; if it cannot
   keep 2 lines, it moves to the next page with its content (User Story 5).
+- Author request (during implementation): PDF page numbers follow the web reader: page 1 is
+  chapter one's first page (the front matter is not numbered), folios sit in the outside corner
+  (bottom left on left pages, bottom right on right pages), and books with Myanmar digits
+  (`strings.chapter_digits`) number pages and contents entries in Myanmar digits (FR-022).
 - Author request (during implementation): the printed dots show the macOS window-control icons
   ×, −, + (replacing dot, minus, diagonal); the PDF contents entries get more line spacing.
 - Planning finding: ±2% of `book-01`'s 12 pages is less than one page, so SC-001 allows at least
@@ -271,6 +275,10 @@ starts the next page.
   MUST be carried over, with every deliberate change recorded in `docs/decision-log.md`.
 - **FR-018**: Code and terminal blocks in both PDF editions MUST use line height 1.7, as the EPUB
   and web editions do (a recorded difference from the reference's 1.4).
+- **FR-022**: Page numbers (folios and contents entries) MUST count from 1 on chapter one's first
+  page, leave the front matter unnumbered, sit at the bottom outside corner (left pages left, right
+  pages right), and use the digits of `strings.chapter_digits` (Myanmar or ASCII), as the web
+  reader does (a recorded difference from the reference's centred, whole-document numbers).
 - **FR-019**: In both PDF editions, every section heading (levels 2–6 in the chapter body) MUST
   either have at least 2 lines of its following content on the same page or start the next page
   with that content (User Story 5).
