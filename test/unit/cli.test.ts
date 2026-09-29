@@ -12,11 +12,11 @@ function capture() {
 }
 
 describe("runCli", () => {
-  it("reserved command cover prints 'not available yet' and exits 1", async () => {
+  it("requires the cover HTML for cover", async () => {
     const io = capture();
-    const code = await runCli(["cover", "--config", "book.json"], io.deps);
-    expect(code).toBe(1);
-    expect(io.err.join("")).toBe("md2book: cover: not available yet\n");
+    const code = await runCli(["cover"], io.deps);
+    expect(code).not.toBe(0);
+    expect(io.err.join("")).toContain("missing required argument 'file'");
   });
 
   it("requires --config for build pdf", async () => {
@@ -38,7 +38,7 @@ describe("runCli", () => {
 
   it("maps a thrown BookError to exit code 1 with a one-line message", async () => {
     const io = capture();
-    const code = await runCli(["cover"], io.deps);
+    const code = await runCli(["cover", "/no/such/cover.html"], io.deps);
     expect(code).toBe(1);
     expect(io.err.join("").trimEnd().split("\n")).toHaveLength(1);
   });

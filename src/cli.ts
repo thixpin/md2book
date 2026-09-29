@@ -6,6 +6,7 @@ import { promptMissing, type InitAnswers } from "./init/prompts.ts";
 import { runServe, runWeb, webWrittenLine } from "./web/command.ts";
 import { runEpub } from "./epub/command.ts";
 import { runPdf } from "./pdf/command.ts";
+import { runCover } from "./cover/command.ts";
 import { runAll, runQa } from "./qa/command.ts";
 
 export interface CliDeps {
@@ -144,11 +145,37 @@ export async function runCli(argv: string[], deps: CliDeps = {}): Promise<number
 
   program
     .command("cover")
-    .allowUnknownOption()
-    .allowExcessArguments()
-    .action(() => {
-      throw new BookError("cover", "not available yet");
-    });
+    .description("Render a one-page HTML cover to PNG with the book fonts.")
+    .argument("<file>", "cover HTML file")
+    .option("-o, --output <png>", "PNG to write (default cover.png next to the HTML)")
+    .option("--dpi <n>", "resolution in dots per inch", "300")
+    .option("--config <path>", "book config; its language and font_set pick the fonts")
+    .option("--set <id>", "font set id instead of a config (default my-sans)")
+    .option("--fonts <dir>", "font cache root (overrides MD2BOOK_FONTS)")
+    .action(
+      async (
+        file: string,
+        options: { output?: string; dpi: string; config?: string; set?: string; fonts?: string },
+      ) => {
+        if (!/^\d+$/.test(options.dpi)) {
+          throw new BookError("--dpi", `not a resolution in dots per inch: ${options.dpi}`);
+        }
+        const result = await runCover(
+          {
+            html: file,
+            output: options.output,
+            dpi: Number(options.dpi),
+            config: options.config,
+            set: options.set,
+            fontsDir: options.fonts,
+          },
+          deps.manifestPath,
+        );
+        stdout(
+          `Cover written: ${result.file} (${result.width} x ${result.height} px, ${options.dpi} dpi)\n`,
+        );
+      },
+    );
 
   try {
     await program.parseAsync(argv, { from: "user" });

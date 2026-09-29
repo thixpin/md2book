@@ -15,12 +15,14 @@ export async function requireFontSet(
     config.language,
     config.font_set,
   );
+  return { set, dir: requireSet(set, options, `md2book fonts --config ${config.configPath}`) };
+}
+
+/** The set's cache directory; stops with `fix` (the command to run) if any file is missing. */
+export function requireSet(set: FontSet, options: { fontsDir?: string }, fix: string): string {
   const dir = setDir(fontsRoot(options), set.id);
   if (setFiles(set).some(({ file }) => !existsSync(join(dir, file)))) {
-    throw new BookError(
-      dir,
-      `font set ${set.id} not found; run: md2book fonts --config ${config.configPath}`,
-    );
+    throw new BookError(dir, `font set ${set.id} not found; run: ${fix}`);
   }
-  return { set, dir };
+  return dir;
 }

@@ -22,9 +22,10 @@ Values from the Python toolchain are cited as **[REF]** (`publish/render_cover.p
 
 ### Session 2026-09-29
 
-- Q: When does CI run? → A: Only on version tags. The tag workflow runs the checks and browser
-  tests and then publishes; pushes and pull requests run nothing (the constitution's gate —
-  tests, lint and format before merging — is `npm run check`, run locally before each commit).
+- Q: When does CI run? → A: The checks and browser tests run on pull requests and on version
+  tags; publishing runs only on version tags. Plain branch pushes run nothing (the constitution's
+  gate — tests, lint and format before merging — is `npm run check`, run locally before each
+  commit, and the pull-request checks).
 - Q: What is the first published version? → A: `0.1.0` (early release; the CLI and API may still
   change).
 - Q: Should the repository include a demo book authors can copy the syntax and formats from?
@@ -110,15 +111,15 @@ step locally.
 
 **Acceptance Scenarios**:
 
-1. **Given** a pushed tag `v<version>` equal to the package version, **When** CI runs (it runs on
-   tags only), **Then** it installs, runs all checks, the browser tests and the package check, and
-   publishes the package publicly with provenance.
+1. **Given** a pushed tag `v<version>` equal to the package version, **When** CI runs, **Then** it
+   installs, runs all checks, the browser tests and the package check, and publishes the package
+   publicly with provenance.
 2. **Given** a tag that differs from the package version, **When** the workflow runs, **Then** it
    stops before publishing with a message naming both versions.
 3. **Given** no registry token is configured, **When** the workflow runs, **Then** it fails at the
    publish step without publishing anything.
-4. **Given** a push to a branch or a pull request, **When** GitHub receives it, **Then** no
-   workflow runs.
+4. **Given** a pull request, **When** CI runs, **Then** it runs the checks and browser tests and
+   never publishes; **Given** a plain branch push, **Then** no workflow runs.
 
 ---
 
@@ -193,9 +194,9 @@ fonts) and check that each documented format appears in its output.
   repository, homepage, bugs, Node.js ≥ 26, the `md2book` command, typed exports and public
   access.
 - **FR-011**: The first published version MUST be `0.1.0`.
-- **FR-012**: CI MUST run only on a pushed `v*` tag (author decision): it checks that the tag
-  equals the package version, runs all checks, the browser tests and the package check, and then
-  publishes publicly with provenance. No workflow runs on branch pushes or pull requests.
+- **FR-012**: CI MUST run its checks and browser tests on pull requests and on pushed `v*` tags,
+  and nothing on plain branch pushes (author decision). Only on a `v*` tag does it then check that
+  the tag equals the package version, run the package check and publish publicly with provenance.
 - **FR-013**: The README MUST document installing from npm, the one Chromium setup step, and the
   `cover` command, and link the demo book.
 - **FR-014**: The repository MUST include `examples/demo-book/` as described in User Story 4; it is

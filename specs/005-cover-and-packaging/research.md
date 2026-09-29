@@ -49,14 +49,13 @@ Measured 2026-09-29 on `development-book/book-01-dsa/cover/cover.html` (referenc
 
 ## R-06 CI on tags only
 
-- **Decision**: replace `.github/workflows/ci.yml` triggers with `push: tags: ["v*"]`; jobs:
+- **Decision**: trigger `.github/workflows/ci.yml` on `pull_request` and `push: tags: ["v*"]`; jobs:
   `check` (npm ci, Chromium, epubcheck, `npm run check`), `browser` (Chromium + WebKit,
-  `npm run test:e2e`), `release` (needs both; version check `v$(node -p
+  `npm run test:e2e`), `release` (tags only, needs both; version check `v$(node -p
   "require('./package.json').version")` = tag; `npm run package:check`; `npm publish --provenance
   --access public` with `NODE_AUTH_TOKEN` from `secrets.NPM_TOKEN`; `permissions: id-token: write,
   contents: read`).
-- **Rationale**: author decision (CI on tags only); the constitution's merge gate is
-  `npm run check` locally.
+- **Rationale**: author decision (tests on pull requests and tags, publish on tags only).
 
 ## R-07 Demo book
 

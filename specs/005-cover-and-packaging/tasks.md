@@ -18,7 +18,7 @@ implementation. Rendering tests are offline and use the print font fixture.
 
 ## Phase 1: Setup
 
-- [ ] T001 Create `test/fixtures/cover/cover.html` (`@page { size: 170mm 240mm; margin: 0 }`, a Burmese title in `"Noto Sans Myanmar"`, an English author, a local `mark.png` background image) and `test/fixtures/cover/two-pages.html` (content that spans two pages)
+- [X] T001 Create `test/fixtures/cover/cover.html` (`@page { size: 170mm 240mm; margin: 0 }`, a Burmese title in `"Noto Sans Myanmar"`, an English author, a local `mark.png` background image) and `test/fixtures/cover/two-pages.html` (content that spans two pages)
 
 ---
 
@@ -26,14 +26,14 @@ implementation. Rendering tests are offline and use the print font fixture.
 
 ### Tests ⚠️
 
-- [ ] T002 [P] [US1] Write `test/unit/cover/page-size.test.ts`: `pageSizePt(size)` for `170mm 240mm` → [481.89, 680.31]; `8.5in 11in`, `21cm 29.7cm`, `600px 800px`, `A4`, `A5 landscape`, `letter`, a single length (square), `auto`/empty → undefined
-- [ ] T003 [P] [US1] Write `test/integration/cover.test.ts` (Chromium): `renderCover` on the fixture writes `cover.png` next to the HTML at 2008 × 2835 (300 dpi) and 1004 × 1417 (`--dpi 150`, `-o`); the Burmese title is drawn with the set's font (a render with the fixture font removed differs); `two-pages.html` → `md2book: <html>: expected 1 page, got 2` and no PNG; a remote `<img src="https://…">` → `md2book: cover: unexpected request https://…`; missing fonts → the `md2book fonts` line; two renders are byte-identical; CLI prints `Cover written: <file> (2008 x 2835 px, 300 dpi)`; `--config` and `--set` together → one-line error; `--dpi 0` → one-line error
+- [X] T002 [P] [US1] Write `test/unit/cover/page-size.test.ts`: `pageSizePt(size)` for `170mm 240mm` → [481.89, 680.31]; `8.5in 11in`, `21cm 29.7cm`, `600px 800px`, `A4`, `A5 landscape`, `letter`, a single length (square), `auto`/empty → undefined
+- [X] T003 [P] [US1] Write `test/integration/cover.test.ts` (Chromium): `renderCover` on the fixture writes `cover.png` next to the HTML at 2008 × 2835 (300 dpi) and 1004 × 1417 (`--dpi 150`, `-o`); the Burmese title is drawn with the set's font (a render with the fixture font removed differs); `two-pages.html` → `md2book: <html>: expected 1 page, got 2` and no PNG; a remote `<img src="https://…">` → `md2book: cover: unexpected request https://…`; missing fonts → the `md2book fonts` line; two renders are byte-identical; CLI prints `Cover written: <file> (2008 x 2835 px, 300 dpi)`; `--config` and `--set` together → one-line error; `--dpi 0` → one-line error
 
 ### Implementation
 
-- [ ] T004 [US1] Implement `src/cover/page-size.ts` to pass T002
-- [ ] T005 [US1] Implement `src/cover/render.ts` `renderCover({ html, output, dpi, set, fontsDir })` per research R-01–R-03 (inject @font-face, serve the folder, count pages with `page.pdf`, size from `@page` else the PDF, screenshot at target ÷ CSS width, sharp resize, write via temp + rename) and `src/cover/command.ts` `runCover`; pass T003
-- [ ] T006 [US1] Wire `md2book cover <file.html> [-o] [--dpi] [--config|--set]` in `src/cli.ts` (remove the reserved stub); export `cover()` from `src/index.ts`; public-API test adds `cover`; CLI test: no reserved commands remain
+- [X] T004 [US1] Implement `src/cover/page-size.ts` to pass T002
+- [X] T005 [US1] Implement `src/cover/render.ts` `renderCover({ html, output, dpi, set, fontsDir })` per research R-01–R-03 (inject @font-face, serve the folder, count pages with `page.pdf`, size from `@page` else the PDF, screenshot at target ÷ CSS width, sharp resize, write via temp + rename) and `src/cover/command.ts` `runCover`; pass T003
+- [X] T006 [US1] Wire `md2book cover <file.html> [-o] [--dpi] [--config|--set]` in `src/cli.ts` (remove the reserved stub); export `cover()` from `src/index.ts`; public-API test adds `cover`; CLI test: no reserved commands remain
 
 ---
 
@@ -55,7 +55,7 @@ implementation. Rendering tests are offline and use the print font fixture.
 
 ## Phase 5: User Story 3 - Publish a release (P2)
 
-- [ ] T013 [US3] Rewrite `.github/workflows/ci.yml`: trigger only on `push: tags: ["v*"]`; jobs `check`, `browser` (Chromium + WebKit), `release` (needs both; tag = `v` + package version, else fail naming both; `npm run package:check`; `npm publish --provenance --access public` with `NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}`; `permissions: contents: read, id-token: write`; registry-url set in setup-node)
+- [ ] T013 [US3] Rewrite `.github/workflows/ci.yml`: trigger on `pull_request` and `push: tags: ["v*"]` only; jobs `check`, `browser` (Chromium + WebKit) run on both; `release` runs only on tags (`if: startsWith(github.ref, 'refs/tags/v')`, needs both; tag = `v` + package version, else fail naming both; `npm run package:check`; `npm publish --provenance --access public` with `NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}`; `permissions: contents: read, id-token: write`; registry-url set in setup-node)
 
 ---
 

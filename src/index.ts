@@ -3,12 +3,14 @@
 import { runEpub, type EpubOptions } from "./epub/command.ts";
 import { runFonts, type FontsOptions } from "./fonts/command.ts";
 import { runPdf, type PdfOptions } from "./pdf/command.ts";
+import { runCover, type CoverOptions } from "./cover/command.ts";
 import { runAll, runQa, type QaOptions } from "./qa/command.ts";
 import { runInit, type InitOptions } from "./init/init.ts";
 import { runServe, runWeb, type ServeOptions, type WebOptions } from "./web/command.ts";
 import type { Served } from "./web/serve.ts";
 
 export type {
+  CoverOptions,
   EpubOptions,
   FontsOptions,
   PdfOptions,
@@ -47,6 +49,13 @@ export function epub(options: EpubOptions): Promise<{ file: string }> {
 /** `md2book build pdf`: build the screen or printed PDF; resolves to the file written. */
 export function pdf(options: PdfOptions): Promise<{ file: string }> {
   return runPdf(options);
+}
+
+/** `md2book cover`: render a one-page HTML cover to PNG; resolves to the file and its size. */
+export function cover(
+  options: CoverOptions,
+): Promise<{ file: string; width: number; height: number }> {
+  return runCover(options);
 }
 
 /** `md2book qa`: write QA-REPORT.md; resolves to the report file. */
