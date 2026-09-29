@@ -50,3 +50,26 @@ nav#toc li.toc-part ol { padding-left: 1.2em; }
 
 pre { font-size: 0.78em; }
 pre.wide, pre.xwide { font-size: 0.7em; }
+
+/* md2book addition (docs/decision-log.md): Apple Books themes (Night, Gray, ...) replace page
+   backgrounds and text colours, which erased the terminal window. Apple Books marks the root with
+   __ibooks_internal_theme; keep the terminal as designed in every theme. */
+:root[__ibooks_internal_theme] .terminal { background-color: #1e1e1e !important; }
+:root[__ibooks_internal_theme] .terminal pre,
+:root[__ibooks_internal_theme] .terminal code { background-color: #1e1e1e !important; color: #f0f0f0 !important; }
+:root[__ibooks_internal_theme] .terminal span { color: #f0f0f0 !important; }
+:root[__ibooks_internal_theme] .terminal-bar { background-color: #3a3a3c !important; }
+:root[__ibooks_internal_theme] .terminal-dot { background-color: #ff5f57 !important; }
+:root[__ibooks_internal_theme] .terminal-dot + .terminal-dot { background-color: #febc2e !important; }
+:root[__ibooks_internal_theme] .terminal-dot + .terminal-dot + .terminal-dot { background-color: #28c840 !important; }
+:root[__ibooks_internal_theme] .terminal .gp { color: #4ec98f !important; }
+:root[__ibooks_internal_theme] .terminal .go { color: #a8b0bc !important; }
+:root[__ibooks_internal_theme] .terminal .gt,
+:root[__ibooks_internal_theme] .terminal .gr,
+:root[__ibooks_internal_theme] .terminal .err { color: #f48771 !important; }
+:root[__ibooks_internal_theme] .terminal .nv { color: #9cdcfe !important; }
+:root[__ibooks_internal_theme] .terminal .s,
+:root[__ibooks_internal_theme] .terminal .s1,
+:root[__ibooks_internal_theme] .terminal .s2 { color: #ce9178 !important; }
+:root[__ibooks_internal_theme] .terminal .c,
+:root[__ibooks_internal_theme] .terminal .c1 { color: #7f8793 !important; }
