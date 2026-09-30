@@ -102,6 +102,22 @@ describe("reader DOM", () => {
     }
   });
 
+  it("starts loading, showing only the cover until the reader has laid out the book", async () => {
+    const book = await webBook(await bookMm());
+    const html = readerHtml(book, "");
+    const [shell] = find(html, (el) => matches(el, "div[data-reader]"));
+    expect((attr(shell!, "class") ?? "").split(" ")).toContain("is-loading");
+    const [loading] = find(html, (el) => matches(el, "div.reader-loading[data-reader-loading]"));
+    expect(loading).toBeDefined();
+    const [img] = find(
+      html,
+      (el) => el.tagName === "img" && attr(el, "class") === "reader-loading-cover",
+    );
+    expect(attr(img!, "src")).toBe(`/${book.coverName}`);
+    expect(attr(img!, "alt")).toBe("");
+    expect(html).toContain('<span class="visually-hidden" role="status">Loading the book…</span>');
+  });
+
   it("gives CSS the cover's edge colour for the hardcover case", async () => {
     const [shell] = find(readerHtml(await webBook(await bookMm()), ""), (el) =>
       matches(el, "div[data-reader]"),

@@ -830,6 +830,8 @@
     turn = Math.floor(page / pagesPerView);
     showTurn();
     requestAnimationFrame(() => flow.classList.remove("is-measuring"));
+    // md2book: the book is laid out; replace the loading cover with it.
+    reader.classList.remove("is-loading");
     scheduleBuild();
   }
 

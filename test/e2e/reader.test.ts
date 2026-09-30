@@ -42,6 +42,49 @@ async function open(url: string, device = desktop, init?: string): Promise<Page>
 const isClosed = (page: Page) =>
   page.evaluate(() => document.querySelector("[data-book]")!.classList.contains("is-closed"));
 
+describe("loading screen", () => {
+  const visibility = (page: Page, selector: string) =>
+    page.evaluate((s) => getComputedStyle(document.querySelector(s)!).visibility, selector);
+
+  async function withoutReader(): Promise<Page> {
+    const page = await (await browser.newContext(contextOptions(desktop))).newPage();
+    await page.route(/reader\.[0-9a-f]+\.js$/, (route) => route.abort());
+    await page.goto(`${mm.url}chapters/ch01.html`);
+    await page.waitForTimeout(300);
+    return page;
+  }
+
+  it("shows only the cover until the reader has laid out the book", async () => {
+    const page = await withoutReader();
+    expect(await visibility(page, "[data-reader-loading]")).toBe("visible");
+    const box = await page.locator(".reader-loading-cover").boundingBox();
+    expect(box!.width).toBeGreaterThan(100);
+    expect(await visibility(page, ".reader-window")).toBe("hidden");
+    expect(await visibility(page, ".reader-controls")).toBe("hidden");
+    await page.context().close();
+  });
+
+  it("removes the loading screen after the first layout", async () => {
+    const page = await open(`${mm.url}chapters/ch01.html`);
+    expect(
+      await page.evaluate(() =>
+        document.querySelector("[data-reader]")!.classList.contains("is-loading"),
+      ),
+    ).toBe(false);
+    expect(await page.locator("[data-reader-loading]").isVisible()).toBe(false);
+    expect(await visibility(page, ".reader-window")).toBe("visible");
+    await page.context().close();
+  });
+
+  it("shows the book anyway if the reader script never runs", async () => {
+    const page = await withoutReader();
+    await page.waitForTimeout(8_500);
+    expect(await visibility(page, ".reader-window")).toBe("visible");
+    expect(await visibility(page, "[data-reader-loading]")).toBe("hidden");
+    await page.context().close();
+  });
+});
+
 describe("reader behaviour (SC-004)", () => {
   it("starts closed on the cover, opens with → and turns back with ←", async () => {
     const page = await open(mm.url);

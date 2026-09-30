@@ -9,6 +9,11 @@ const REFERENCE_SHA256 = "bb980615d4c6973b16cc0d9c6005054dbb81c149b3e7f816c90275
 // section-sized, preloaded turn surfaces recorded in specs/decision-log.md):
 // [edited text, reference text].
 export const READER_EDITS: [string, string][] = [
+  // md2book: the loading cover goes when the book is laid out (specs/decision-log.md).
+  [
+    '    requestAnimationFrame(() => flow.classList.remove("is-measuring"));\n    // md2book: the book is laid out; replace the loading cover with it.\n    reader.classList.remove("is-loading");\n    scheduleBuild();\n',
+    '    requestAnimationFrame(() => flow.classList.remove("is-measuring"));\n    scheduleBuild();\n',
+  ],
   // md2book: turn surfaces copy only the sections of the pages they show and prepare the next
   // and previous turns while idle (large books; specs/decision-log.md). Listed first: they undo
   // edits made on top of the ones below.

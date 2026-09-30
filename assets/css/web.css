@@ -400,3 +400,23 @@ pre { line-height: 1.7; }
     1px 0 0 color-mix(in srgb, var(--case) 62%, black),
     2px 0 0 color-mix(in srgb, var(--case) 48%, black);
 }
+
+/* md2book addition (specs/decision-log.md): until the reader script has laid out the book (it
+   removes .is-loading), the book shows only its cover, centred like the closed book, and the
+   page controls wait; the flow is unpaginated before then. If the script never runs, the book
+   appears anyway after 8 s. */
+.reader-loading { display: none; }
+.reader-shell.is-loading .reader-loading { display: flex; position: absolute; top: 0; bottom: 0;
+  left: 50%; width: min(100%, calc(var(--page-height) * var(--page-ratio))); translate: -50% 0; z-index: 10;
+  align-items: center; justify-content: center; pointer-events: none;
+  background: var(--cover-edge); box-shadow: 0 10px 24px rgb(32 42 53 / 28%);
+  animation: md2book-loaded 0s linear 8s forwards; }
+.reader-loading-cover { width: 100%; height: 100%; object-fit: contain;
+  animation: md2book-loading 1.6s ease-in-out infinite alternate; }
+.reader-shell.is-loading .book > :not(.reader-loading), .reader-shell.is-loading .reader-controls {
+  visibility: hidden; animation: md2book-reveal 0s linear 8s forwards; }
+.reader-shell.is-loading .book::before { visibility: hidden; }
+@keyframes md2book-loading { from { opacity: 1; } to { opacity: .78; } }
+@keyframes md2book-reveal { to { visibility: visible; } }
+@keyframes md2book-loaded { to { visibility: hidden; } }
+@media (prefers-reduced-motion: reduce) { .reader-loading-cover { animation: none; } }

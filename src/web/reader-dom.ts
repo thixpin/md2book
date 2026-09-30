@@ -100,7 +100,9 @@ export function readerHtml(book: WebBook, openChapter: string): string {
     .join("");
 
   return (
-    `<div class="reader-shell" data-reader data-book-key="${book.bookKey}" ` +
+    // md2book: `is-loading` shows only the cover until the reader script has laid out the book
+    // (it removes the class); before that the flow is unpaginated and runs across the spine.
+    `<div class="reader-shell is-loading" data-reader data-book-key="${book.bookKey}" ` +
     `data-book-title="${title}" data-author="${esc(config.author)}" data-open-chapter="${openChapter}" ` +
     `data-cover-src="/${book.coverName}" data-back-cover-src="/${book.backCoverName}" ` +
     `data-cover-ratio="${facts.ratio.toFixed(5)}" ` +
@@ -123,7 +125,10 @@ export function readerHtml(book: WebBook, openChapter: string): string {
     '<div class="turn-under" data-turn-under></div>' +
     '<div class="turn-cast" data-turn-cast></div>' +
     '<div class="turn-sheet" data-turn-sheet></div></div>' +
-    '<div class="book-crease" aria-hidden="true"></div></div>' +
+    '<div class="book-crease" aria-hidden="true"></div>' +
+    '<div class="reader-loading" data-reader-loading>' +
+    `<img class="reader-loading-cover" src="/${book.coverName}" alt=""/>` +
+    '<span class="visually-hidden" role="status">Loading the book…</span></div></div>' +
     '<nav class="reader-controls" aria-label="Page navigation">' +
     '<button type="button" class="page-turn" data-page-previous ' +
     'aria-label="Previous page" title="Previous page (←)">' +
