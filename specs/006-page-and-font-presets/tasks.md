@@ -177,11 +177,11 @@ gains `pageSize`, `fontFamily`, `fontSize`, `chapters` (FR-023).
 - [X] T022 [US3] Extend `scripts/make-font-fixtures.py` with OFL subsets of the two new sets for
   `test/fixtures/fonts-source/` and `test/fixtures/fonts-print/` (with licence files and
   fixture manifests)
-- [ ] T023 [US3] Create `test/fixtures/book-fonts/` (Myanmar book): one chapter with medials,
+- [X] T023 [US3] Create `test/fixtures/book-fonts/` (Myanmar book): one chapter with medials,
   vowel signs, stacked consonants, kinzi, asat, Burmese digits and punctuation, Latin runs, bold
   and italic in both scripts, inline code, a code block and a terminal block with Burmese text,
   a table, each callout, and a long paragraph for line breaking (research R-08)
-- [ ] T024 [US3] Write `test/integration/pdf-fonts.test.ts` (Chromium, print fonts): for
+- [X] T024 [US3] Write `test/integration/pdf-fonts.test.ts` (Chromium, print fonts): for
   `noto-sans-myanmar`, `padauk` and `masterpiece-uni-round`, the fixture PDF embeds the family's
   font, extracted text equals the source (0 replacement characters, 0 stray glyph-ID letters),
   code and terminal text is in the mono font, and the QA Burmese checks pass; the EPUB embeds the
