@@ -1,9 +1,11 @@
 name: CI
 
-# Checks run on pull requests and version tags; publishing runs on version tags only (spec 005).
+# `check` runs on pull requests, pushes to master and version tags; the browser and performance
+# tests on pull requests and version tags; publishing on version tags only (spec 005).
 on:
   pull_request:
   push:
+    branches: [master]
     tags: ["v*"]
 
 permissions:
@@ -42,6 +44,7 @@ jobs:
   browser:
     # Reader behaviour and the device matrix (spec 002 SC-003, SC-004); headings in Chromium and
     # WebKit (spec 004 SC-007).
+    if: github.event_name == 'pull_request' || startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -57,6 +60,7 @@ jobs:
     # Performance and load tests (test/perf: build times, the reader on a long book). Kept out of
     # `npm run test`; they run here on pull requests and version tags, so nothing is published
     # before they pass.
+    if: github.event_name == 'pull_request' || startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
