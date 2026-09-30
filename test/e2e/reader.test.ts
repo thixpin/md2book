@@ -113,7 +113,7 @@ describe("toolbar panels", () => {
       const page = await open(`${mm.url}chapters/ch01.html`, device);
       for (const id of ["reader-contents", "reader-search", "reader-text"]) {
         await page.click(`[popovertarget="${id}"]`);
-        await page.waitForTimeout(150);
+        await page.waitForTimeout(300); // after the opening transition
         const { button, panel, width } = await rects(page, id);
         expect(panel.top, id).toBeGreaterThanOrEqual(button.bottom);
         expect(panel.top - button.bottom, id).toBeLessThan(16);
@@ -130,6 +130,47 @@ describe("toolbar panels", () => {
       await page.context().close();
     });
   }
+
+  it("draws every panel as rounded glass with a pointer at its button", async () => {
+    const page = await open(`${mm.url}chapters/ch01.html`);
+    for (const id of ["reader-contents", "reader-search", "reader-text"]) {
+      await page.click(`[popovertarget="${id}"]`);
+      await page.waitForTimeout(250);
+      const look = await page.evaluate((panelId) => {
+        const panel = document.getElementById(panelId)!;
+        const style = getComputedStyle(panel);
+        const pointer = getComputedStyle(panel, "::before");
+        const button = document
+          .querySelector(`[popovertarget="${panelId}"]`)!
+          .getBoundingClientRect();
+        const box = panel.getBoundingClientRect();
+        return {
+          radius: parseFloat(style.borderTopLeftRadius),
+          backdrop:
+            style.backdropFilter ||
+            (style as unknown as { webkitBackdropFilter: string }).webkitBackdropFilter,
+          background: style.backgroundColor,
+          shadow: style.boxShadow,
+          pointer: pointer.content,
+          pointerX: box.left + parseFloat(pointer.left),
+          buttonX: (button.left + button.right) / 2,
+          body: panel.firstElementChild?.className,
+        };
+      }, id);
+      expect(look.radius, id).toBeGreaterThanOrEqual(10);
+      expect(look.backdrop, id).toContain("blur");
+      expect(look.background, id).toMatch(
+        /rgba?\(.*\/ 0\.\d+\)|rgba\(.*, 0\.\d+\)|color\(srgb .* \/ 0\.\d+\)/,
+      );
+      expect(look.shadow, id).not.toBe("none");
+      expect(look.pointer, id).not.toBe("none");
+      expect(Math.abs(look.pointerX - look.buttonX), id).toBeLessThan(2);
+      expect(look.body, id).toBe("reader-panel-body");
+      await page.keyboard.press("Escape");
+      await page.waitForTimeout(100);
+    }
+    await page.context().close();
+  });
 
   it("shows a spinner in the text size panel while the book re-paginates", async () => {
     const page = await open(`${mm.url}chapters/ch01.html`);

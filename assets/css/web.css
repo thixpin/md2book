@@ -439,3 +439,32 @@ pre { line-height: 1.7; }
 @keyframes md2book-spin { to { transform: rotate(1turn); } }
 @media (prefers-reduced-motion: reduce) { .text-size-busy { animation: none; } }
 
+/* md2book addition (specs/decision-log.md): toolbar panels as light frosted glass, rounded, with
+   a small pointer at their button (--pointer-x, set by the reader). The contents scroll in
+   .reader-panel-body so the pointer is not clipped. */
+.reader-panel { overflow: visible; max-height: none; padding: 0; border-radius: 14px;
+  border: 1px solid rgb(255 255 255 / 65%);
+  background: rgb(251 251 249 / 74%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%); backdrop-filter: blur(18px) saturate(160%);
+  box-shadow: 0 0 0 .5px rgb(32 42 53 / 12%), 0 2px 6px rgb(32 42 53 / 7%),
+    0 14px 34px rgb(32 42 53 / 14%);
+  transform-origin: var(--pointer-x, 90%) 0; }
+.reader-panel-body { max-height: min(70vh, 32rem); overflow: auto; padding: 1.1rem 1.3rem;
+  border-radius: inherit; }
+.reader-panel input[type="search"], .text-size .reader-tool { border-radius: 8px; }
+.reader-panel::before { content: ""; position: absolute; top: -7px; left: var(--pointer-x, 90%);
+  width: 13px; height: 13px; translate: -50% 0; rotate: 45deg; border-radius: 3px 0 0 0;
+  background: inherit; border: inherit; border-right: 0; border-bottom: 0;
+  -webkit-backdrop-filter: inherit; backdrop-filter: inherit;
+  clip-path: polygon(0 0, 100% 0, 0 100%); }
+.reader-panel:popover-open { opacity: 1; transform: none;
+  transition: opacity .16s ease, transform .16s ease; }
+@starting-style { .reader-panel:popover-open { opacity: 0; transform: translateY(-4px); } }
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .reader-panel { background: var(--paper); }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .reader-panel { background: var(--paper); -webkit-backdrop-filter: none; backdrop-filter: none; }
+}
+@media (prefers-reduced-motion: reduce) { .reader-panel:popover-open { transition: none; } }
+

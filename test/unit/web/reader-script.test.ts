@@ -9,6 +9,20 @@ const REFERENCE_SHA256 = "bb980615d4c6973b16cc0d9c6005054dbb81c149b3e7f816c90275
 // section-sized, preloaded turn surfaces recorded in specs/decision-log.md):
 // [edited text, reference text].
 export const READER_EDITS: [string, string][] = [
+  // md2book: glass panels scroll in an inner body and point at their button
+  // (specs/decision-log.md).
+  [
+    '    const rect = button.getBoundingClientRect();\n    const top = rect.bottom + 12; // room for the pointer\n    panel.style.inset = "auto";\n',
+    '    const rect = button.getBoundingClientRect();\n    const top = rect.bottom + 6;\n    panel.style.inset = "auto";\n',
+  ],
+  [
+    '    panel.style.right = `${Math.max(0, right)}px`;\n    // The pointer (web.css ::before) at the button\'s centre.\n    const left = window.innerWidth - Math.max(0, right) - width;\n    panel.style.setProperty("--pointer-x", `${(rect.left + rect.right) / 2 - left}px`);\n    panel.firstElementChild.style.maxHeight =\n      `min(70vh, 32rem, ${Math.max(160, window.innerHeight - top - 12)}px)`;\n  }\n',
+    "    panel.style.right = `${Math.max(0, right)}px`;\n    panel.style.maxHeight = `min(70vh, 32rem, ${Math.max(160, window.innerHeight - top - 12)}px)`;\n  }\n",
+  ],
+  [
+    '  for (const panel of document.querySelectorAll(".reader-panel")) {\n    // The panel\'s contents scroll in an inner body, so the panel itself can show its pointer.\n    const body = document.createElement("div");\n    body.className = "reader-panel-body";\n    body.append(...panel.childNodes);\n    panel.append(body);\n    panel.addEventListener("beforetoggle", (event) => {\n',
+    '  for (const panel of document.querySelectorAll(".reader-panel")) {\n    panel.addEventListener("beforetoggle", (event) => {\n',
+  ],
   // md2book: toolbar panels open below their button; a spinner while the text size re-paginates
   // (specs/decision-log.md).
   [

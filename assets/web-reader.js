@@ -773,7 +773,7 @@
     const button = document.querySelector(`[popovertarget="${panel.id}"]`);
     if (!button) return;
     const rect = button.getBoundingClientRect();
-    const top = rect.bottom + 6;
+    const top = rect.bottom + 12; // room for the pointer
     panel.style.inset = "auto";
     panel.style.margin = "0";
     panel.style.top = `${top}px`;
@@ -782,7 +782,11 @@
     const width = Math.min(window.innerWidth * 0.9, 24 * rem);
     const right = Math.min(Math.max(8, window.innerWidth - rect.right), window.innerWidth - 8 - width);
     panel.style.right = `${Math.max(0, right)}px`;
-    panel.style.maxHeight = `min(70vh, 32rem, ${Math.max(160, window.innerHeight - top - 12)}px)`;
+    // The pointer (web.css ::before) at the button's centre.
+    const left = window.innerWidth - Math.max(0, right) - width;
+    panel.style.setProperty("--pointer-x", `${(rect.left + rect.right) / 2 - left}px`);
+    panel.firstElementChild.style.maxHeight =
+      `min(70vh, 32rem, ${Math.max(160, window.innerHeight - top - 12)}px)`;
   }
 
   function measure() {
@@ -1214,6 +1218,11 @@
   }
 
   for (const panel of document.querySelectorAll(".reader-panel")) {
+    // The panel's contents scroll in an inner body, so the panel itself can show its pointer.
+    const body = document.createElement("div");
+    body.className = "reader-panel-body";
+    body.append(...panel.childNodes);
+    panel.append(body);
     panel.addEventListener("beforetoggle", (event) => {
       if (event.newState === "open") placePanel(panel);
     });
