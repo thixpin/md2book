@@ -2,7 +2,7 @@ import { existsSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { loadConfig } from "../config/load.ts";
 import { BookError } from "../errors.ts";
-import { fontSetById, getFontSet, loadManifest, type FontSet } from "../fonts/manifest.ts";
+import { fontSetById, configFontSet, loadManifest, type FontSet } from "../fonts/manifest.ts";
 import { requireSet } from "../fonts/require.ts";
 import { renderCover } from "./render.ts";
 
@@ -43,7 +43,7 @@ export async function runCover(
     fix = `md2book fonts --set ${set.id}`;
   } else {
     const { config } = await loadConfig(options.config ?? "book.json", { requireCover: false });
-    set = getFontSet(manifest, config.language, config.font_set);
+    set = configFontSet(manifest, config);
     fix = `md2book fonts --config ${config.configPath}`;
   }
   const fontsDir = requireSet(set, options, fix);

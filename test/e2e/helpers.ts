@@ -8,7 +8,7 @@ import { serveDir, type Served } from "../../src/web/serve.ts";
 import { FIXTURE_MANIFEST } from "../helpers/fonts.ts";
 import { FIXTURE_FONTS } from "../helpers/fonts.ts";
 import { fetchFontSet } from "../../src/fonts/fetch.ts";
-import { getFontSet, loadManifest } from "../../src/fonts/manifest.ts";
+import { configFontSet, loadManifest } from "../../src/fonts/manifest.ts";
 
 /**
  * Builds a fixture book's web edition and serves it on a random local port. The files live in
@@ -19,7 +19,7 @@ export async function serveFixture(config: BookConfig): Promise<Served> {
   const root = mkdtempSync(join(tmpdir(), "md2book-e2e-"));
   const manifest = await loadManifest(FIXTURE_MANIFEST);
   process.env.MD2BOOK_FONTS_SOURCE = FIXTURE_FONTS;
-  const set = getFontSet(manifest, config.language, config.font_set);
+  const set = configFontSet(manifest, config);
   await fetchFontSet(set, { fontsDir: join(root, "fonts"), manifest });
   const { dir } = await buildWeb(config, {
     out: join(root, "book"),

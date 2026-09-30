@@ -1,6 +1,6 @@
 import { loadConfig } from "../config/load.ts";
 import { fetchFontSet } from "./fetch.ts";
-import { fontSetById, getFontSet, loadManifest } from "./manifest.ts";
+import { fontSetById, configFontSet, loadManifest } from "./manifest.ts";
 
 export interface FontsOptions {
   /** Book config whose `language` and `font_set` pick the set (default book.json). */
@@ -22,7 +22,7 @@ export async function runFonts(
     set = fontSetById(manifest, options.set);
   } else {
     const { config } = await loadConfig(options.config ?? "book.json");
-    set = getFontSet(manifest, config.language, config.font_set);
+    set = configFontSet(manifest, config);
   }
   return fetchFontSet(set, { fontsDir: options.fontsDir, manifest });
 }

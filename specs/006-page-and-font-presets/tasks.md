@@ -20,7 +20,7 @@ gains `pageSize`, `fontFamily`, `fontSize`, `chapters` (FR-023).
 
 ## Phase 1: Setup
 
-- [ ] T001 Create `src/config/presets.ts` with the tables of data-model.md: `PAGE_SIZES`
+- [X] T001 Create `src/config/presets.ts` with the tables of data-model.md: `PAGE_SIZES`
   (`default` 170 × 240, `a5` 148 × 210, `b5` 176 × 250, `a4` 210 × 297, `letter`
   215.9 × 279.4 mm, each with its file suffix and wizard label), `FONT_SIZES` (`xs` 0.85,
   `s` 0.92, `m` 1, `l` 1.1, `xl` 1.2, labels "Extra Small" … "Extra Large", "Medium (default)"),
@@ -32,7 +32,7 @@ gains `pageSize`, `fontFamily`, `fontSize`, `chapters` (FR-023).
 
 ## Phase 2: Foundational (config keys, blocks every story)
 
-- [ ] T002 Write failing tests in `test/unit/config/schema.test.ts` and
+- [X] T002 Write failing tests in `test/unit/config/schema.test.ts` and
   `test/unit/config/load.test.ts`: `page.size` accepts exactly `default|a5|b5|a4|letter` and
   defaults to `default`; `font.size` accepts exactly `xs|s|m|l|xl` and defaults to `m`;
   `font.family` must be a known id of the book's language; `font_set` alone maps to the Noto
@@ -40,11 +40,11 @@ gains `pageSize`, `fontFamily`, `fontSize`, `chapters` (FR-023).
   keys; a Myanmar family on `language: en` → one-line error; messages have the form
   `<config>: page.size: must be one of default, a5, b5, a4, letter`; unknown keys inside
   `page`/`font` warn; the JSON Schema contract stays in step
-- [ ] T003 Implement `page` and `font` in `src/config/schema.ts`, resolution in
+- [X] T003 Implement `page` and `font` in `src/config/schema.ts`, resolution in
   `src/config/load.ts` (loaded config gains `page` preset, `font.family`, `font.setId`,
   `font.size` preset) and extend
   `specs/001-core-manuscript-pipeline/contracts/book-config.schema.json`; pass T002
-- [ ] T004 Route every font-set lookup through the resolved `font.setId` instead of
+- [X] T004 Route every font-set lookup through the resolved `font.setId` instead of
   `language` + `font_set` (`src/fonts/command.ts`, `src/cover/command.ts`, and the PDF, EPUB,
   web and QA commands that call `getFontSet`); existing tests stay green
 

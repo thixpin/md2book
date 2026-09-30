@@ -10,7 +10,7 @@ import type { BookConfig } from "../../src/config/load.ts";
 import { loadConfig } from "../../src/config/load.ts";
 import { runCli } from "../../src/cli.ts";
 import { BookError } from "../../src/errors.ts";
-import { getFontSet, loadManifest } from "../../src/fonts/manifest.ts";
+import { configFontSet, loadManifest } from "../../src/fonts/manifest.ts";
 import { buildPdf } from "../../src/pdf/build.ts";
 import { pdfFacts, type PdfFacts } from "../../src/qa/pdf-read.ts";
 import { bookEn, bookHeadings, bookMm } from "../helpers/fixture-config.ts";
@@ -194,7 +194,7 @@ describe("buildPdf (screen edition)", { timeout: 120_000 }, () => {
   it("embeds only the set's fonts when they cover the text (no system copies)", async () => {
     const config = await bookMm();
     const { facts } = await build(config);
-    const set = getFontSet(await loadManifest(PRINT_MANIFEST), config.language, config.font_set);
+    const set = configFontSet(await loadManifest(PRINT_MANIFEST), config);
     const allowed = new Set(set.faces.map((face) => face.file.replace(/\.ttf$/, "")));
     expect(facts.fonts.length).toBeGreaterThan(0);
     for (const font of facts.fonts) {

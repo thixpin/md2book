@@ -3,18 +3,14 @@ import { join } from "node:path";
 import type { BookConfig } from "../config/load.ts";
 import { BookError } from "../errors.ts";
 import { fontsRoot, setDir } from "./cache.ts";
-import { getFontSet, loadManifest, setFiles, type FontSet } from "./manifest.ts";
+import { configFontSet, loadManifest, setFiles, type FontSet } from "./manifest.ts";
 
 /** The configured font set's cache directory; stops with the fix command if any file is missing. */
 export async function requireFontSet(
   config: BookConfig,
   options: { fontsDir?: string; manifestPath?: string } = {},
 ): Promise<{ set: FontSet; dir: string }> {
-  const set = getFontSet(
-    await loadManifest(options.manifestPath),
-    config.language,
-    config.font_set,
-  );
+  const set = configFontSet(await loadManifest(options.manifestPath), config);
   return { set, dir: requireSet(set, options, `md2book fonts --config ${config.configPath}`) };
 }
 

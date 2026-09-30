@@ -1,7 +1,7 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { fontSetById, getFontSet, loadManifest } from "../../../src/fonts/manifest.ts";
+import { configFontSet, fontSetById, loadManifest } from "../../../src/fonts/manifest.ts";
 import { BookError } from "../../../src/errors.ts";
 import { FIXTURE_MANIFEST } from "../../helpers/fonts.ts";
 import { tempDir } from "../../helpers/temp.ts";
@@ -45,9 +45,9 @@ describe("font manifest (fixture)", () => {
     }
   });
 
-  it("looks a set up by language and style", async () => {
+  it("looks a set up by id and by a config's resolved family", async () => {
     const manifest = await loadManifest(FIXTURE_MANIFEST);
-    expect(getFontSet(manifest, "en", "serif").id).toBe("en-serif");
+    expect(configFontSet(manifest, { font: { setId: "en-serif" } }).id).toBe("en-serif");
     expect(fontSetById(manifest, "my-sans").body_family).toBe("Noto Sans Myanmar");
   });
 

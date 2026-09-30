@@ -4,7 +4,7 @@ import { loadBook } from "../book/load.ts";
 import { loadConfig } from "../config/load.ts";
 import { runEpub, type EpubOptions } from "../epub/command.ts";
 import { BookError } from "../errors.ts";
-import { getFontSet, loadManifest } from "../fonts/manifest.ts";
+import { configFontSet, loadManifest } from "../fonts/manifest.ts";
 import { requireFontSet } from "../fonts/require.ts";
 import { defaultOut, runWeb, webWrittenLine } from "../web/command.ts";
 import { fontCoverage, type Coverage } from "./coverage.ts";
@@ -34,7 +34,7 @@ export async function runQa(
   const { config } = await loadConfig(options.config);
   const book = await loadBook(config);
   const out = resolve(options.out ?? defaultOut(options.config));
-  const set = getFontSet(await loadManifest(manifestPath), config.language, config.font_set);
+  const set = configFontSet(await loadManifest(manifestPath), config);
 
   let coverage: Coverage | undefined;
   try {

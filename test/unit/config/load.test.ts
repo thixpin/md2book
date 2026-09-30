@@ -129,6 +129,66 @@ describe("loadConfig", () => {
     });
   });
 
+  it("defaults the page size, font family and font size (spec 006)", async () => {
+    const { config } = await loadConfig(book(base));
+    expect(config.page).toMatchObject({ id: "default", width: 170, height: 240 });
+    expect(config.font).toMatchObject({ family: "noto-sans-myanmar", setId: "my-sans" });
+    expect(config.font.size).toMatchObject({ id: "m", factor: 1 });
+    const en = await loadConfig(book({ ...base, language: "en" }));
+    expect(en.config.font).toMatchObject({ family: "noto-sans", setId: "en-sans" });
+  });
+
+  it("reads page.size, font.family and font.size", async () => {
+    const { config } = await loadConfig(
+      book({ ...base, page: { size: "a5" }, font: { family: "noto-serif-myanmar", size: "xl" } }),
+    );
+    expect(config.page).toMatchObject({ id: "a5", width: 148, height: 210, suffix: "148x210" });
+    expect(config.font).toMatchObject({ family: "noto-serif-myanmar", setId: "my-serif" });
+    expect(config.font.size).toMatchObject({ id: "xl", factor: 1.2 });
+    expect(config.strings.typeface_line).toBe("Typeface: Noto Serif Myanmar");
+  });
+
+  it("maps the legacy font_set to a family", async () => {
+    const { config } = await loadConfig(book({ ...base, language: "en", font_set: "serif" }));
+    expect(config.font).toMatchObject({ family: "noto-serif", setId: "en-serif" });
+  });
+
+  it.each([
+    [{ page: { size: "a6" } }, "page.size: must be one of default, a5, b5, a4, letter"],
+    [{ font: { size: "12pt" } }, "font.size: must be one of xs, s, m, l, xl"],
+  ])("stops on a preset outside the list: %j", async (extra, reason) => {
+    const error = await loadError(book({ ...base, ...extra }));
+    expect(error.reason).toBe(reason);
+  });
+
+  it("stops on an unknown font family, listing the families", async () => {
+    const error = await loadError(book({ ...base, font: { family: "comic-sans" } }));
+    expect(error.reason).toMatch(/^font\.family: must be one of noto-sans-myanmar, /);
+  });
+
+  it("stops on a family of the other language", async () => {
+    const error = await loadError(
+      book({ ...base, language: "en", font: { family: "noto-sans-myanmar" } }),
+    );
+    expect(error.reason).toBe(
+      "font.family: noto-sans-myanmar is a Myanmar family; English books use noto-sans or noto-serif",
+    );
+  });
+
+  it("stops when font_set and font.family disagree, naming both", async () => {
+    const error = await loadError(
+      book({ ...base, font_set: "serif", font: { family: "noto-sans-myanmar" } }),
+    );
+    expect(error.reason).toBe(
+      "font_set: serif selects noto-serif-myanmar, but font.family is noto-sans-myanmar; remove font_set",
+    );
+  });
+
+  it("warns about unknown keys inside page and font", async () => {
+    const { warnings } = await loadConfig(book({ ...base, page: { width: 100 } }));
+    expect(warnings).toEqual(["unknown key: page.width"]);
+  });
+
   it("stops on invalid JSON, naming the file", async () => {
     const dir = tempDir({ "book.json": "{ nope" });
     const error = await loadError(join(dir, "book.json"));

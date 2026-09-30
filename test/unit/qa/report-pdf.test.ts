@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { loadBook } from "../../../src/book/load.ts";
-import { getFontSet, loadManifest } from "../../../src/fonts/manifest.ts";
+import { fontSetById, loadManifest } from "../../../src/fonts/manifest.ts";
 import type { PdfChecks } from "../../../src/qa/pdf-checks.ts";
 import type { PdfFacts } from "../../../src/qa/pdf-read.ts";
 import { qaReport, type ReportInput } from "../../../src/qa/report.ts";
@@ -10,7 +10,7 @@ import { FIXTURE_MANIFEST } from "../../helpers/fonts.ts";
 
 async function pdfSection(pdf: ReportInput["pdf"]): Promise<string[]> {
   const book = await loadBook(await bookMm());
-  const set = getFontSet(await loadManifest(FIXTURE_MANIFEST), "my", "sans");
+  const set = fontSetById(await loadManifest(FIXTURE_MANIFEST), "my-sans");
   const report = qaReport({
     book,
     issues: [],

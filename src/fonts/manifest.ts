@@ -1,14 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { z } from "zod";
-import {
-  FONT_STYLES,
-  LANGUAGES,
-  fontSetId,
-  type FontSetId,
-  type FontStyle,
-  type Language,
-} from "../config/language.ts";
+import { FONT_STYLES, LANGUAGES, fontSetId, type FontSetId } from "../config/language.ts";
 import { BookError } from "../errors.ts";
 
 /** The only manifest production code trusts (contracts/font-manifest.md). */
@@ -90,8 +83,12 @@ export async function loadManifest(manifestPath = SHIPPED_MANIFEST): Promise<Fon
   return { ...parsed.data, sets };
 }
 
-export function getFontSet(manifest: FontManifest, language: Language, style: FontStyle): FontSet {
-  return manifest.sets[fontSetId(language, style)];
+/** The set of the config's resolved font family (spec 006). */
+export function configFontSet(
+  manifest: FontManifest,
+  config: { font: { setId: string } },
+): FontSet {
+  return fontSetById(manifest, config.font.setId);
 }
 
 export function fontSetById(manifest: FontManifest, id: string): FontSet {

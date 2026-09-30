@@ -104,6 +104,47 @@
       "description": "Curated font set for the book's language.",
       "type": "string"
     },
+    "page": {
+      "description": "PDF page size preset (spec 006). Default: default (170 x 240 mm).",
+      "type": "object",
+      "properties": {
+        "size": {
+          "type": "string",
+          "enum": [
+            "default",
+            "a5",
+            "b5",
+            "a4",
+            "letter"
+          ]
+        }
+      }
+    },
+    "font": {
+      "description": "Font family and PDF font size presets (spec 006). Defaults: the language default family (or font_set), size m.",
+      "type": "object",
+      "properties": {
+        "family": {
+          "type": "string",
+          "enum": [
+            "noto-sans-myanmar",
+            "noto-serif-myanmar",
+            "noto-sans",
+            "noto-serif"
+          ]
+        },
+        "size": {
+          "type": "string",
+          "enum": [
+            "xs",
+            "s",
+            "m",
+            "l",
+            "xl"
+          ]
+        }
+      }
+    },
     "code_root": {
       "type": "string",
       "description": "Base for snippet paths. Default: nearest ancestor with .git, else this file's directory."

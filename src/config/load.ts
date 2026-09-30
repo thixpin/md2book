@@ -5,13 +5,29 @@ import { z } from "zod";
 import { BookError, warn } from "../errors.ts";
 import { findCodeRoot } from "./code-root.ts";
 import { defaultStrings, type SeriesStrings } from "./language.ts";
+import {
+  FONT_SIZES,
+  PAGE_SIZES,
+  familyForStyle,
+  fontFamily,
+  type FontFamily,
+  type FontSizeId,
+  type PageSize,
+  type PageSizeId,
+} from "./presets.ts";
 import { bookConfigSchema, type RawBookConfig } from "./schema.ts";
 
-export type BookConfig = Omit<RawBookConfig, "strings" | "code_root"> & {
+export type BookConfig = Omit<RawBookConfig, "strings" | "code_root" | "page" | "font"> & {
   configPath: string;
   configDir: string;
   code_root: string;
   strings: SeriesStrings;
+  page: PageSize & { id: PageSizeId };
+  font: {
+    family: string;
+    setId: string;
+    size: (typeof FONT_SIZES)[FontSizeId] & { id: FontSizeId };
+  };
 };
 
 export interface LoadedConfig {
@@ -46,7 +62,10 @@ export async function loadConfig(
   warnings.forEach(warn);
 
   const configDir = dirname(path);
-  const { strings, code_root, ...fields } = parsed.data;
+  const { strings, code_root, page, font, ...fields } = parsed.data;
+  const family = resolveFamily(path, fields, font?.family, hasKey(raw, "font_set"));
+  const pageId = page?.size ?? "default";
+  const sizeId = font?.size ?? "m";
   const config: BookConfig = {
     ...fields,
     publisher: fields.publisher || undefined,
@@ -54,7 +73,15 @@ export async function loadConfig(
     configPath: path,
     configDir,
     code_root: code_root ? resolve(configDir, code_root) : findCodeRoot(configDir),
-    strings: mergeStrings(defaultStrings(fields.language, fields.font_set), strings),
+    strings: mergeStrings(
+      {
+        ...defaultStrings(fields.language, fields.font_set),
+        typeface_line: `Typeface: ${family.name}`,
+      },
+      strings,
+    ),
+    page: { id: pageId, ...PAGE_SIZES[pageId] },
+    font: { family: family.id, setId: family.setId, size: { id: sizeId, ...FONT_SIZES[sizeId] } },
   };
   for (const key of PATH_KEYS) {
     const value = config[key];
@@ -65,6 +92,38 @@ export async function loadConfig(
   }
 
   return { config, warnings, placeholders: findPlaceholders(parsed.data) };
+}
+
+function hasKey(raw: unknown, key: string): boolean {
+  return !!raw && typeof raw === "object" && key in raw;
+}
+
+/** `font.family`, else the legacy `font_set`, else the language's default (spec 006 FR-015). */
+function resolveFamily(
+  path: string,
+  fields: Pick<RawBookConfig, "language" | "font_set">,
+  familyId: string | undefined,
+  explicitSet: boolean,
+): FontFamily {
+  const fromSet = familyForStyle(fields.language, fields.font_set);
+  if (familyId === undefined) return fromSet;
+  const family = fontFamily(familyId)!;
+  if (family.language !== fields.language) {
+    const own = [familyForStyle(fields.language, "sans"), familyForStyle(fields.language, "serif")];
+    const kind = family.language === "my" ? "a Myanmar" : "an English";
+    const books = fields.language === "my" ? "Myanmar" : "English";
+    throw new BookError(
+      path,
+      `font.family: ${family.id} is ${kind} family; ${books} books use ${own.map((f) => f.id).join(" or ")}`,
+    );
+  }
+  if (explicitSet && fromSet.id !== family.id) {
+    throw new BookError(
+      path,
+      `font_set: ${fields.font_set} selects ${fromSet.id}, but font.family is ${family.id}; remove font_set`,
+    );
+  }
+  return family;
 }
 
 async function readJson(path: string): Promise<unknown> {

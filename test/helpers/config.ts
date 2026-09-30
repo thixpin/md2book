@@ -1,6 +1,7 @@
 import { join } from "node:path";
 import { defaultStrings, type FontStyle, type Language } from "../../src/config/language.ts";
 import type { BookConfig } from "../../src/config/load.ts";
+import { FONT_SIZES, PAGE_SIZES, familyForStyle } from "../../src/config/presets.ts";
 
 /** A resolved config for tests that do not need loadConfig. */
 export function testConfig(
@@ -9,6 +10,7 @@ export function testConfig(
 ): BookConfig {
   const language = overrides.language ?? "my";
   const font_set = overrides.font_set ?? "sans";
+  const family = familyForStyle(language, font_set);
   return {
     title: "T",
     author: "A",
@@ -22,6 +24,8 @@ export function testConfig(
     configPath: join(dir, "book.json"),
     configDir: dir,
     code_root: dir,
+    page: { id: "default", ...PAGE_SIZES.default },
+    font: { family: family.id, setId: family.setId, size: { id: "m", ...FONT_SIZES.m } },
     ...overrides,
     language,
     font_set,
