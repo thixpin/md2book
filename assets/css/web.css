@@ -468,3 +468,18 @@ pre { line-height: 1.7; }
 }
 @media (prefers-reduced-motion: reduce) { .reader-panel:popover-open { transition: none; } }
 
+/* md2book addition (specs/decision-log.md): Contents and Bookmarks as two tabs of one panel, a
+   compact segmented switcher above the list; only the list scrolls. */
+.reader-panel-body.has-tabs { display: flex; flex-direction: column; overflow: hidden;
+  padding: .8rem .9rem 1rem; }
+.panel-tabs { flex: none; display: flex; gap: 2px; margin: 0 0 .75rem; padding: 2px;
+  border-radius: 9px; background: rgb(118 118 128 / 12%); }
+.panel-tabs [role="tab"] { flex: 1; padding: .28rem .6rem; border: 0; border-radius: 7px;
+  color: var(--ink); background: transparent; font: inherit; font-size: .85rem; font-weight: 600;
+  cursor: pointer; }
+.panel-tabs [role="tab"][aria-selected="true"] { background: #fff;
+  box-shadow: 0 1px 3px rgb(32 42 53 / 14%), 0 0 0 .5px rgb(32 42 53 / 6%); }
+.panel-tabs [role="tab"]:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.has-tabs .panel-tab { flex: 1 1 auto; min-height: 0; overflow: auto; padding: 0 .4rem; }
+.has-tabs .panel-tab[hidden] { display: none; }
+

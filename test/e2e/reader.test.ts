@@ -160,7 +160,7 @@ describe("toolbar panels", () => {
           pointer: pointer.content,
           pointerX: box.left + parseFloat(pointer.left),
           buttonX: (button.left + button.right) / 2,
-          body: panel.firstElementChild?.className,
+          body: panel.firstElementChild?.classList.contains("reader-panel-body"),
         };
       }, id);
       expect(look.radius, id).toBeGreaterThanOrEqual(10);
@@ -171,10 +171,43 @@ describe("toolbar panels", () => {
       expect(look.shadow, id).not.toBe("none");
       expect(look.pointer, id).not.toBe("none");
       expect(Math.abs(look.pointerX - look.buttonX), id).toBeLessThan(2);
-      expect(look.body, id).toBe("reader-panel-body");
+      expect(look.body, id).toBe(true);
       await page.keyboard.press("Escape");
       await page.waitForTimeout(100);
     }
+    await page.context().close();
+  });
+
+  it("shows Contents and Bookmarks as two tabs in one panel", async () => {
+    const page = await open(`${mm.url}chapters/ch01.html`);
+    await page.click('[popovertarget="reader-contents"]');
+    await page.waitForTimeout(300);
+    const tabs = page.locator('#reader-contents [role="tab"]');
+    expect(await tabs.allTextContents()).toEqual(["Contents", "Bookmarks"]);
+    expect(await tabs.nth(0).getAttribute("aria-selected")).toBe("true");
+    const contents = page.locator('#reader-contents [role="tabpanel"]').nth(0);
+    const bookmarks = page.locator('#reader-contents [role="tabpanel"]').nth(1);
+    expect(await contents.isVisible()).toBe(true);
+    expect(await bookmarks.isVisible()).toBe(false);
+    expect(await contents.locator("a[data-chapter]").count()).toBeGreaterThan(0);
+
+    await tabs.nth(1).click();
+    expect(await tabs.nth(1).getAttribute("aria-selected")).toBe("true");
+    expect(await contents.isVisible()).toBe(false);
+    expect(await bookmarks.isVisible()).toBe(true);
+    expect(await page.locator("[data-bookmark-empty]").isVisible()).toBe(true);
+    expect(await page.locator("[data-bookmark-empty]").textContent()).toBe("No bookmarks yet.");
+
+    // Arrow keys move between the tabs; the page does not turn behind the panel.
+    const before = await indicator(page);
+    await page.keyboard.press("ArrowLeft");
+    expect(await tabs.nth(0).getAttribute("aria-selected")).toBe("true");
+    expect(await contents.isVisible()).toBe(true);
+    expect(await indicator(page)).toBe(before);
+
+    // Only the tab content scrolls; the tab switcher stays in place.
+    const scroll = await contents.evaluate((el) => getComputedStyle(el).overflowY);
+    expect(scroll).toBe("auto");
     await page.context().close();
   });
 
@@ -303,8 +336,9 @@ describe("reader behaviour (SC-004)", () => {
     await page.waitForTimeout(1000);
     expect(await indicator(page)).toBe(where);
     expect(await page.getAttribute("[data-bookmark-toggle]", "aria-pressed")).toBe("true");
-    // The reader fills the bookmark list when the Contents panel opens.
+    // The reader fills the bookmark list when the Contents panel opens; it is on its Bookmarks tab.
     await page.click('[popovertarget="reader-contents"]');
+    await page.click('#reader-contents [role="tab"]:nth-child(2)');
     await page.waitForSelector("[data-bookmark-list] li", { timeout: 5000 });
     expect(await page.locator("[data-bookmark-list] li").count()).toBe(1);
     await page.context().close();

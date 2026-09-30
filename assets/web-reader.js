@@ -767,6 +767,61 @@
     }, 0));
   }
 
+  // md2book: Contents and Bookmarks as the two tabs of the contents panel. Built here, so the
+  // page markup stays the reference's (without the script both lists show). Contents is selected
+  // first; the arrow keys, Home and End move between the tabs, not the pages.
+  function makeNavigationTabs() {
+    const body = contentsPanel.querySelector(".reader-panel-body");
+    const [contentsHeading, bookmarksHeading] = body.querySelectorAll(":scope > h2");
+    const sections = [
+      { name: "contents", label: contentsHeading.textContent, nodes: [contentsHeading.nextElementSibling] },
+      { name: "bookmarks", label: bookmarksHeading.textContent, nodes: [bookmarkList, bookmarkEmpty] },
+    ];
+    const tablist = document.createElement("div");
+    tablist.className = "panel-tabs";
+    tablist.setAttribute("role", "tablist");
+    tablist.setAttribute("aria-label", "Navigation");
+    const tabs = [];
+    const panels = [];
+    for (const { name, label, nodes } of sections) {
+      const tab = document.createElement("button");
+      tab.type = "button";
+      tab.id = `reader-tab-${name}`;
+      tab.textContent = label;
+      tab.setAttribute("role", "tab");
+      tab.setAttribute("aria-controls", `reader-tabpanel-${name}`);
+      const panel = document.createElement("div");
+      panel.id = `reader-tabpanel-${name}`;
+      panel.className = "panel-tab";
+      panel.setAttribute("role", "tabpanel");
+      panel.setAttribute("aria-labelledby", tab.id);
+      panel.append(...nodes);
+      tabs.push(tab);
+      panels.push(panel);
+    }
+    const select = (index, focus = false) => {
+      tabs.forEach((tab, i) => {
+        tab.setAttribute("aria-selected", String(i === index));
+        tab.tabIndex = i === index ? 0 : -1;
+        panels[i].hidden = i !== index;
+      });
+      if (focus) tabs[index].focus();
+    };
+    tabs.forEach((tab, i) => tab.addEventListener("click", () => select(i)));
+    tablist.addEventListener("keydown", (event) => {
+      const current = tabs.findIndex((tab) => tab.getAttribute("aria-selected") === "true");
+      const moves = { ArrowLeft: current - 1, ArrowRight: current + 1, Home: 0, End: tabs.length - 1 };
+      if (!(event.key in moves)) return;
+      event.preventDefault();
+      event.stopPropagation();
+      select((moves[event.key] + tabs.length) % tabs.length, true);
+    });
+    tablist.append(...tabs);
+    body.replaceChildren(tablist, ...panels);
+    body.classList.add("has-tabs");
+    select(0);
+  }
+
   // md2book: toolbar panels open just below their button, right-aligned with it and kept in the
   // window, instead of in the middle of the screen, so the pointer barely has to move.
   function placePanel(panel) {
@@ -1236,6 +1291,7 @@
     const open = document.querySelector(".reader-panel:popover-open");
     if (open) placePanel(open);
   });
+  makeNavigationTabs();
   bookmarkToggle.addEventListener("click", toggleBookmark);
   contentsPanel.addEventListener("toggle", (event) => {
     if (event.newState === "open") renderBookmarks();
