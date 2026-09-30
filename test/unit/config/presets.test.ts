@@ -38,7 +38,11 @@ describe("presets", () => {
   });
 
   it("lists a language's wizard families with its default first", () => {
-    expect(familiesFor("my").map((f) => f.id)[0]).toBe("noto-sans-myanmar");
+    expect(familiesFor("my").map((f) => f.id)).toEqual([
+      "noto-sans-myanmar",
+      "masterpiece-uni-round",
+      "padauk",
+    ]);
     expect(familiesFor("en").map((f) => f.id)).toEqual(["noto-sans", "noto-serif"]);
     expect(familiesFor("my").map((f) => f.id)).not.toContain("noto-serif-myanmar");
   });

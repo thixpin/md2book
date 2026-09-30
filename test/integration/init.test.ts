@@ -208,7 +208,7 @@ describe("md2book init", () => {
     ],
     [
       ["--font-family", "comic"],
-      '--font-family: unsupported font family "comic" for my books; valid values: noto-sans-myanmar, noto-serif-myanmar, padauk, masterpiece-uni-round',
+      '--font-family: unsupported font family "comic" for my books; valid values: noto-sans-myanmar, noto-serif-myanmar, masterpiece-uni-round, padauk',
     ],
     [
       ["--font", "serif", "--font-family", "noto-sans-myanmar"],

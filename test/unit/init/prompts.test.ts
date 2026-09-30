@@ -65,7 +65,7 @@ describe("promptMissing", () => {
     expect(shown).toContain(
       "❯ Default (170 × 240 mm)\n  A5 (148 × 210 mm)\n  B5 (176 × 250 mm)\n  A4 (210 × 297 mm)\n  Letter (216 × 279 mm)",
     );
-    expect(shown).toContain("❯ Noto Sans Myanmar (default)");
+    expect(shown).toContain("❯ Noto Sans Myanmar (default)\n  Masterpiece Uni Round\n  Padauk");
     expect(shown).toContain("❯ Medium (default)\n  Extra Small\n  Small\n  Large\n  Extra Large");
     expect(shown).toContain("❯ Default (chapters)\n  Custom");
   });

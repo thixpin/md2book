@@ -129,8 +129,8 @@
           "enum": [
             "noto-sans-myanmar",
             "noto-serif-myanmar",
-            "padauk",
             "masterpiece-uni-round",
+            "padauk",
             "noto-sans",
             "noto-serif"
           ]

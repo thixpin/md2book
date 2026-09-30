@@ -425,6 +425,14 @@ def add_families() -> int:
     (OUT / "MasterpieceUniRound-OFL.txt").write_bytes(licence_from_name_table(base))
     merged = Merger().merge([str(source), str(rescaled(OUT / "NotoSans-Regular.ttf", upem, LATIN_SCALE))])
     set_style(merged, "Masterpiece Uni Round", "MasterpieceUniRound", 400, False)
+    # Its own space is 0.62 em (Noto's is 0.26 em), which opens wide gaps in justified lines;
+    # give it the merged Noto Sans Latin space width instead (visual review, spec 006 T026).
+    noto = TTFont(str(OUT / "NotoSans-Regular.ttf"))
+    space_width = round(noto["hmtx"][noto.getBestCmap()[0x20]][0] * upem / noto["head"].unitsPerEm * LATIN_SCALE)
+    for cp in (0x20, 0xA0):
+        glyph = merged.getBestCmap().get(cp)
+        if glyph:
+            merged["hmtx"][glyph] = (space_width, merged["hmtx"][glyph][1])
     merged.save(str(OUT / "MasterpieceUniRound-Regular.ttf"))
     for p in tmp.iterdir():
         p.unlink()

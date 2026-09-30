@@ -81,20 +81,21 @@ const FAMILY_LIST: FontFamily[] = [
     wizard: false,
     style: "serif",
   },
-  // Spec 006 candidates (research R-06); offered by the wizard once verified (tasks T026).
-  {
-    id: "padauk",
-    setId: "my-padauk",
-    language: "my",
-    name: "Padauk",
-    wizard: false,
-  },
+  // Spec 006: verified for shaping, extraction, embedding and licence (research R-06, R-08);
+  // Myanmar Census and NamKhone Unicode were excluded for unclear licences.
   {
     id: "masterpiece-uni-round",
     setId: "my-masterpiece",
     language: "my",
     name: "Masterpiece Uni Round",
-    wizard: false,
+    wizard: true,
+  },
+  {
+    id: "padauk",
+    setId: "my-padauk",
+    language: "my",
+    name: "Padauk",
+    wizard: true,
   },
   {
     id: "noto-sans",
