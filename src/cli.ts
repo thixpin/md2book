@@ -177,6 +177,28 @@ export async function runCli(argv: string[], deps: CliDeps = {}): Promise<number
     });
 
   program
+    .command("deploy")
+    .description("Set up publishing of the web edition.")
+    .command("github-pages")
+    .description(
+      "Write a GitHub Actions workflow that builds the web edition and deploys it to GitHub Pages.",
+    )
+    .option("-c, --config <path>", "book config", "book.json")
+    .option("-f, --force", "replace an existing workflow")
+    .action(async (options: { config: string; force?: boolean }) => {
+      const { runGithubPages } = await import("./deploy/github-pages.ts");
+      const { file, webUrl } = await runGithubPages(options, VERSION);
+      stdout(
+        `created ${file}\n` +
+          `Site URL: ${webUrl ?? "the one GitHub Pages reports (set web_url for a custom domain)"}\n` +
+          "Next:\n" +
+          "  1. On GitHub: Settings → Pages → Build and deployment → Source: GitHub Actions\n" +
+          "  2. Commit and push the workflow\n" +
+          '  3. Actions → "Deploy web edition to GitHub Pages" → Run workflow\n',
+      );
+    });
+
+  program
     .command("cover")
     .description("Render a one-page HTML cover to PNG with the book fonts.")
     .argument("<file>", "cover HTML file")

@@ -34,18 +34,23 @@ function imports(args: string[]): { status: number | null; stdout: string; loade
 }
 
 describe("CLI startup", { timeout: 30_000 }, () => {
-  it.each([["--help"], ["-h"], ["--version"], ["-v"], ["init", "--help"], ["build", "pdf", "-h"]])(
-    "%j loads no build-time dependency",
-    (...args) => {
-      const { status, stdout, loaded } = imports(args);
-      expect(status).toBe(0);
-      expect(stdout).not.toBe("");
-      expect(loaded.length).toBeGreaterThan(0);
-      expect(
-        loaded.filter((specifier) =>
-          HEAVY.some((dep) => specifier === dep || specifier.startsWith(`${dep}/`)),
-        ),
-      ).toEqual([]);
-    },
-  );
+  it.each([
+    ["--help"],
+    ["-h"],
+    ["--version"],
+    ["-v"],
+    ["init", "--help"],
+    ["build", "pdf", "-h"],
+    ["deploy", "github-pages", "-h"],
+  ])("%j loads no build-time dependency", (...args) => {
+    const { status, stdout, loaded } = imports(args);
+    expect(status).toBe(0);
+    expect(stdout).not.toBe("");
+    expect(loaded.length).toBeGreaterThan(0);
+    expect(
+      loaded.filter((specifier) =>
+        HEAVY.some((dep) => specifier === dep || specifier.startsWith(`${dep}/`)),
+      ),
+    ).toEqual([]);
+  });
 });
