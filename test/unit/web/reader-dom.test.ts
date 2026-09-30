@@ -115,6 +115,9 @@ describe("reader DOM", () => {
     );
     expect(attr(img!, "src")).toBe(`/${book.coverName}`);
     expect(attr(img!, "alt")).toBe("");
+    expect(attr(img!, "fetchpriority")).toBe("high");
+    // First in the book, before the (possibly megabytes of) book text, so it is found at once.
+    expect(html.indexOf("data-reader-loading")).toBeLessThan(html.indexOf("reader-flow"));
     expect(html).toContain('<span class="visually-hidden" role="status">Loading the book…</span>');
   });
 

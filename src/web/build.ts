@@ -66,7 +66,12 @@ export async function buildWeb(
 
   const bookDescription = config.description || config.subtitle || config.title;
   const common = { stylesheet: assets.stylesheet, favicon: true };
-  const reader = { ...common, script: assets.script, headerTools: readerToolbar() };
+  const reader = {
+    ...common,
+    script: assets.script,
+    headerTools: readerToolbar(),
+    preloadImage: `/${coverName}`,
+  };
   writeFileSync(
     join(web, "index.html"),
     page(config, {

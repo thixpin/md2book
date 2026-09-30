@@ -64,13 +64,22 @@ describe("loading screen", () => {
     await page.context().close();
   });
 
-  it("removes the loading screen after the first layout", async () => {
+  it("fades the loading cover out with a blur after the first layout", async () => {
     const page = await open(`${mm.url}chapters/ch01.html`);
-    expect(
-      await page.evaluate(() =>
-        document.querySelector("[data-reader]")!.classList.contains("is-loading"),
-      ),
-    ).toBe(false);
+    const classes = await page.evaluate(() => [
+      ...document.querySelector("[data-reader]")!.classList,
+    ]);
+    expect(classes).not.toContain("is-loading");
+    expect(classes).toContain("is-ready");
+    await page.waitForTimeout(600);
+    const style = await page.evaluate(() => {
+      const s = getComputedStyle(document.querySelector("[data-reader-loading]")!);
+      return { property: s.transitionProperty, opacity: s.opacity, filter: s.filter };
+    });
+    expect(style.property).toContain("opacity");
+    expect(style.property).toContain("filter");
+    expect(style.opacity).toBe("0");
+    expect(style.filter).toContain("blur");
     expect(await page.locator("[data-reader-loading]").isVisible()).toBe(false);
     expect(await visibility(page, ".reader-window")).toBe("visible");
     await page.context().close();
@@ -100,6 +109,27 @@ describe("reader behaviour (SC-004)", () => {
     await page.keyboard.press("ArrowLeft");
     await page.waitForTimeout(800);
     expect(await indicator(page)).toBe("Contents");
+    await page.context().close();
+  });
+
+  it("finishes a turn at once when the next press comes during it", async () => {
+    const page = await open(`${mm.url}chapters/ch01.html`);
+    const press = async (key: string, pause: number) => {
+      await page.keyboard.press(key);
+      await page.waitForTimeout(pause);
+    };
+    const start = await indicator(page);
+    // Where two unhurried turns end.
+    await press("ArrowRight", 900);
+    await press("ArrowRight", 900);
+    const twoTurns = await indicator(page);
+    await press("ArrowLeft", 900);
+    await press("ArrowLeft", 900);
+    expect(await indicator(page)).toBe(start);
+    // The second press comes 100 ms into the first turn: both turns still happen.
+    await press("ArrowRight", 100);
+    await press("ArrowRight", 900);
+    expect(await indicator(page)).toBe(twoTurns);
     await page.context().close();
   });
 

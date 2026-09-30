@@ -76,4 +76,20 @@ describe("page head", () => {
     ]);
     expect(links(build({}, "/", "book", false), "icon")).toEqual([]);
   });
+
+  it("preloads the loading cover early, with high priority, when asked", () => {
+    const html = page(config({}), {
+      title: "T",
+      content: "<p>x</p>",
+      description: "D",
+      stylesheet: "style.abc.css",
+      path: "/",
+      preloadImage: "/cover.png",
+    });
+    const [link] = find(html, (el) => el.tagName === "link" && attr(el, "rel") === "preload");
+    expect(attr(link!, "href")).toBe("/cover.png");
+    expect(attr(link!, "as")).toBe("image");
+    expect(attr(link!, "fetchpriority")).toBe("high");
+    expect(links(build({}, "/"), "preload")).toEqual([]);
+  });
 });

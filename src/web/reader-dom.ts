@@ -109,6 +109,10 @@ export function readerHtml(book: WebBook, openChapter: string): string {
     `data-cover-edge="${edgeCss(facts.edge)}" style="--cover-edge: ${edgeCss(facts.edge)}"` +
     `${readerOptions(config)}>` +
     '<div class="book" data-book>' +
+    // md2book: first in the book, before the book text, so the cover is fetched at once.
+    '<div class="reader-loading" data-reader-loading>' +
+    `<img class="reader-loading-cover" src="/${book.coverName}" alt="" fetchpriority="high"/>` +
+    '<span class="visually-hidden" role="status">Loading the book…</span></div>' +
     '<svg class="book-paper" data-book-paper aria-hidden="true"></svg>' +
     '<div class="reader-window" role="region" aria-label="Book page">' +
     `<article class="reader-flow">${front}${sections}${back}` +
@@ -125,10 +129,7 @@ export function readerHtml(book: WebBook, openChapter: string): string {
     '<div class="turn-under" data-turn-under></div>' +
     '<div class="turn-cast" data-turn-cast></div>' +
     '<div class="turn-sheet" data-turn-sheet></div></div>' +
-    '<div class="book-crease" aria-hidden="true"></div>' +
-    '<div class="reader-loading" data-reader-loading>' +
-    `<img class="reader-loading-cover" src="/${book.coverName}" alt=""/>` +
-    '<span class="visually-hidden" role="status">Loading the book…</span></div></div>' +
+    '<div class="book-crease" aria-hidden="true"></div></div>' +
     '<nav class="reader-controls" aria-label="Page navigation">' +
     '<button type="button" class="page-turn" data-page-previous ' +
     'aria-label="Previous page" title="Previous page (←)">' +

@@ -89,7 +89,8 @@
 
   const STRIPS = 12;
   const MAX_SHEETS = 16;
-  const TURN_MS = 540;
+  // md2book: 400 ms (reference 540), closer to reader apps; the curl still reads as a turn.
+  const TURN_MS = 400;
   const MAX_FRAME_STEP = 34;
   const MIN_SETTLE_MS = 140;
   const DRAG_START_PX = 8;
@@ -112,6 +113,8 @@
   let pageGap = 0;
   let resizeTimer;
   let animating = false;
+  // md2book: the page turn being animated, if any: { jump() } (runTurn).
+  let running = null;
   let paperKey = "";
   let surfaces = null;
   let buildTimer;
@@ -830,8 +833,8 @@
     turn = Math.floor(page / pagesPerView);
     showTurn();
     requestAnimationFrame(() => flow.classList.remove("is-measuring"));
-    // md2book: the book is laid out; replace the loading cover with it.
-    reader.classList.remove("is-loading");
+    // md2book: the book is laid out; the loading cover fades away over it (web.css).
+    reader.classList.replace("is-loading", "is-ready");
     scheduleBuild();
   }
 
@@ -943,10 +946,16 @@
     let elapsed = 0;
     let last = null;
     let shown = false;
+    let request = 0;
+    // md2book: the running turn can be landed at once (jump), when the next press comes during it.
+    const land = () => {
+      running = null;
+      done();
+    };
     const frame = (now) => {
       if (!shown) {
         shown = true;
-        requestAnimationFrame(frame);
+        request = requestAnimationFrame(frame);
         return;
       }
       elapsed += last === null ? 0 : Math.min(now - last, MAX_FRAME_STEP);
@@ -954,12 +963,19 @@
       const k = Math.min(1, elapsed / duration);
       sheet.pose(from + (to - from) * k);
       if (k < 1) {
-        requestAnimationFrame(frame);
+        request = requestAnimationFrame(frame);
         return;
       }
-      done();
+      land();
     };
-    requestAnimationFrame(frame);
+    running = {
+      jump() {
+        cancelAnimationFrame(request);
+        sheet.pose(to);
+        land();
+      },
+    };
+    request = requestAnimationFrame(frame);
   }
 
   function animateTurn(direction, targetTurn) {
@@ -975,6 +991,9 @@
   const lastTurn = () => Math.ceil(pageCount / pagesPerView) - 1;
 
   function changeTurn(direction) {
+    // md2book: a press during a page turn lands it at once and turns again, so pages can be
+    // skimmed; opening or closing the cover and a finger drag still make it wait.
+    if (animating && running) running.jump();
     if (animating) return;
     const target = turn + direction;
     if (target >= 0 && target <= lastTurn()) turnTo(direction, target);

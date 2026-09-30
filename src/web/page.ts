@@ -14,6 +14,8 @@ export interface PageOptions {
   headerTools?: string;
   ogType?: "book" | "article";
   favicon?: boolean;
+  /** An image to fetch before the page body is parsed: the reader's loading cover. */
+  preloadImage?: string;
 }
 
 /**
@@ -23,6 +25,9 @@ export interface PageOptions {
 export function page(config: BookConfig, options: PageOptions): string {
   const { title, content, description, stylesheet, path } = options;
   const { script = "", headerTools = "", ogType = "book", favicon = false } = options;
+  const preload = options.preloadImage
+    ? `<link rel="preload" as="image" href="${esc(options.preloadImage)}" fetchpriority="high">`
+    : "";
   const base = (config.web_url ?? "").replace(/\/+$/, "");
   const icons = favicon
     ? '<link rel="icon" href="/favicon.svg" type="image/svg+xml">' +
@@ -48,7 +53,7 @@ export function page(config: BookConfig, options: PageOptions): string {
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(description)}">
 ${social}
-<link rel="stylesheet" href="/${stylesheet}">${icons}</head>
+${preload}<link rel="stylesheet" href="/${stylesheet}">${icons}</head>
 <body><header class="site-header"><a href="/" data-home><span class="site-title">${esc(config.title)}</span>
 <span class="site-subtitle">${esc(config.subtitle ?? "")}</span></a>${headerTools}</header>
 <main>${content}</main><footer class="footer">${esc(config.author)}</footer>

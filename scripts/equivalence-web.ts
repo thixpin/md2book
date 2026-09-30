@@ -27,7 +27,8 @@ function withoutAdditions(html: string): string {
       .replace(/ data-author="[^"]*"/, "")
       // The cover edge colour as a CSS variable (the realistic book in web.css).
       .replace(/ style="--cover-edge: [^"]*"/, "")
-      // The loading cover shown until the reader has laid out the book.
+      // The loading cover shown until the reader has laid out the book, and its preload.
+      .replace(/<link rel="preload" as="image"[^>]*>/, "")
       .replace('class="reader-shell is-loading"', 'class="reader-shell"')
       .replace(/<div class="reader-loading" data-reader-loading>[\s\S]*?<\/span><\/div>/, "")
   );

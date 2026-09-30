@@ -9,6 +9,41 @@ const REFERENCE_SHA256 = "bb980615d4c6973b16cc0d9c6005054dbb81c149b3e7f816c90275
 // section-sized, preloaded turn surfaces recorded in specs/decision-log.md):
 // [edited text, reference text].
 export const READER_EDITS: [string, string][] = [
+  // md2book: 400 ms turns, a press during a turn lands it at once, and the loading cover fades
+  // away (specs/decision-log.md).
+  [
+    "  const MAX_SHEETS = 16;\n  // md2book: 400 ms (reference 540), closer to reader apps; the curl still reads as a turn.\n  const TURN_MS = 400;\n  const MAX_FRAME_STEP = 34;\n",
+    "  const MAX_SHEETS = 16;\n  const TURN_MS = 540;\n  const MAX_FRAME_STEP = 34;\n",
+  ],
+  [
+    '  let animating = false;\n  // md2book: the page turn being animated, if any: { jump() } (runTurn).\n  let running = null;\n  let paperKey = "";\n',
+    '  let animating = false;\n  let paperKey = "";\n',
+  ],
+  [
+    '    requestAnimationFrame(() => flow.classList.remove("is-measuring"));\n    // md2book: the book is laid out; the loading cover fades away over it (web.css).\n    reader.classList.replace("is-loading", "is-ready");\n    scheduleBuild();\n',
+    '    requestAnimationFrame(() => flow.classList.remove("is-measuring"));\n    // md2book: the book is laid out; replace the loading cover with it.\n    reader.classList.remove("is-loading");\n    scheduleBuild();\n',
+  ],
+  [
+    "    let shown = false;\n    let request = 0;\n    // md2book: the running turn can be landed at once (jump), when the next press comes during it.\n    const land = () => {\n      running = null;\n      done();\n    };\n    const frame = (now) => {\n",
+    "    let shown = false;\n    const frame = (now) => {\n",
+  ],
+  [
+    "        shown = true;\n        request = requestAnimationFrame(frame);\n        return;\n",
+    "        shown = true;\n        requestAnimationFrame(frame);\n        return;\n",
+  ],
+  [
+    "      if (k < 1) {\n        request = requestAnimationFrame(frame);\n        return;\n",
+    "      if (k < 1) {\n        requestAnimationFrame(frame);\n        return;\n",
+  ],
+  ["      }\n      land();\n    };\n", "      }\n      done();\n    };\n"],
+  [
+    "    };\n    running = {\n      jump() {\n        cancelAnimationFrame(request);\n        sheet.pose(to);\n        land();\n      },\n    };\n    request = requestAnimationFrame(frame);\n  }\n",
+    "    };\n    requestAnimationFrame(frame);\n  }\n",
+  ],
+  [
+    "  function changeTurn(direction) {\n    // md2book: a press during a page turn lands it at once and turns again, so pages can be\n    // skimmed; opening or closing the cover and a finger drag still make it wait.\n    if (animating && running) running.jump();\n    if (animating) return;\n",
+    "  function changeTurn(direction) {\n    if (animating) return;\n",
+  ],
   // md2book: the loading cover goes when the book is laid out (specs/decision-log.md).
   [
     '    requestAnimationFrame(() => flow.classList.remove("is-measuring"));\n    // md2book: the book is laid out; replace the loading cover with it.\n    reader.classList.remove("is-loading");\n    scheduleBuild();\n',
