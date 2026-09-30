@@ -3,7 +3,7 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
   test: {
     include: ["test/**/*.test.ts"],
-    exclude: ["test/release/**", "test/e2e/**", "node_modules/**"],
+    exclude: ["test/release/**", "test/e2e/**", "test/perf/**", "node_modules/**"],
     setupFiles: ["test/setup/no-network.ts"],
     coverage: {
       provider: "v8",

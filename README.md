@@ -114,7 +114,8 @@ $ npm run check
 
 `check` runs the type checker, ESLint, Prettier and the tests. Tests
 never use the network. `npm run coverage` runs the tests with coverage
-thresholds, `npm run test:e2e` the browser tests and
+thresholds, `npm run test:e2e` the browser tests, `npm run test:perf`
+the slow performance and load tests (on demand only) and
 `npm run package:check` installs the packed tarball into an empty
 project and runs the CLI from it. `npm run docs:dev` previews the
 documentation site and `npm run docs:build` builds it. Design notes live in `specs/` and deliberate

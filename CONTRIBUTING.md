@@ -38,6 +38,8 @@ Node.js 26 or newer is required. The EPUB tests use
 
    `check` runs the type checker, ESLint, Prettier and the tests; `coverage` must stay above the
    thresholds in `vitest.config.ts`; `test:e2e` runs the web reader in Chromium and WebKit.
+   Performance and load tests (build times, the reader on a long book) are slow and run only on
+   demand, when a change may affect speed or memory: `npm run test:perf`.
 
 ## Commits and pull requests
 
