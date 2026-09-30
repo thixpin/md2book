@@ -1,5 +1,7 @@
 // Public programmatic API (Constitution VIII): one function per CLI command. Internal modules
 // are never re-exported from here.
+import { readFileSync } from "node:fs";
+import { runGithubPages, type GithubPagesOptions } from "./deploy/github-pages.ts";
 import { runEpub, type EpubOptions } from "./epub/command.ts";
 import { runFonts, type FontsOptions } from "./fonts/command.ts";
 import { runPdf, type PdfOptions } from "./pdf/command.ts";
@@ -13,6 +15,7 @@ export type {
   CoverOptions,
   EpubOptions,
   FontsOptions,
+  GithubPagesOptions,
   PdfOptions,
   QaOptions,
   InitOptions,
@@ -61,6 +64,20 @@ export function cover(
 /** `md2book qa`: write QA-REPORT.md; resolves to the report file. */
 export function qa(options: QaOptions): Promise<{ file: string }> {
   return runQa(options);
+}
+
+/**
+ * `md2book deploy github-pages`: write the GitHub Pages workflow into the book's repository;
+ * resolves to the file and the book's `web_url` (unset: the URL GitHub Pages reports is used).
+ */
+export function deployGithubPages(
+  options: GithubPagesOptions,
+): Promise<{ file: string; webUrl?: string }> {
+  // package.json sits one folder up from both src/index.ts and the built dist/index.js.
+  const { version } = JSON.parse(
+    readFileSync(new URL("../package.json", import.meta.url), "utf8"),
+  ) as { version: string };
+  return runGithubPages(options, version);
 }
 
 /** `md2book build all`: PDF, EPUB, web edition (when chapters are published), then QA. */

@@ -3,6 +3,7 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { WORKFLOW_PATH, pagesWorkflow, runGithubPages } from "../../../src/deploy/github-pages.ts";
 import { runCli } from "../../../src/cli.ts";
+import { deployGithubPages } from "../../../src/index.ts";
 import { BookError } from "../../../src/errors.ts";
 import { fixture, tempDir } from "../../helpers/temp.ts";
 
@@ -121,6 +122,15 @@ describe("runGithubPages", () => {
       ),
     );
     expect(existsSync(join(dir, ".github"))).toBe(false);
+  });
+});
+
+describe("deployGithubPages (API)", () => {
+  it("writes the same workflow as the command, pinned to this md2book", async () => {
+    const { root, config } = repository();
+    const { file } = await deployGithubPages({ config });
+    expect(file).toBe(join(root, WORKFLOW_PATH));
+    expect(readFileSync(file, "utf8")).toContain(`npm install -g @thixpin/md2book@${VERSION}\n`);
   });
 });
 

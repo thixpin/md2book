@@ -5,7 +5,18 @@ import { tempDir } from "../helpers/temp.ts";
 import * as api from "../../src/index.ts";
 
 // Constitution VIII: the programmatic API mirrors the CLI commands and nothing else.
-const PUBLIC = ["all", "cover", "epub", "init", "fonts", "pdf", "qa", "serve", "web"];
+const PUBLIC = [
+  "all",
+  "cover",
+  "deployGithubPages",
+  "epub",
+  "init",
+  "fonts",
+  "pdf",
+  "qa",
+  "serve",
+  "web",
+];
 const INTERNAL = [
   "loadConfig",
   "loadChapters",

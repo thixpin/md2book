@@ -106,7 +106,7 @@ again.
 
 | Option                | Meaning                                                                                               |
 | --------------------- | ----------------------------------------------------------------------------------------------------- |
-| `-c, --config <path>` | pick the set from the config's `language` and `font_set` (default `book.json`)                        |
+| `-c, --config <path>` | pick the set from the config's `font.family` (default `book.json`)                                    |
 | `-s, --set <id>`      | pick a set by id instead: `my-sans`, `my-serif`, `my-padauk`, `my-masterpiece`, `en-sans`, `en-serif` |
 | `--fonts <dir>`       | cache root (overrides `MD2BOOK_FONTS`)                                                                |
 
@@ -120,14 +120,14 @@ $ md2book cover <file> [-o <png>] [--dpi <n>] [--config <path> | --set <id>] [--
 
 Renders a one-page HTML cover to a PNG with the book's fonts.
 
-| Option                | Meaning                                                                          |
-| --------------------- | -------------------------------------------------------------------------------- |
-| `<file>`              | the cover HTML (required)                                                        |
-| `-o, --output <png>`  | PNG to write (default `cover.png` next to the HTML)                              |
-| `-d, --dpi <n>`       | resolution, 1–1200 (default 300)                                                 |
-| `-c, --config <path>` | book config whose `language` and `font_set` pick the fonts (default `book.json`) |
-| `-s, --set <id>`      | font set instead of a config                                                     |
-| `--fonts <dir>`       | font cache root (overrides `MD2BOOK_FONTS`)                                      |
+| Option                | Meaning                                                               |
+| --------------------- | --------------------------------------------------------------------- |
+| `<file>`              | the cover HTML (required)                                             |
+| `-o, --output <png>`  | PNG to write (default `cover.png` next to the HTML)                   |
+| `-d, --dpi <n>`       | resolution, 1–1200 (default 300)                                      |
+| `-c, --config <path>` | book config whose `font.family` picks the fonts (default `book.json`) |
+| `-s, --set <id>`      | font set instead of a config                                          |
+| `--fonts <dir>`       | font cache root (overrides `MD2BOOK_FONTS`)                           |
 
 Give either `--config` or `--set`, not both. The full guide is in
 [Covers](cover.md).

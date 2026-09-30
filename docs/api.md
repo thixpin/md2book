@@ -26,17 +26,18 @@ folder. Relative paths, including the default output folder
 
 ## Functions
 
-| Function         | Options        | Resolves to                                                                              |
-| ---------------- | -------------- | ---------------------------------------------------------------------------------------- |
-| `init(options)`  | `InitOptions`  | `{ files }`: the files written                                                           |
-| `fonts(options)` | `FontsOptions` | `{ dir, files }`: the set's cache folder and files                                       |
-| `cover(options)` | `CoverOptions` | `{ file, width, height }`: the PNG and its size in px                                    |
-| `pdf(options)`   | `PdfOptions`   | `{ file }`: the PDF                                                                      |
-| `epub(options)`  | `EpubOptions`  | `{ file }`: the EPUB                                                                     |
-| `web(options)`   | `WebOptions`   | `{ dir, chapters }`: the site folder and chapter count                                   |
-| `serve(options)` | `ServeOptions` | `Served`: `{ url, port, close() }`                                                       |
-| `qa(options)`    | `QaOptions`    | `{ file }`: `QA-REPORT.md`                                                               |
-| `all(options)`   | `QaOptions`    | `{ pdf, epub, web?, report }`: the files written; `web` only when chapters are published |
+| Function                     | Options              | Resolves to                                                                              |
+| ---------------------------- | -------------------- | ---------------------------------------------------------------------------------------- |
+| `init(options)`              | `InitOptions`        | `{ files }`: the files written                                                           |
+| `fonts(options)`             | `FontsOptions`       | `{ dir, files }`: the set's cache folder and files                                       |
+| `cover(options)`             | `CoverOptions`       | `{ file, width, height }`: the PNG and its size in px                                    |
+| `pdf(options)`               | `PdfOptions`         | `{ file }`: the PDF                                                                      |
+| `epub(options)`              | `EpubOptions`        | `{ file }`: the EPUB                                                                     |
+| `web(options)`               | `WebOptions`         | `{ dir, chapters }`: the site folder and chapter count                                   |
+| `serve(options)`             | `ServeOptions`       | `Served`: `{ url, port, close() }`                                                       |
+| `qa(options)`                | `QaOptions`          | `{ file }`: `QA-REPORT.md`                                                               |
+| `all(options)`               | `QaOptions`          | `{ pdf, epub, web?, report }`: the files written; `web` only when chapters are published |
+| `deployGithubPages(options)` | `GithubPagesOptions` | `{ file, webUrl? }`: the workflow written and the book's `web_url`                       |
 
 ## Options
 
@@ -87,6 +88,11 @@ interface ServeOptions extends WebOptions {
 
 interface QaOptions extends EpubOptions {
   printed?: boolean; // check (for `all`, also build) the printed PDF
+}
+
+interface GithubPagesOptions {
+  config: string; // the book config, inside a git repository
+  force?: boolean; // replace an existing .github/workflows/md2book-pages.yml
 }
 ```
 

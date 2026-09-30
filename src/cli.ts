@@ -85,11 +85,11 @@ export async function runCli(argv: string[], deps: CliDeps = {}): Promise<number
   program
     .command("fonts")
     .description("Fetch and verify the book's font set into the local cache.")
+    .option("-c, --config <path>", "book config (default book.json); its font family picks the set")
     .option(
-      "-c, --config <path>",
-      "book config (default book.json); its language and font_set pick the set",
+      "-s, --set <id>",
+      "font set id: my-sans, my-serif, my-padauk, my-masterpiece, en-sans or en-serif",
     )
-    .option("-s, --set <id>", "font set id: my-sans, my-serif, en-sans, en-serif")
     .option("--fonts <dir>", "font cache root (overrides MD2BOOK_FONTS)")
     .action(async (options: { config?: string; set?: string; fonts?: string }) => {
       const { runFonts } = await import("./fonts/command.ts");
@@ -208,7 +208,7 @@ export async function runCli(argv: string[], deps: CliDeps = {}): Promise<number
     .option("-d, --dpi <n>", "resolution in dots per inch", "300")
     .option(
       "-c, --config <path>",
-      "book config (default book.json); its language and font_set pick the fonts",
+      "book config (default book.json); its font family picks the fonts",
     )
     .option("-s, --set <id>", "font set id instead of a config")
     .option("--fonts <dir>", "font cache root (overrides MD2BOOK_FONTS)")

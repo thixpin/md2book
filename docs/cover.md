@@ -21,7 +21,7 @@ from a new project.
 | `<file>`             | the cover HTML (required)                                                                                 |
 | `-o, --output <png>` | PNG to write (default `cover.png` next to the HTML)                                                       |
 | `--dpi <n>`          | resolution, 1–1200 (default 300)                                                                          |
-| `--config <path>`    | book config whose `language` and `font_set` pick the fonts (default `book.json`)                          |
+| `--config <path>`    | book config whose `font.family` picks the fonts (default `book.json`)                                     |
 | `--set <id>`         | font set instead of a config: `my-sans`, `my-serif`, `my-padauk`, `my-masterpiece`, `en-sans`, `en-serif` |
 | `--fonts <dir>`      | font cache root (overrides `MD2BOOK_FONTS`)                                                               |
 
