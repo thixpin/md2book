@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { loadBook } from "../../../src/book/load.ts";
+import { FONT_SIZES, PAGE_SIZES } from "../../../src/config/presets.ts";
 import { fontSetById, loadManifest } from "../../../src/fonts/manifest.ts";
 import type { PdfChecks } from "../../../src/qa/pdf-checks.ts";
 import type { PdfFacts } from "../../../src/qa/pdf-read.ts";
@@ -53,6 +54,31 @@ const CHECKS: PdfChecks = {
 };
 
 describe("QA report: PDF section", () => {
+  it("names the configured page size, body size and margins (spec 006)", async () => {
+    const book = await loadBook(await bookMm());
+    book.config.page = { id: "a5", ...PAGE_SIZES.a5 };
+    book.config.font.size = { id: "l", ...FONT_SIZES.l };
+    const set = fontSetById(await loadManifest(FIXTURE_MANIFEST), "my-sans");
+    const report = qaReport({
+      book,
+      set,
+      issues: [],
+      generated: new Date(0),
+      fontsCommand: "",
+      pdf: {
+        file: "/x/book-mm-148x210.pdf",
+        printed: false,
+        facts: { ...FACTS, sizeMm: [148, 210] },
+        checks: CHECKS,
+      },
+    });
+    expect(report).toContain("- Page size: 148.0 x 210.0 mm (target 148 x 210)");
+    expect(report).toContain("- Body font size: 12.1 pt; line spacing 1.55;");
+    expect(report).toContain(
+      "- Margins: top 17.5 mm, bottom 19.3 mm, inside 20.9 mm, outside 15.7 mm",
+    );
+  });
+
   it("writes every line of contracts/qa-pdf.md for the screen edition", async () => {
     const book = await loadBook(await bookMm());
     const manuscript = manuscriptStats(book.chapters).charsNoSpace.toLocaleString("en-US");

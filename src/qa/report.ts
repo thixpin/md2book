@@ -1,5 +1,7 @@
 import { basename } from "node:path";
 import type { Book } from "../book/load.ts";
+import type { BookConfig } from "../config/load.ts";
+import { pageLayout } from "../config/presets.ts";
 import type { FontSet } from "../fonts/manifest.ts";
 import type { Coverage } from "./coverage.ts";
 import type { EpubCheckResult } from "./epub-checks.ts";
@@ -25,9 +27,18 @@ const n = (value: number) => value.toLocaleString("en-US");
 const pyFloat = (value: number) => (Number.isInteger(value) ? value.toFixed(1) : String(value));
 
 /** The PDF section (port of qa.py; spec 004 contracts/qa-pdf.md). */
-function pdfSection(pdf: NonNullable<ReportInput["pdf"]>, chapters: number, charsNoSpace: number) {
+function pdfSection(
+  pdf: NonNullable<ReportInput["pdf"]>,
+  chapters: number,
+  charsNoSpace: number,
+  config: BookConfig,
+) {
   const { facts, checks } = pdf;
   const [w, h] = facts.sizeMm;
+  const target = config.page.suffix.replace("x", " x ");
+  const margin = pageLayout(config.page);
+  const num = (value: number, digits: number) => Number(value.toFixed(digits));
+  const body = num(11 * config.font.size.factor, 2);
   const shortPages = checks.shortPages.map(([page, lines]) => `(${page}, ${lines})`).join(", ");
   const stray = checks.stray.map(([c, count]) => `(${pyRepr(c)}, ${count})`).join(", ");
   const samples = checks.samples.map(
@@ -37,10 +48,10 @@ function pdfSection(pdf: NonNullable<ReportInput["pdf"]>, chapters: number, char
     `- File: ${basename(pdf.file)}`,
     `- Edition: ${pdf.printed ? "printed (no cover page, black-and-white code)" : "screen"}`,
     `- Pages: ${facts.pages}`,
-    `- Page size: ${pyFloat(w)} x ${pyFloat(h)} mm (target 170 x 240)`,
+    `- Page size: ${pyFloat(w)} x ${pyFloat(h)} mm (target ${target})`,
     `- Fonts embedded: ${facts.fonts.join(", ") || "none detected"}`,
-    "- Body font size: 11 pt; line spacing 1.55; first-line indent 6 mm; no extra space between paragraphs",
-    "- Margins: top 20 mm, bottom 22 mm, inside 24 mm, outside 18 mm",
+    `- Body font size: ${body} pt; line spacing 1.55; first-line indent 6 mm; no extra space between paragraphs`,
+    `- Margins: top ${num(margin.top, 1)} mm, bottom ${num(margin.bottom, 1)} mm, inside ${num(margin.inside, 1)} mm, outside ${num(margin.outside, 1)} mm`,
     `- Chapter opening pages detected: ${checks.chapterStarts.size} of ${chapters}`,
     `- Nearly empty pages (3 lines or fewer, after front matter): ${shortPages ? `[${shortPages}]` : "none"}`,
     `- Extracted text characters (excl. whitespace): ${n(checks.textChars)} (manuscript: ${n(charsNoSpace)}; PDF includes front matter, headers, page numbers)`,
@@ -121,7 +132,7 @@ export function qaReport(input: ReportInput): string {
   add("");
 
   add("## PDF", "");
-  if (input.pdf) add(...pdfSection(input.pdf, chapters.length, stats.charsNoSpace), "");
+  if (input.pdf) add(...pdfSection(input.pdf, chapters.length, stats.charsNoSpace, config), "");
   else add("- PDF not built.", "");
 
   add("## EPUB", "");

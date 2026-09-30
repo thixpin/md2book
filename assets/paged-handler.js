@@ -27,4 +27,36 @@ class Folios extends Paged.Handler {
     });
   }
 }
-Paged.registerHandlers(ChapterFirstPage, Folios);
+// A section heading must not end a page with none of the block that follows it (spec 004 US5,
+// spec 006). `break-after: avoid` only works when Paged.js finds the overflow at that block
+// itself; when the block's box fits but its first line does not (a code block's padding, say),
+// the overflow starts inside it and the heading is left alone at the page foot. Then the break
+// moves to just before the heading, unless the heading already opens the page.
+class KeepHeadingsWithContent extends Paged.Handler {
+  onOverflow(overflow, rendered) {
+    if (!overflow) return undefined;
+    const start = overflow.startContainer;
+    const node = start.nodeType === 1 ? (start.childNodes[overflow.startOffset] ?? start) : start;
+    let block = node.nodeType === 1 ? node : node.parentElement;
+    while (block && block.parentElement && !block.previousElementSibling)
+      block = block.parentElement;
+    for (; block && block !== rendered; block = block.parentElement) {
+      const heading = block.previousElementSibling;
+      if (!heading || !/^H[2-6]$/.test(heading.tagName)) continue;
+      const kept = document.createRange();
+      kept.setStartBefore(block);
+      kept.setEnd(overflow.startContainer, overflow.startOffset);
+      if (kept.toString().trim()) return undefined;
+      const before = document.createRange();
+      before.setStart(rendered, 0);
+      before.setEndBefore(heading);
+      if (!before.toString().trim()) return undefined;
+      const moved = overflow.cloneRange();
+      moved.setStartBefore(heading);
+      return moved;
+    }
+    return undefined;
+  }
+}
+
+Paged.registerHandlers(ChapterFirstPage, Folios, KeepHeadingsWithContent);

@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import type { BookConfig } from "../config/load.ts";
+import { pageLayout } from "../config/presets.ts";
 import type { FontSet } from "../fonts/manifest.ts";
 import { substituteFonts } from "../web/assets.ts";
 
@@ -49,8 +50,36 @@ function bookCss(config: BookConfig): string {
     `@page cover { ${noMargins} }`,
     "#ch01 { counter-reset: page 1; }",
     `.toc-page li a::after { content: target-counter(attr(href url), page${style}); }`,
+    ...pageCss(config),
     "",
   ].join("\n");
+}
+
+const mm = (value: number) => `${Number(value.toFixed(3))}mm`;
+
+/**
+ * Page size preset (spec 006, research R-01): the page, proportional margins, the full-bleed
+ * cover and the fixed vertical offsets of print.css scaled to the page height. Nothing for the
+ * default 170 × 240 mm page, whose rules are print.css's own.
+ */
+function pageCss(config: BookConfig): string[] {
+  if (config.page.id === "default") return [];
+  const { width, height } = config.page;
+  const m = pageLayout(config.page);
+  const v = (value: number) => mm(value * m.sy);
+  return [
+    `@page { size: ${mm(width)} ${mm(height)}; margin: ${mm(m.top)} ${mm(m.outside)} ${mm(m.bottom)} ${mm(m.outside)}; }`,
+    `@page :left { margin-left: ${mm(m.outside)}; margin-right: ${mm(m.inside)}; }`,
+    `@page :right { margin-left: ${mm(m.inside)}; margin-right: ${mm(m.outside)}; }`,
+    `.cover-page, .cover-page img { width: ${mm(width)}; height: ${mm(height)}; }`,
+    `.title-page { padding-top: ${v(60)}; }`,
+    `.title-page .book-subtitle { margin-bottom: ${v(20)}; }`,
+    `.title-page .book-publisher { margin-top: ${v(50)}; }`,
+    `.copyright-page { padding-top: ${v(120)}; }`,
+    `.chapter-head { padding-top: ${v(34)}; }`,
+    `.end-page { padding-top: ${v(80)}; }`,
+    `.end-image-page img { max-height: ${v(165)}; }`,
+  ];
 }
 
 /** The PDF stylesheets in cascade order (contracts/pdf-output.md), with the set's fonts. */

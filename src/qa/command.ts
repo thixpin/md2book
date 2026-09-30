@@ -44,7 +44,7 @@ export async function runQa(
     if (!(error instanceof BookError)) throw error;
   }
   const printed = options.printed ?? false;
-  const pdfFile = join(out, pdfName(config.output_name, printed));
+  const pdfFile = join(out, pdfName(config.output_name, printed, config.page.suffix));
   let pdf: ReportInput["pdf"];
   if (existsSync(pdfFile)) {
     const facts = await pdfFacts(pdfFile);

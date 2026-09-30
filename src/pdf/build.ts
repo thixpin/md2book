@@ -33,9 +33,9 @@ function image(file: string): ServedFile {
   return { body: readFileSync(file), type };
 }
 
-/** `<output_name>-170x240.pdf`, or `-170x240-printed.pdf` for the print-shop interior. */
-export function pdfName(outputName: string, printed: boolean): string {
-  return `${outputName}-170x240${printed ? "-printed" : ""}.pdf`;
+/** `<output_name>-<size>.pdf` (`-170x240` by default), or `-<size>-printed.pdf` for the print-shop interior. */
+export function pdfName(outputName: string, printed: boolean, suffix = "170x240"): string {
+  return `${outputName}-${suffix}${printed ? "-printed" : ""}.pdf`;
 }
 
 /** Port of build.py `build_pdf`: the print document, laid out by Paged.js in Chromium. */
@@ -73,8 +73,9 @@ export async function buildPdf(book: Book, options: PdfBuildOptions): Promise<{ 
 
   const pdf = await normalisePdf(
     await renderPdf({ html, files, endMarker: `.${END_MARKER}`, launch: options.launch }),
+    config.page,
   );
-  const file = join(options.out, pdfName(config.output_name, printed));
+  const file = join(options.out, pdfName(config.output_name, printed, config.page.suffix));
   const partial = `${file}.partial`;
   try {
     writeFileSync(partial, pdf);

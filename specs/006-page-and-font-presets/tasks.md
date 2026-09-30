@@ -56,29 +56,35 @@ gains `pageSize`, `fontFamily`, `fontSize`, `chapters` (FR-023).
 
 ### Tests ⚠️
 
-- [ ] T005 [P] [US1] Write `test/unit/pdf/page-size.test.ts`: `pdfName` gives
+- [X] T005 [P] [US1] Write `test/unit/pdf/page-size.test.ts`: `pdfName` gives
   `-170x240`/`-148x210`/`-176x250`/`-210x297`/`-216x279` (and `-printed`); `bookCss` for
   `default` contains no page-size rules (the default CSS is unchanged, compare with a snapshot of
   today's output); for `a5` it sets `@page { size: 148mm 210mm }`, margins scaled by
   `sx`/`sy`, `.cover-page` and its image to 148 × 210 mm, and the vertical offsets of research
   R-01 scaled by `sy`
-- [ ] T006 [P] [US1] Write tests in `test/unit/pdf/normalise.test.ts` (MediaBox and CropBox set
+- [X] T006 [P] [US1] Write tests in `test/unit/pdf/normalise.test.ts` (MediaBox and CropBox set
   to the preset's size in points) and `test/unit/pdf/fit-pre.test.ts` (`fitPreBlocks` with the
   default text width gives exactly today's sizes; with the A5 width, long lines get smaller sizes)
-- [ ] T007 [P] [US1] Update `test/unit/qa/pdf-checks.test.ts` / `report.test.ts`: the page-size
+- [X] T007 [P] [US1] Update `test/unit/qa/pdf-checks.test.ts` / `report.test.ts`: the page-size
   line names the configured target (`target 148 x 210`)
 
 ### Implementation
 
-- [ ] T008 [US1] Implement page-size overrides in `bookCss` (`src/pdf/stylesheets.ts`), the
+- [X] T008 [US1] Implement page-size overrides in `bookCss` (`src/pdf/stylesheets.ts`), the
   preset MediaBox in `src/pdf/normalise.ts`, `pdfName` in `src/pdf/build.ts`, the text width in
   `fitPreBlocks` (`src/pdf/document.ts`), and pass the preset through `src/pdf/command.ts` and
   `src/qa/command.ts`; pass T005–T007
-- [ ] T009 [US1] Write `test/integration/pdf-presets.test.ts` (Chromium, print fonts): the
+- [X] T009 [US1] Write `test/integration/pdf-presets.test.ts` (Chromium, print fonts): the
   headings fixture at each page size (font size `m`) has every page at the preset's size, the
   expected file name, chapter openings on new (and with `recto_chapter_start`, right-hand)
   pages, headings keeping two lines (reuse the `pdf-headings` check), and no text position
   outside the text area; make it pass
+
+- [X] T009a [US1] (Found by T009 at Letter size) Keep a heading with the block after it when
+  Paged.js would break inside that block before its first line: `KeepHeadingsWithContent`
+  `onOverflow` handler in `assets/paged-handler.js` moves the break before the heading; the
+  default-size `pdf-headings` test is unchanged (a first attempt that wrapped every heading with
+  a following code block changed default pagination and was dropped)
 
 **Checkpoint**: every page size builds a valid PDF; `default` is unchanged.
 

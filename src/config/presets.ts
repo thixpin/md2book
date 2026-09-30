@@ -22,6 +22,24 @@ export const PAGE_SIZES = {
 export type PageSizeId = keyof typeof PAGE_SIZES;
 export const PAGE_SIZE_IDS = Object.keys(PAGE_SIZES) as PageSizeId[];
 
+/**
+ * Margins (mm) of a page, proportional to the 170 × 240 mm reference (research R-01): top 20,
+ * bottom 22, inside 24, outside 18, so the text block keeps its 128 : 170 width ratio. `sy`
+ * scales the fixed vertical offsets of the front matter and chapter openings.
+ */
+export function pageLayout(page: Pick<PageSize, "width" | "height">) {
+  const sx = page.width / 170;
+  const sy = page.height / 240;
+  return {
+    top: 20 * sy,
+    bottom: 22 * sy,
+    inside: 24 * sx,
+    outside: 18 * sx,
+    textWidth: 128 * sx,
+    sy,
+  };
+}
+
 /** The web reader's text-size steps around 1 (assets/web-reader.js), so both editions agree. */
 export const FONT_SIZES = {
   xs: { factor: 0.85, label: "Extra Small" },

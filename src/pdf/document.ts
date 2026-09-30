@@ -5,9 +5,11 @@ import { frontMatterHtml } from "../epub/front-matter.ts";
 import { tocListHtml } from "../manuscript/toc.ts";
 import { escapeHtml } from "../manuscript/text.ts";
 import { chapterHeadHtml } from "../markdown/chapter-head.ts";
+import { pageLayout } from "../config/presets.ts";
 
-// Print measure: 170 mm page minus 24 mm inside and 18 mm outside margins, minus pre padding.
-const PRE_USABLE_MM = 123.0;
+// Print measure: the text block (128 mm on the 170 mm page) minus 5 mm of pre padding; the
+// sizes scale with the font size preset (spec 006).
+const PRE_PADDING_MM = 5;
 const PRE_MAX_PT = 8.3;
 const PRE_MIN_PT = 6.0; // below this, long lines wrap instead
 const MONO_ADVANCE_EM = 0.6; // Noto Sans Mono advance width
@@ -21,12 +23,16 @@ function longestLine(fragment: string): number {
 }
 
 /** Port of build.py `fit_pre_blocks`: a font size per block so its longest line fits the measure. */
-export function fitPreBlocks(fragment: string): string {
+export function fitPreBlocks(
+  fragment: string,
+  fit: { textWidth: number; factor: number } = { textWidth: 128, factor: 1 },
+): string {
+  const usable = fit.textWidth - PRE_PADDING_MM;
   return fragment.replace(/<pre([^>]*)>([\s\S]*?)<\/pre>/g, (_, attrs: string, body: string) => {
     const longest = Math.max(longestLine(body), 1);
     const pt = Math.max(
-      PRE_MIN_PT,
-      Math.min(PRE_MAX_PT, PRE_USABLE_MM / ((longest * MONO_ADVANCE_EM * 25.4) / 72)),
+      PRE_MIN_PT * fit.factor,
+      Math.min(PRE_MAX_PT * fit.factor, usable / ((longest * MONO_ADVANCE_EM * 25.4) / 72)),
     );
     return `<pre${attrs} style="font-size: ${pt.toFixed(2)}pt">${body}</pre>`;
   });
@@ -113,7 +119,12 @@ export function printDocument(book: Book, options: PrintDocumentOptions): string
     pieces.push(
       `<section class="${classes.join(" ")}" id="${ch.slug}">` +
         chapterHeadHtml(ch) +
-        isolateCodeNewlines(fitPreBlocks(addSyllableBreaks(ch.html ?? ""))) +
+        isolateCodeNewlines(
+          fitPreBlocks(addSyllableBreaks(ch.html ?? ""), {
+            textWidth: pageLayout(config.page).textWidth,
+            factor: config.font.size.factor,
+          }),
+        ) +
         "</section>",
     );
   }
