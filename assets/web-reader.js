@@ -614,7 +614,11 @@
       history.replaceState(null, "", path);
     } catch {
       // Opened from a file: the address cannot change, which is harmless.
+      return;
     }
+    // md2book: the page shows another chapter; web analytics (if the book has it) counts a
+    // page view from this event. The reader itself knows no analytics provider.
+    document.dispatchEvent(new CustomEvent("md2book:pageview", { detail: { path, title: document.title } }));
   }
 
   function renderBookmarks() {

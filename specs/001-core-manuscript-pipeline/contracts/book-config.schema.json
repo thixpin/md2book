@@ -81,6 +81,79 @@
         "type": "string"
       }
     },
+    "web_analytics": {
+      "description": "Opt-in analytics for the web edition: provider google (id G-…), plausible (site domain), goatcounter (site code) or cloudflare (token). Absent: no analytics.",
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "provider": {
+              "type": "string",
+              "const": "google"
+            },
+            "id": {
+              "type": "string",
+              "pattern": "^G-[A-Z0-9]{4,}$"
+            }
+          },
+          "required": [
+            "provider",
+            "id"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "provider": {
+              "type": "string",
+              "const": "plausible"
+            },
+            "id": {
+              "type": "string",
+              "pattern": "^[a-z0-9-]+(\\.[a-z0-9-]+)+$"
+            }
+          },
+          "required": [
+            "provider",
+            "id"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "provider": {
+              "type": "string",
+              "const": "goatcounter"
+            },
+            "id": {
+              "type": "string",
+              "pattern": "^[a-z0-9-]+$"
+            }
+          },
+          "required": [
+            "provider",
+            "id"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "provider": {
+              "type": "string",
+              "const": "cloudflare"
+            },
+            "id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{32}$"
+            }
+          },
+          "required": [
+            "provider",
+            "id"
+          ]
+        }
+      ]
+    },
     "recto_chapter_start": {
       "type": "boolean",
       "default": false

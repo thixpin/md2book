@@ -154,6 +154,9 @@ async function readJson(path: string): Promise<unknown> {
 function describeIssue(issue: z.core.$ZodIssue): string {
   const key = issue.path.join(".");
   if (issue.code === "invalid_value") return `${key}: must be one of ${issue.values.join(", ")}`;
+  // An unknown choice in a discriminated union (web_analytics.provider).
+  if (issue.code === "invalid_union" && "options" in issue && Array.isArray(issue.options))
+    return `${key}: must be one of ${issue.options.join(", ")}`;
   if (issue.code === "invalid_type" && issue.input === undefined)
     return `${key}: required key missing`;
   return `${key}: ${issue.message}`;

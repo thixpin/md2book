@@ -74,6 +74,10 @@ turn with a curled sheet, and wide screens show a two-page spread.
 Each page carries the same running head and foot as the PDF, set by
 [`running`](configuration.md#running-heads-and-feet).
 
+The site loads nothing from other servers unless the book opts into
+[analytics](configuration.md#analytics) (Google Analytics, Plausible,
+GoatCounter or Cloudflare Web Analytics).
+
 Readers get a toolbar with the contents, search, text size, bookmarks
 and fullscreen, and these keys:
 

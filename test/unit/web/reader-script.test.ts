@@ -9,6 +9,16 @@ const REFERENCE_SHA256 = "bb980615d4c6973b16cc0d9c6005054dbb81c149b3e7f816c90275
 // section-sized, preloaded turn surfaces recorded in specs/decision-log.md):
 // [edited text, reference text].
 export const READER_EDITS: [string, string][] = [
+  // md2book: a md2book:pageview event on each chapter change, for web analytics
+  // (specs/decision-log.md).
+  [
+    "      // Opened from a file: the address cannot change, which is harmless.\n      return;\n    }\n",
+    "      // Opened from a file: the address cannot change, which is harmless.\n    }\n",
+  ],
+  [
+    '    }\n    // md2book: the page shows another chapter; web analytics (if the book has it) counts a\n    // page view from this event. The reader itself knows no analytics provider.\n    document.dispatchEvent(new CustomEvent("md2book:pageview", { detail: { path, title: document.title } }));\n  }\n',
+    "    }\n  }\n",
+  ],
   // md2book: the running heads and feet follow the book's `running` layout (specs/decision-log.md).
   [
     '  const asciiFolios = reader.dataset.folioDigits === "ascii";\n  // md2book: the running heads and feet (data-running; absent means this default layout).\n  const defaultLayout = {\n    top: { inner: "chapter-title", center: "none", outer: "author" },\n    bottom: { inner: "book-title", center: "none", outer: "page-number" },\n  };\n  const layout = reader.dataset.running ? JSON.parse(reader.dataset.running) : defaultLayout;\n  const burmeseDigits = (number) =>\n',

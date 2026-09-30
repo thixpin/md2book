@@ -1,4 +1,5 @@
 import type { BookConfig } from "../config/load.ts";
+import { analyticsHead } from "./analytics.ts";
 import { escapeHtml as esc } from "../manuscript/text.ts";
 
 export const OG_IMAGE = { name: "og-image.png", width: 1200, height: 630 };
@@ -53,7 +54,7 @@ export function page(config: BookConfig, options: PageOptions): string {
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(description)}">
 ${social}
-${preload}<link rel="stylesheet" href="/${stylesheet}">${icons}</head>
+${preload}<link rel="stylesheet" href="/${stylesheet}">${icons}${path ? analyticsHead(config.web_analytics) : ""}</head>
 <body><header class="site-header"><a href="/" data-home><span class="site-title">${esc(config.title)}</span>
 <span class="site-subtitle">${esc(config.subtitle ?? "")}</span></a>${headerTools}</header>
 <main>${content}</main><footer class="footer">${esc(config.author)}</footer>

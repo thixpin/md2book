@@ -224,6 +224,43 @@ describe("loadConfig", () => {
     expect(warnings).toEqual(["unknown key: running.top.middle"]);
   });
 
+  it.each([
+    [{ provider: "google", id: "G-AB12CD34EF" }],
+    [{ provider: "plausible", id: "book.example.com" }],
+    [{ provider: "goatcounter", id: "mybook" }],
+    [{ provider: "cloudflare", id: "0123456789abcdef0123456789abcdef" }],
+  ])("accepts web analytics %j", async (web_analytics) => {
+    const { config } = await loadConfig(book({ ...base, web_analytics }));
+    expect(config.web_analytics).toEqual(web_analytics);
+  });
+
+  it.each([
+    [
+      { provider: "google", id: "UA-1234-1" },
+      "web_analytics.id: must be a Google Analytics measurement id like G-XXXXXXXXXX",
+    ],
+    [
+      { provider: "plausible", id: "https://book.example.com/" },
+      "web_analytics.id: must be the site's domain as registered in Plausible, like book.example.com",
+    ],
+    [
+      { provider: "goatcounter", id: "My Book" },
+      "web_analytics.id: must be the GoatCounter site code (the name in <code>.goatcounter.com)",
+    ],
+    [
+      { provider: "cloudflare", id: "abc" },
+      "web_analytics.id: must be the 32-character Cloudflare Web Analytics token",
+    ],
+    [
+      { provider: "matomo", id: "1" },
+      "web_analytics.provider: must be one of google, plausible, goatcounter, cloudflare",
+    ],
+    [{ provider: "google" }, "web_analytics.id: required key missing"],
+  ])("stops on bad web analytics %j", async (web_analytics, reason) => {
+    const error = await loadError(book({ ...base, web_analytics }));
+    expect(error.reason).toBe(reason);
+  });
+
   it("stops on invalid JSON, naming the file", async () => {
     const dir = tempDir({ "book.json": "{ nope" });
     const error = await loadError(join(dir, "book.json"));

@@ -7,6 +7,36 @@ import { FONT_FAMILIES, FONT_SIZE_IDS, PAGE_SIZE_IDS, slotValues } from "./prese
 
 const nonEmpty = z.string().min(1);
 
+// Opt-in analytics for the web edition: one provider and its site id, checked per provider.
+const analyticsId = (pattern: RegExp, message: string) => z.string().regex(pattern, { message });
+export const webAnalyticsSchema = z.discriminatedUnion("provider", [
+  z.object({
+    provider: z.literal("google"),
+    id: analyticsId(
+      /^G-[A-Z0-9]{4,}$/,
+      "must be a Google Analytics measurement id like G-XXXXXXXXXX",
+    ),
+  }),
+  z.object({
+    provider: z.literal("plausible"),
+    id: analyticsId(
+      /^[a-z0-9-]+(\.[a-z0-9-]+)+$/,
+      "must be the site's domain as registered in Plausible, like book.example.com",
+    ),
+  }),
+  z.object({
+    provider: z.literal("goatcounter"),
+    id: analyticsId(
+      /^[a-z0-9-]+$/,
+      "must be the GoatCounter site code (the name in <code>.goatcounter.com)",
+    ),
+  }),
+  z.object({
+    provider: z.literal("cloudflare"),
+    id: analyticsId(/^[0-9a-f]{32}$/, "must be the 32-character Cloudflare Web Analytics token"),
+  }),
+]);
+
 const stringsSchema = z
   .object({
     chapter_label: nonEmpty,
@@ -40,6 +70,7 @@ export const bookConfigSchema = z.object({
   chapter_glob: nonEmpty,
   part_glob: z.string().optional(),
   web_published_chapters: z.array(z.string()).optional(),
+  web_analytics: webAnalyticsSchema.optional(),
   recto_chapter_start: z.boolean().default(false),
   running_headers: z.boolean().default(true),
   end_image: z.string().optional(),
