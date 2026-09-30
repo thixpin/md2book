@@ -208,8 +208,12 @@ gains `pageSize`, `fontFamily`, `fontSize`, `chapters` (FR-023).
   size and font size in the PDF)
 - [X] T028 [P] Update `specs/decision-log.md`: presets, file-name suffixes, proportional margins,
   font-size factors, init writes `font.family` instead of `font_set`, new font release
-- [ ] T029 Run `npm run check`, `npm run test:e2e`, `npm run equivalence:pdf` (with `DEVBOOK`)
+- [X] T029 Run `npm run check`, `npm run test:e2e`, `npm run equivalence:pdf` (with `DEVBOOK`)
   and `npm run docs:build`; fix anything that fails
+  — result 2026-09-30: `npm run check` (464 tests), `test:e2e` (32), `docs:build`,
+  `coverage` (95.7/88.8/93.1/96.3 %) and `package:check` pass; `equivalence:pdf` NOT RUN
+  (`DEVBOOK`, the reference development-book checkout, is not on this machine); ESLint now also
+  ignores `examples/*/dist/` (build output of the demo book)
 - [ ] T030 Build sample PDFs of `examples/demo-book` for a representative set (every page size
   at `m`, `a5` at `xs` and `xl`, `a4` at `xl`, each supported family at `default`/`m`) and
   review them per quickstart.md §2–3

@@ -12,6 +12,7 @@ export default tseslint.config(
       "assets/web-reader.js",
       "docs/.vitepress/cache/",
       "docs/.vitepress/dist/",
+      "examples/*/dist/",
     ],
   },
   js.configs.recommended,
