@@ -2,14 +2,10 @@ import { readFileSync } from "node:fs";
 import { Writable } from "node:stream";
 import { Command, CommanderError } from "commander";
 import { BookError } from "./errors.ts";
-import { runFonts } from "./fonts/command.ts";
-import { runInit } from "./init/init.ts";
-import { promptMissing, type InitAnswers } from "./init/prompts.ts";
-import { runServe, runWeb, webWrittenLine } from "./web/command.ts";
-import { runEpub } from "./epub/command.ts";
-import { runPdf } from "./pdf/command.ts";
-import { runCover } from "./cover/command.ts";
-import { runAll, runQa } from "./qa/command.ts";
+import type { InitAnswers } from "./init/prompts.ts";
+
+// Each command imports its module when it runs, so `--help` and `--version` load only commander
+// and not the build dependencies (Playwright, pdf.js, Paged.js, sharp, Prism, …).
 
 // package.json sits one folder up from both src/cli.ts and the built dist/cli.js.
 const VERSION = (
@@ -54,6 +50,7 @@ export async function runCli(argv: string[], deps: CliDeps = {}): Promise<number
       const stdin = deps.stdin ?? process.stdin;
       let answers = flags;
       if (stdin.isTTY) {
+        const { promptMissing } = await import("./init/prompts.ts");
         answers = await promptMissing(flags, {
           input: stdin as NodeJS.ReadableStream,
           output: new Writable({
@@ -69,6 +66,7 @@ export async function runCli(argv: string[], deps: CliDeps = {}): Promise<number
             throw new BookError(`--${key}`, "required when not running in a terminal");
         }
       }
+      const { runInit } = await import("./init/init.ts");
       const { files } = await runInit({
         dir,
         lang: answers.lang!,
@@ -94,6 +92,7 @@ export async function runCli(argv: string[], deps: CliDeps = {}): Promise<number
     .option("-s, --set <id>", "font set id: my-sans, my-serif, en-sans, en-serif")
     .option("--fonts <dir>", "font cache root (overrides MD2BOOK_FONTS)")
     .action(async (options: { config?: string; set?: string; fonts?: string }) => {
+      const { runFonts } = await import("./fonts/command.ts");
       const { dir } = await runFonts(
         { config: options.config, set: options.set, fontsDir: options.fonts },
         deps.manifestPath,
@@ -110,6 +109,7 @@ export async function runCli(argv: string[], deps: CliDeps = {}): Promise<number
     .option("-o, --out <dir>", "output directory (default dist/<config name>/)")
     .option("-p, --printed", "print-shop interior: no cover page, no colour")
     .action(async (options: { config: string; out?: string; printed?: boolean }) => {
+      const { runPdf } = await import("./pdf/command.ts");
       await runPdf(options, deps.manifestPath, (line) => stdout(`${line}\n`));
     });
 
@@ -119,6 +119,7 @@ export async function runCli(argv: string[], deps: CliDeps = {}): Promise<number
     .option("-c, --config <path>", "book config", "book.json")
     .option("-o, --out <dir>", "output directory (default dist/<config name>/)")
     .action(async (options: { config: string; out?: string }) => {
+      const { runEpub } = await import("./epub/command.ts");
       await runEpub(options, deps.manifestPath, (line) => stdout(`${line}\n`));
     });
 
@@ -129,6 +130,7 @@ export async function runCli(argv: string[], deps: CliDeps = {}): Promise<number
     .option("-o, --out <dir>", "output directory (default dist/<config name>/)")
     .option("-p, --printed", "check the printed edition's PDF")
     .action(async (options: { config: string; out?: string; printed?: boolean }) => {
+      const { runQa } = await import("./qa/command.ts");
       await runQa(options, deps.manifestPath, (line) => stdout(`${line}\n`));
     });
 
@@ -139,6 +141,7 @@ export async function runCli(argv: string[], deps: CliDeps = {}): Promise<number
     .option("-o, --out <dir>", "output directory (default dist/<config name>/)")
     .option("-p, --printed", "build and check the printed edition's PDF")
     .action(async (options: { config: string; out?: string; printed?: boolean }) => {
+      const { runAll } = await import("./qa/command.ts");
       await runAll(options, deps.manifestPath, (line) => stdout(`${line}\n`));
     });
 
@@ -148,6 +151,7 @@ export async function runCli(argv: string[], deps: CliDeps = {}): Promise<number
     .option("-c, --config <path>", "book config", "book.json")
     .option("-o, --out <dir>", "output directory (default dist/<config name>/)")
     .action(async (options: { config: string; out?: string }) => {
+      const { runWeb, webWrittenLine } = await import("./web/command.ts");
       stdout(`${webWrittenLine(await runWeb(options, deps.manifestPath))}\n`);
     });
 
@@ -162,6 +166,7 @@ export async function runCli(argv: string[], deps: CliDeps = {}): Promise<number
       if (!Number.isInteger(port) || port < 0 || port > 65535) {
         throw new BookError("--port", `not a valid port: ${options.port}`);
       }
+      const { runServe } = await import("./web/command.ts");
       const served = await runServe({ ...options, port }, deps.manifestPath);
       stdout(`Serving ${served.url} (Ctrl+C to stop)\n`);
       await new Promise<void>((done) =>
@@ -189,6 +194,7 @@ export async function runCli(argv: string[], deps: CliDeps = {}): Promise<number
         if (!/^\d+$/.test(options.dpi)) {
           throw new BookError("--dpi", `not a resolution in dots per inch: ${options.dpi}`);
         }
+        const { runCover } = await import("./cover/command.ts");
         const result = await runCover(
           {
             html: file,
