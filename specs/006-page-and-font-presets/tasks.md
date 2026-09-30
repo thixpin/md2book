@@ -174,7 +174,7 @@ gains `pageSize`, `fontFamily`, `fontSize`, `chapters` (FR-023).
   and `my-masterpiece` (Masterpiece Uni Round 1.0, checksum-pinned, merged with Noto Sans Latin
   at 0.93, Regular only, `OFL.txt` extracted from the font's name table); release `fonts-v2`;
   run it to write `build/fonts/` and `assets/fonts-manifest.json` (existing files byte-identical)
-- [ ] T022 [US3] Extend `scripts/make-font-fixtures.py` with OFL subsets of the two new sets for
+- [X] T022 [US3] Extend `scripts/make-font-fixtures.py` with OFL subsets of the two new sets for
   `test/fixtures/fonts-source/` and `test/fixtures/fonts-print/` (with licence files and
   fixture manifests)
 - [ ] T023 [US3] Create `test/fixtures/book-fonts/` (Myanmar book): one chapter with medials,

@@ -246,6 +246,84 @@
         "file": "LICENSE-OFL.txt",
         "sha256": "246a75859267af7da466823969d2e2b407ed8455ee5f74f4c8d63d8783be9b57"
       }
+    },
+    "my-padauk": {
+      "language": "my",
+      "body_family": "Padauk",
+      "mono_family": "Noto Sans Mono",
+      "faces": [
+        {
+          "role": "body-regular",
+          "file": "Padauk-Regular.ttf",
+          "weight": 400,
+          "italic": false,
+          "sha256": "3dd5406194518d903c423fc77822be4e8b6c9e6a75dfacda2eafc1a54e64cade"
+        },
+        {
+          "role": "body-semibold",
+          "file": "Padauk-SemiBold.ttf",
+          "weight": 600,
+          "italic": false,
+          "sha256": "5acd54422ffa854a5d36a7f6805913d4d27d6c183d2f540fefcd3c5d6d22d59d"
+        },
+        {
+          "role": "body-bold",
+          "file": "Padauk-Bold.ttf",
+          "weight": 700,
+          "italic": false,
+          "sha256": "61aa2f322143229e477a3eeefdc157020ad8f477d9574685f73ecdcbe16fa0b5"
+        },
+        {
+          "role": "mono-regular",
+          "file": "NotoSansMono-Regular.ttf",
+          "weight": 400,
+          "italic": false,
+          "sha256": "9dc18fe4159af417dbf84514780739b64ad6112a7f5ffea178d83891662bed0d"
+        },
+        {
+          "role": "mono-bold",
+          "file": "NotoSansMono-Bold.ttf",
+          "weight": 700,
+          "italic": false,
+          "sha256": "71d50625f397c6191884437c6275fb2a27e6fc85cc34b7ed2f6de1a82fc87a60"
+        }
+      ],
+      "licence": {
+        "file": "Padauk-OFL.txt",
+        "sha256": "481f3db6a2a44668f5b60d05f9f26d58464df1bad86dd3baae1fc0b3a053d0e4"
+      }
+    },
+    "my-masterpiece": {
+      "language": "my",
+      "body_family": "Masterpiece Uni Round",
+      "mono_family": "Noto Sans Mono",
+      "faces": [
+        {
+          "role": "body-regular",
+          "file": "MasterpieceUniRound-Regular.ttf",
+          "weight": 400,
+          "italic": false,
+          "sha256": "f122e1e43a4479bc87270ae26baff40499d611d56630ac6696db90ae97661bcf"
+        },
+        {
+          "role": "mono-regular",
+          "file": "NotoSansMono-Regular.ttf",
+          "weight": 400,
+          "italic": false,
+          "sha256": "9dc18fe4159af417dbf84514780739b64ad6112a7f5ffea178d83891662bed0d"
+        },
+        {
+          "role": "mono-bold",
+          "file": "NotoSansMono-Bold.ttf",
+          "weight": 700,
+          "italic": false,
+          "sha256": "71d50625f397c6191884437c6275fb2a27e6fc85cc34b7ed2f6de1a82fc87a60"
+        }
+      ],
+      "licence": {
+        "file": "MasterpieceUniRound-OFL.txt",
+        "sha256": "e564f06d018e7b95bc3594c96a17f1d41865af4038c375e7aa974dd69df38602"
+      }
     }
   }
 }

@@ -14,6 +14,11 @@ falling back to system fonts.
 
   python scripts/make-font-fixtures.py --print [path/to/build/fonts]
 
+With --print --add-families it adds only the spec 006 sets (my-padauk, my-masterpiece) to
+test/fixtures/fonts-print/, leaving the existing fixture files and sets untouched.
+
+  python scripts/make-font-fixtures.py --print --add-families [path/to/build/fonts]
+
 Needs fontTools (e.g. development-book/.venv/bin/python).
 """
 from __future__ import annotations
@@ -28,7 +33,8 @@ from fontTools import subset
 
 ROOT = Path(__file__).resolve().parent.parent
 PRINT = "--print" in sys.argv
-ARGS = [a for a in sys.argv[1:] if a != "--print"]
+ADD = "--add-families" in sys.argv
+ARGS = [a for a in sys.argv[1:] if a not in ("--print", "--add-families")]
 OUT = ROOT / "test" / "fixtures" / ("fonts-print" if PRINT else "fonts-source")
 DEFAULT_SOURCE = ROOT / "build" / "fonts" if PRINT else ROOT.parent / "development-book" / "publish" / "fonts"
 SOURCE = Path(ARGS[0]) if ARGS else DEFAULT_SOURCE
@@ -101,5 +107,36 @@ def main() -> None:
     (OUT / "fonts-manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
 
 
+ADDED = {  # set id -> body family, faces by role, licence file
+    "my-padauk": ("Padauk", {"body-regular": "Padauk-Regular.ttf", "body-semibold": "Padauk-SemiBold.ttf",
+                             "body-bold": "Padauk-Bold.ttf"}, "Padauk-OFL.txt"),
+    "my-masterpiece": ("Masterpiece Uni Round", {"body-regular": "MasterpieceUniRound-Regular.ttf"},
+                       "MasterpieceUniRound-OFL.txt"),
+}
+
+
+def add_families() -> None:
+    if not PRINT:
+        sys.exit("--add-families needs --print")
+    path = OUT / "fonts-manifest.json"
+    manifest = json.loads(path.read_text())
+    mono = [f for f in manifest["sets"]["my-sans"]["faces"] if f["role"].startswith("mono-")]
+    for set_id, (family, body, licence) in ADDED.items():
+        for name in body.values():
+            # Padauk's OFL reserves its name, so a subset (a modified copy) may not be called
+            # Padauk: the fixture keeps SIL's unmodified files.
+            if set_id == "my-padauk":
+                shutil.copy(SOURCE / name, OUT / name)
+            else:
+                make(name, name, f"{PRINT_LATIN},{PRINT_MYANMAR}")
+        shutil.copy(SOURCE / licence, OUT / licence)
+        manifest["sets"][set_id] = {
+            "language": "my", "body_family": family, "mono_family": "Noto Sans Mono",
+            "faces": [face(role, name) for role, name in body.items()] + mono,
+            "licence": {"file": licence, "sha256": sha256(licence)},
+        }
+    path.write_text(json.dumps(manifest, indent=2) + "\n")
+
+
 if __name__ == "__main__":
-    main()
+    add_families() if ADD else main()
