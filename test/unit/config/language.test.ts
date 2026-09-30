@@ -67,6 +67,15 @@ describe("chapter heading pattern", () => {
     expect(en.exec("# Chapter ၃ - Title")?.slice(1)).toEqual(["Chapter ၃", "Title"]);
   });
 
+  it("accepts an en or em dash between the label and the title, and keeps later dashes", () => {
+    expect(my.exec("# အခန်း (၁) – Title")?.slice(1)).toEqual(["အခန်း (၁)", "Title"]);
+    expect(my.exec("# အခန်း (၇) — Skill — Reuse")?.slice(1)).toEqual([
+      "အခန်း (၇)",
+      "Skill — Reuse",
+    ]);
+    expect(en.exec("# Chapter 3—Title")?.slice(1)).toEqual(["Chapter 3", "Title"]);
+  });
+
   it("rejects the other language's shape", () => {
     expect(my.test("# အခန်း 1 - Title")).toBe(false);
     expect(en.test("# Chapter (3) - Title")).toBe(false);

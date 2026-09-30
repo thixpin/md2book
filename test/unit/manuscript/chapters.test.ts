@@ -39,6 +39,15 @@ describe("loadChapters", () => {
     });
   });
 
+  it("parses a heading with an em dash and writes the full title with the book's hyphen", async () => {
+    const [ch] = await load({ "chapters/chapter-01.md": "# အခန်း (၁) — Title — More\n\nBody.\n" });
+    expect(ch).toMatchObject({
+      label: "အခန်း (၁)",
+      title: "Title — More",
+      fullTitle: "အခန်း (၁) - Title — More",
+    });
+  });
+
   it("reads ASCII digits in a Myanmar label", async () => {
     const [ch] = await load({ "chapters/chapter-01.md": "# အခန်း (7) - Seven\n" });
     expect(ch?.number).toBe(7);

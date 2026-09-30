@@ -60,10 +60,13 @@ function escapeRegExp(text: string): string {
  * First-line chapter heading. `my`: `# အခန်း (၁) - Title`; `en`: `# Chapter 3 - Title`.
  * Group 1 is the label, group 2 the title. Both accept Myanmar and ASCII digits.
  */
+/** The dash between a heading's label and title: a hyphen, an en dash or an em dash. */
+export const HEADING_DASH = "[-\u2013\u2014]";
+
 export function chapterHeadingPattern(language: Language, label: string): RegExp {
   const word = escapeRegExp(label);
   const number = language === "my" ? String.raw`\s*\([၀-၉0-9]+\)` : String.raw`\s+[၀-၉0-9]+`;
-  return new RegExp(String.raw`^#\s+(${word}${number})\s*-\s*(.+?)\s*$`, "u");
+  return new RegExp(String.raw`^#\s+(${word}${number})\s*${HEADING_DASH}\s*(.+?)\s*$`, "u");
 }
 
 const MYANMAR_ZERO = 0x1040;

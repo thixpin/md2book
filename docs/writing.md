@@ -19,6 +19,12 @@ The first line of each chapter is its heading: the chapter label from
 # Chapter 1 - Title
 ```
 
+The dash may be a hyphen (`-`), an en dash (`–`) or an em dash (`—`),
+with or without spaces; the book always shows a hyphen after the
+number, and dashes inside the title are kept (`# အခန်း (၇) — Skills —
+Reuse` is chapter 7, "Skills — Reuse"). Part headings accept the same
+dashes.
+
 Myanmar books put the number in brackets; English books do not. Both
 accept Myanmar (၁၂၃) or ASCII (123) digits. The numbers must run 1, 2,
 3, … in file order; the QA report flags a mismatch.

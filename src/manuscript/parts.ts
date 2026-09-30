@@ -1,5 +1,6 @@
 import { readFile } from "node:fs/promises";
 import { basename } from "node:path";
+import { HEADING_DASH } from "../config/language.ts";
 import type { BookConfig } from "../config/load.ts";
 import { BookError } from "../errors.ts";
 import type { Chapter } from "./chapters.ts";
@@ -13,7 +14,10 @@ export interface Part {
   chapters: Chapter[];
 }
 
-const PART_HEAD_RE = /^#\s+(Part\s+[IVX]+)\s*-\s*(.+?)\s*$/u;
+const PART_HEAD_RE = new RegExp(
+  String.raw`^#\s+(Part\s+[IVX]+)\s*${HEADING_DASH}\s*(.+?)\s*$`,
+  "u",
+);
 const PART_RANGE_RE = /^chapters:\s*(\d+)\s*-\s*(\d+)\s*$/mu;
 
 /** Parts only group the contents list; they add no pages. */

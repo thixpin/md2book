@@ -32,7 +32,7 @@ describe("loadParts", () => {
     const { config, chapters } = await book({
       ...chapters3,
       "chapters/part-01.md": "# Part I - Basics\n\nchapters: 1-2\n",
-      "chapters/part-02.md": "# Part II - More\nchapters: 2-3\n",
+      "chapters/part-02.md": "# Part II — More\nchapters: 2-3\n",
     });
     const parts = await loadParts(config, chapters);
     expect(parts.map((p) => [p.label, p.title, p.first, p.last])).toEqual([
