@@ -44,12 +44,13 @@ describe("buildWeb", { timeout: 60_000 }, () => {
         "fonts/NotoSansMono-Regular.ttf",
         "index.html",
         "og-image.png",
+        "robots.txt",
         "favicon.svg",
         "favicon-32.png",
         "apple-touch-icon.png",
       ]),
     );
-    expect(files).toHaveLength(8 + 12); // 8 font files + 12 other contract files
+    expect(files).toHaveLength(8 + 13); // 8 font files + 13 other contract files
     expect(files.filter((f) => /^style\.[0-9a-f]{12}\.css$/.test(f))).toHaveLength(1);
     expect(files.filter((f) => /^reader\.[0-9a-f]{12}\.js$/.test(f))).toHaveLength(1);
     expect(files.filter((f) => f.startsWith("fonts/"))).toHaveLength(8);
@@ -71,6 +72,39 @@ describe("buildWeb", { timeout: 60_000 }, () => {
       expect(readFileSync(join(web, file)).includes("DRAFT-MARKER-3"), file).toBe(false);
     }
     expect(existsSync(join(web, "chapters", "ch03.html"))).toBe(false);
+  });
+
+  it("lists only the home page and the published chapters in sitemap.xml", async () => {
+    const { web } = await build(async () => ({
+      ...(await bookEn()),
+      web_url: "https://book.example.com/",
+    }));
+    expect(readFileSync(join(web, "sitemap.xml"), "utf8")).toBe(
+      '<?xml version="1.0" encoding="UTF-8"?>\n' +
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
+        "  <url><loc>https://book.example.com/</loc></url>\n" +
+        "  <url><loc>https://book.example.com/chapters/ch01.html</loc></url>\n" +
+        "  <url><loc>https://book.example.com/chapters/ch02.html</loc></url>\n" +
+        "</urlset>\n",
+    );
+    expect(readFileSync(join(web, "robots.txt"), "utf8")).toBe(
+      "User-agent: *\nAllow: /\n\nSitemap: https://book.example.com/sitemap.xml\n",
+    );
+  });
+
+  it("writes no sitemap.xml without web_url, and a robots.txt without it", async () => {
+    const { web } = await build(bookEn);
+    expect(existsSync(join(web, "sitemap.xml"))).toBe(false);
+    expect(readFileSync(join(web, "robots.txt"), "utf8")).toBe("User-agent: *\nAllow: /\n");
+  });
+
+  it("names md2book as the generator on every page", async () => {
+    const { web } = await build(bookEn);
+    for (const file of tree(web).filter((f) => f.endsWith(".html"))) {
+      expect(readFileSync(join(web, file), "utf8"), file).toContain(
+        '<meta name="generator" content="md2book">',
+      );
+    }
   });
 
   it("empties web/ before building and is deterministic", async () => {

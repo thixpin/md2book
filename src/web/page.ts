@@ -1,6 +1,7 @@
 import type { BookConfig } from "../config/load.ts";
 import { analyticsHead } from "./analytics.ts";
 import { escapeHtml as esc } from "../manuscript/text.ts";
+import { site } from "./site.ts";
 
 export const OG_IMAGE = { name: "og-image.png", width: 1200, height: 630 };
 
@@ -29,7 +30,7 @@ export function page(config: BookConfig, options: PageOptions): string {
   const preload = options.preloadImage
     ? `<link rel="preload" as="image" href="${esc(options.preloadImage)}" fetchpriority="high">`
     : "";
-  const base = (config.web_url ?? "").replace(/\/+$/, "");
+  const { base } = site(config);
   const icons = favicon
     ? '<link rel="icon" href="/favicon.svg" type="image/svg+xml">' +
       '<link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">' +
@@ -53,6 +54,7 @@ export function page(config: BookConfig, options: PageOptions): string {
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(description)}">
+<meta name="generator" content="md2book">
 ${social}
 ${preload}<link rel="stylesheet" href="/${stylesheet}">${icons}${path ? analyticsHead(config.web_analytics) : ""}</head>
 <body><header class="site-header"><a href="/" data-home><span class="site-title">${esc(config.title)}</span>

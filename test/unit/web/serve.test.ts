@@ -15,6 +15,7 @@ function site() {
     "404.html": "<p>missing</p>",
     "chapters/ch01.html": "<p>one</p>",
     "style.abc.css": "body{}",
+    "sitemap.xml": "<urlset/>",
     "fonts/A.ttf": "ttf",
   });
 }
@@ -52,6 +53,11 @@ describe("serveDir", () => {
     });
     expect((await get(port, "/style.abc.css")).type).toMatch(/^text\/css/);
     expect((await get(port, "/fonts/A.ttf")).type).toBe("font/ttf");
+  });
+
+  it("serves sitemap.xml as XML", async () => {
+    const { port } = await start();
+    expect((await get(port, "/sitemap.xml")).type).toBe("application/xml; charset=utf-8");
   });
 
   it("answers unknown paths with 404.html and status 404", async () => {

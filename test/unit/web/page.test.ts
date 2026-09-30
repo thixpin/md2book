@@ -59,6 +59,11 @@ describe("page head", () => {
     expect(meta(without, "og:url")).toEqual([]);
   });
 
+  it("names md2book as the generator on every page", () => {
+    expect(meta(build({}, "/", "book"), "generator")).toEqual(["md2book"]);
+    expect(meta(build({}, null), "generator")).toEqual(["md2book"]);
+  });
+
   it("marks the 404 page noindex, without canonical or script", () => {
     const html = build({ web_url: "https://book.example" }, null);
     expect(meta(html, "robots")).toEqual(["noindex"]);

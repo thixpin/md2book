@@ -12,6 +12,7 @@ import { coverFacts, writeFavicons, writeOgImage } from "./images.ts";
 import { pageDescription } from "./description.ts";
 import { warn } from "../errors.ts";
 import { page } from "./page.ts";
+import { robotsTxt, site, sitemapXml } from "./site.ts";
 import {
   chapterHref,
   computeBookKey,
@@ -51,8 +52,11 @@ export async function buildWeb(
   const facts = await coverFacts(config.cover);
   await writeFavicons(config, web, facts);
   await writeOgImage(config.cover, web, facts);
+  const { base } = site(config);
   if (!config.web_url) {
-    warn("web_url is not set; canonical and og:url are omitted and og:image is relative");
+    warn(
+      "web_url is not set; canonical and og:url are omitted, og:image is relative and there is no sitemap.xml",
+    );
   }
   const book: WebBook = {
     config,
@@ -107,5 +111,10 @@ export async function buildWeb(
       path: null,
     }),
   );
+  // Search engines: the home page and the published chapters (never the 404 page or a draft,
+  // which is never read); a sitemap needs absolute URLs, so only with web_url.
+  const paths = ["/", ...chapters.map((ch) => chapterHref(ch.slug))];
+  if (base) writeFileSync(join(web, "sitemap.xml"), sitemapXml(base, paths));
+  writeFileSync(join(web, "robots.txt"), robotsTxt(base ? `${base}/sitemap.xml` : null));
   return { dir: web, chapters: chapters.length };
 }
