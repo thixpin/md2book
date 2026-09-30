@@ -34,6 +34,7 @@ export default defineConfig({
           { text: "Covers", link: "/cover" },
           { text: "Usage examples", link: "/examples" },
           { text: "Analytics", link: "/analytics" },
+          { text: "GitHub Pages", link: "/github-pages" },
         ],
       },
       {

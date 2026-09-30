@@ -79,6 +79,7 @@ Every command reads `book.json` from the current folder (or
 | `md2book serve [--port <n>]`    | build and preview the web edition         |
 | `md2book qa [--printed]`        | write `QA-REPORT.md`                      |
 | `md2book build all [--printed]` | all of the above, then the QA report      |
+| `md2book deploy github-pages`   | set up GitHub Pages publishing (web)      |
 
 ## Documentation
 
@@ -92,6 +93,7 @@ in [`docs/`](docs/README.md):
 - [Covers](docs/cover.md)
 - [Usage examples](docs/examples.md)
 - [Analytics](docs/analytics.md): opt-in page-view analytics for the web edition
+- [GitHub Pages](docs/github-pages.md): publish the web edition with GitHub Actions
 - [Commands](docs/commands.md): every command and option
 - [Configuration](docs/configuration.md): every `book.json` key
 - [Editions](docs/editions.md): the PDF, EPUB, web edition and QA report

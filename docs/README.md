@@ -18,6 +18,8 @@ Myanmar (Burmese) script.
   Myanmar book to a print-shop PDF and a published web edition.
 - [Analytics](analytics.md): count readers of the web edition with
   Google Analytics, Plausible, GoatCounter or Cloudflare.
+- [GitHub Pages](github-pages.md): publish the web edition on GitHub
+  Pages with a GitHub Actions workflow.
 
 ## Reference
 

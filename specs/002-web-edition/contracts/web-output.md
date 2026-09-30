@@ -12,15 +12,20 @@ fonts/*.ttf, fonts/LICENSE-OFL.txt
 cover.<ext>
 back-cover.<ext>
 og-image.png
+robots.txt                                          (Sitemap: line only with web_url)
+sitemap.xml                                         (only with web_url: / and each published chapter)
 favicon.svg, favicon-32.png, apple-touch-icon.png   (configured or default)
 ```
 
 ## Page shell
 
-`<html lang>`; viewport meta; `<title>`; `meta[name=description]`; social tags (canonical and
+`<html lang>`; viewport meta; `<title>`; `meta[name=description]`; `meta[name=generator]` `md2book`; social tags (canonical and
 `og:url` only with `web_url`; `robots noindex` only on 404; `og:type` `book`/`article`;
 `og:site_name`, `og:title`, `og:description`, `og:image` (+ width, height, alt);
 `twitter:card=summary_large_image`); hashed stylesheet; favicon links (always: configured or default icon).
+Every root-relative link (and `data-href`, `data-cover-src`, `data-back-cover-src`) is prefixed with
+the path of `web_url` (`/repo` for `https://owner.github.io/repo/`), which the reader shell then
+also carries as `data-site-root="/repo/"`; without a path, nothing changes.
 `header.site-header > a[href="/"][data-home]` (`.site-title`, `.site-subtitle`) + reader toolbar;
 `main`; `footer.footer` (author); deferred reader script (not on 404).
 

@@ -6,17 +6,18 @@ $ md2book help <command>        # or: md2book <command> -h
 $ md2book -v                    # or: --version
 ```
 
-| Command                     | What it does                                  |
-| --------------------------- | --------------------------------------------- |
-| [`init`](#init)             | create a new book project                     |
-| [`fonts`](#fonts)           | fetch and verify the book's font set          |
-| [`cover`](#cover)           | render a one-page HTML cover to PNG           |
-| [`build pdf`](#build-pdf)   | build the 170 × 240 mm PDF                    |
-| [`build epub`](#build-epub) | build the reflowable EPUB 3                   |
-| [`build web`](#build-web)   | build the static web edition                  |
-| [`serve`](#serve)           | build the web edition and preview it locally  |
-| [`qa`](#qa)                 | write the QA report                           |
-| [`build all`](#build-all)   | build every edition, then write the QA report |
+| Command                                       | What it does                                         |
+| --------------------------------------------- | ---------------------------------------------------- |
+| [`init`](#init)                               | create a new book project                            |
+| [`fonts`](#fonts)                             | fetch and verify the book's font set                 |
+| [`cover`](#cover)                             | render a one-page HTML cover to PNG                  |
+| [`build pdf`](#build-pdf)                     | build the 170 × 240 mm PDF                           |
+| [`build epub`](#build-epub)                   | build the reflowable EPUB 3                          |
+| [`build web`](#build-web)                     | build the static web edition                         |
+| [`serve`](#serve)                             | build the web edition and preview it locally         |
+| [`qa`](#qa)                                   | write the QA report                                  |
+| [`build all`](#build-all)                     | build every edition, then write the QA report        |
+| [`deploy github-pages`](#deploy-github-pages) | set up publishing of the web edition on GitHub Pages |
 
 ## Common behaviour
 
@@ -161,21 +162,25 @@ Builds the reflowable EPUB 3 of every chapter:
 ## `build web`
 
 ```console
-$ md2book build web [--config <path>] [--out <dir>]
+$ md2book build web [--config <path>] [--out <dir>] [--web-url <url>]
 ```
 
 Builds the static site of the chapters listed in
-`web_published_chapters` to `<out>/web/`. See
+`web_published_chapters` to `<out>/web/`. `--web-url` sets the site's
+public URL for this build in place of the config's `web_url`; it must
+be an absolute `http` or `https` URL. See
 [Editions: web edition](editions.md#web-edition).
 
 ## `serve`
 
 ```console
-$ md2book serve [--config <path>] [--out <dir>] [--port <n>]
+$ md2book serve [--config <path>] [--out <dir>] [--port <n>] [--web-url <url>]
 ```
 
 Builds the web edition, then serves it at `http://127.0.0.1:<port>/`
-(default port 8000) until Ctrl+C. Unknown paths get the site's
+(default port 8000) until Ctrl+C; a site URL with a path, like
+`https://me.github.io/my-book/`, is served under that path
+(`http://127.0.0.1:8000/my-book/`), as GitHub Pages serves it. Unknown paths get the site's
 `404.html`. A port already in use stops the command.
 
 ## `qa`
@@ -198,3 +203,15 @@ $ md2book build all [--config <path>] [--out <dir>] [--printed]
 Runs `build pdf`, `build epub`, `build web` and `qa` in that order. The
 web edition is skipped, with a note, when `web_published_chapters` is
 not set. `--printed` builds and checks the printed PDF.
+
+## `deploy github-pages`
+
+```console
+$ md2book deploy github-pages [--config <path>] [--force]
+```
+
+Writes `.github/workflows/md2book-pages.yml` at the root of the book's
+git repository: a GitHub Actions workflow that builds the web edition
+and deploys it to GitHub Pages when you start it from the Actions tab.
+It does not build or publish anything itself. `-f, --force` replaces an
+existing workflow. See [GitHub Pages](github-pages.md).

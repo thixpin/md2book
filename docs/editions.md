@@ -91,12 +91,22 @@ The reading position, bookmarks and text size are remembered in the
 browser.
 
 The site is written to `web/`: `index.html`, one page per chapter in
-`chapters/`, `404.html`, and its styles, fonts and images. Upload the
-folder as it is; it must be served from the root of its domain.
+`chapters/`, `404.html`, `robots.txt`, `sitemap.xml` (with `web_url`),
+and its styles, fonts and images. Upload the folder as it is; it is
+served from the root of its domain, or from the path of `web_url`
+(like a GitHub project site). To publish it on GitHub Pages, see
+[GitHub Pages](github-pages.md).
+
+For search engines, every page names md2book as its generator
+(`<meta name="generator" content="md2book">`), `robots.txt` lets
+crawlers read the whole site, and `sitemap.xml` lists the home page and
+every published chapter by its absolute URL; the 404 page is marked
+`noindex` and is not listed. A sitemap needs the site's address, so
+without `web_url` it is not written and `robots.txt` does not name it.
 
 | Key           | Effect                                                            |
 | ------------- | ----------------------------------------------------------------- |
-| `web_url`     | canonical and share links                                         |
+| `web_url`     | canonical and share links, the sitemap and the site's path        |
 | `description` | the page description (default `subtitle`, then `title`)           |
 | `favicon`     | an SVG icon                                                       |
 | `back_cover`  | the back cover; without it a plain one is generated with Chromium |

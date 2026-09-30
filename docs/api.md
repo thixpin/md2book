@@ -78,6 +78,7 @@ interface EpubOptions {
 interface WebOptions {
   config: string;
   out?: string; // the site goes to <out>/web/
+  webUrl?: string; // the site's public URL for this build, in place of web_url
 }
 
 interface ServeOptions extends WebOptions {

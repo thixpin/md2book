@@ -229,9 +229,26 @@ whole top line, in the PDF only.
 | Key                      | Meaning                                                                           |
 | ------------------------ | --------------------------------------------------------------------------------- |
 | `web_published_chapters` | chapter file names to publish, e.g. `["chapter-01.md"]`; required for `build web` |
-| `web_url`                | the site's public URL, for canonical and share links                              |
+| `web_url`                | the site's public URL, see below                                                  |
 | `description`            | the site's description (default: `subtitle`, then `title`)                        |
 | `web_analytics`          | opt-in page-view analytics, see [Analytics](analytics.md)                         |
+
+### Site URL
+
+`web_url` is the address readers open, like
+`https://book.example.com/`. The web edition uses it for:
+
+- the canonical and share (`og:url`, `og:image`) links of each page;
+- `sitemap.xml`, which lists the absolute URL of the home page and each
+  published chapter, and the `Sitemap:` line of `robots.txt`;
+- the path the site is served under: for
+  `https://<owner>.github.io/<repository>/` (a GitHub project site)
+  every link starts with `/<repository>/`.
+
+Without it the build warns, leaves out those links and `sitemap.xml`,
+and serves the site from the root of its domain.
+`md2book build web --web-url <url>` sets it for one build; [GitHub Pages](github-pages.md) deploys
+use it or the address Pages reports.
 
 ### Analytics
 
