@@ -25,9 +25,9 @@ function cssString(text: string): string {
  * matter is not numbered) and Myanmar books use Myanmar digits, as in the web reader. The book
  * title and author are written as strings (Paged.js ignores `string-set` from `attr()`).
  */
-function bookCss(config: BookConfig): string {
+function bookCss(config: BookConfig, carried: string[]): string {
   const style = config.strings.chapter_digits === "myanmar" ? ", myanmar" : "";
-  const type = "font-size: 9pt; color: #777;";
+  const type = `font-size: ${pt(9 * config.font.size.factor)}; color: #777;`;
   const head = config.running_headers
     ? (content: string) =>
         `content: ${content}; ${type} vertical-align: bottom; padding-bottom: 7.5mm;`
@@ -41,7 +41,10 @@ function bookCss(config: BookConfig): string {
   const folio = "var(--md2book-folio)";
   const none = "content: none;";
   const noMargins = `@top-left { ${none} } @top-right { ${none} } @bottom-left { ${none} } @bottom-right { ${none} }`;
+  const factor = config.font.size.factor;
+  const sizes = factor === 1 ? [] : carried.map((css) => scaleFontSizes(css, factor));
   return [
+    ...sizes,
     `@page { @bottom-center { ${none} } }`,
     `@page :left { @top-left { ${head(author)} } @top-right { ${head(chapter)} } @bottom-left { ${foot(folio)} } @bottom-right { ${foot(title)} } }`,
     `@page :right { @top-left { ${head(chapter)} } @top-right { ${head(author)} } @bottom-left { ${foot(title)} } @bottom-right { ${foot(folio)} } }`,
@@ -56,6 +59,40 @@ function bookCss(config: BookConfig): string {
 }
 
 const mm = (value: number) => `${Number(value.toFixed(3))}mm`;
+const pt = (value: number) => `${Number(value.toFixed(3))}pt`;
+
+/**
+ * Font size preset (spec 006, research R-02): every `font-size: <n>pt` of a carried stylesheet
+ * re-declared at `n × factor` under the same selector (and `@page` margin box), so no absolute
+ * size can be missed; `em` sizes and unitless line heights follow the scaled root size.
+ */
+export function scaleFontSizes(css: string, factor: number): string {
+  const rules: string[] = [];
+  const stack: string[] = [];
+  let buffer = "";
+  const declaration = () => {
+    const match = /^\s*font-size:\s*([\d.]+)pt\s*$/.exec(buffer);
+    if (match && stack.length) {
+      const inner = `font-size: ${pt(Number(match[1]) * factor)};`;
+      rules.push(stack.reduceRight((body, selector) => `${selector} { ${body} }`, inner));
+    }
+    buffer = "";
+  };
+  for (const char of css.replace(/\/\*[\s\S]*?\*\//g, "")) {
+    if (char === "{") {
+      stack.push(buffer.trim().replace(/\s+/g, " "));
+      buffer = "";
+    } else if (char === "}") {
+      declaration();
+      stack.pop();
+    } else if (char === ";") {
+      declaration();
+    } else {
+      buffer += char;
+    }
+  }
+  return rules.join("\n");
+}
 
 /**
  * Page size preset (spec 006, research R-01): the page, proportional margins, the full-bleed
@@ -84,10 +121,19 @@ function pageCss(config: BookConfig): string[] {
 
 /** The PDF stylesheets in cascade order (contracts/pdf-output.md), with the set's fonts. */
 export function printStylesheets(set: FontSet, config: BookConfig, printed: boolean): Stylesheet[] {
-  const carried = ["common.css", "print.css", ...(printed ? ["printed.css"] : [])];
+  const carried = ["common.css", "print.css", ...(printed ? ["printed.css"] : [])].map((name) => ({
+    name,
+    css: substituteFonts(read(`css/${name}`), set),
+  }));
   return [
-    ...carried.map((name) => ({ name, css: substituteFonts(read(`css/${name}`), set) })),
+    ...carried,
     { name: "paged.css", css: read("css/paged.css") },
-    { name: "book.css", css: bookCss(config) },
+    {
+      name: "book.css",
+      css: bookCss(
+        config,
+        carried.map((sheet) => sheet.css),
+      ),
+    },
   ];
 }

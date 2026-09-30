@@ -94,19 +94,19 @@ gains `pageSize`, `fontFamily`, `fontSize`, `chapters` (FR-023).
 
 ### Tests ⚠️
 
-- [ ] T010 [P] [US2] Extend `test/unit/pdf/page-size.test.ts` (or a new
+- [X] T010 [P] [US2] Extend `test/unit/pdf/page-size.test.ts` (or a new
   `test/unit/pdf/font-size.test.ts`): for `m`, `bookCss` adds nothing and the folio size stays
   9 pt; for `l`, every `font-size: <n>pt` in `common.css`, `print.css` and `printed.css`
   (including inside `@page` margin boxes) has an override of `n × 1.1` for the same selector,
   and the folio is 9.9 pt; `fitPreBlocks` maximum and minimum sizes are 8.3 × factor and
   6.0 × factor
-- [ ] T011 [US2] Extend `test/integration/pdf-presets.test.ts` to the full 5 × 5 matrix (page
+- [X] T011 [US2] Extend `test/integration/pdf-presets.test.ts` to the full 5 × 5 matrix (page
   size × font size): the same assertions as T009, and page counts ordered `xs ≤ s ≤ m ≤ l ≤ xl`
   for each page size
 
 ### Implementation
 
-- [ ] T012 [US2] Implement the font-size overrides in `src/pdf/stylesheets.ts` by scanning the
+- [X] T012 [US2] Implement the font-size overrides in `src/pdf/stylesheets.ts` by scanning the
   carried stylesheets for `pt` font sizes (research R-02) and the factor in `fitPreBlocks`;
   pass T010 and T011
 

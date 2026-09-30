@@ -105,11 +105,16 @@ async function expectValid(config: BookConfig, file: string) {
   return pages.length;
 }
 
-describe("PDF presets: page sizes", { timeout: 300_000 }, () => {
+describe("PDF presets: every page size × font size", { timeout: 600_000 }, () => {
   for (const pageId of Object.keys(PAGE_SIZES) as PageSizeId[]) {
-    it(`builds a valid ${pageId} PDF`, async () => {
-      const { config, file } = await build(pageId, "m");
-      await expectValid(config, file);
+    it(`builds valid ${pageId} PDFs at every font size, longer as the text grows`, async () => {
+      const pages: number[] = [];
+      for (const sizeId of Object.keys(FONT_SIZES) as FontSizeId[]) {
+        const { config, file } = await build(pageId, sizeId);
+        pages.push(await expectValid(config, file));
+      }
+      expect(pages, `pages at xs … xl on ${pageId}`).toEqual([...pages].sort((a, b) => a - b));
+      expect(pages[4]!, `xl has more pages than xs on ${pageId}`).toBeGreaterThan(pages[0]!);
     });
   }
 });
