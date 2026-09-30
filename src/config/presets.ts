@@ -81,6 +81,21 @@ const FAMILY_LIST: FontFamily[] = [
     wizard: false,
     style: "serif",
   },
+  // Spec 006 candidates (research R-06); offered by the wizard once verified (tasks T026).
+  {
+    id: "padauk",
+    setId: "my-padauk",
+    language: "my",
+    name: "Padauk",
+    wizard: false,
+  },
+  {
+    id: "masterpiece-uni-round",
+    setId: "my-masterpiece",
+    language: "my",
+    name: "Masterpiece Uni Round",
+    wizard: false,
+  },
   {
     id: "noto-sans",
     setId: "en-sans",

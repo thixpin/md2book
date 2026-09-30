@@ -21,9 +21,15 @@ const REFERENCE_FILES: Record<string, string> = {
 /** Points the carried CSS at another set's files and family names; identity for my-sans. */
 export function substituteFonts(css: string, set: FontSet): string {
   if (set.id === "my-sans") return css;
-  for (const face of set.faces) {
-    const reference = REFERENCE_FILES[face.role];
-    if (reference) css = css.replaceAll(reference, face.file);
+  for (const [role, reference] of Object.entries(REFERENCE_FILES)) {
+    const face = set.faces.find((f) => f.role === role);
+    // A face the set lacks: drop its rule so the renderer synthesises the style (spec 006).
+    if (!face)
+      css = css.replace(
+        new RegExp(`@font-face \\{[^}]*${reference.replace(".", "\\.")}[^}]*\\}\\n?`, "g"),
+        "",
+      );
+    else css = css.replaceAll(reference, face.file);
   }
   return css
     .replaceAll('"Noto Sans Myanmar"', `"${set.body_family}"`)

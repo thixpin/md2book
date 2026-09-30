@@ -151,18 +151,18 @@ gains `pageSize`, `fontFamily`, `fontSize`, `chapters` (FR-023).
 
 ### Tests ⚠️
 
-- [ ] T018 [P] [US3] Update `test/unit/fonts/manifest.test.ts`: a set may omit
+- [X] T018 [P] [US3] Update `test/unit/fonts/manifest.test.ts`: a set may omit
   `body-semibold`, `body-bold`, `body-italic`, `body-bolditalic`; `body-regular`,
   `mono-regular`, `mono-bold` and `licence` stay required; the new set ids `my-padauk` and
   `my-masterpiece` are accepted
-- [ ] T019 [P] [US3] Write tests for `substituteFonts` (`test/unit/web/assets.test.ts`): a set
+- [X] T019 [P] [US3] Write tests for `substituteFonts` (`test/unit/web/assets.test.ts`): a set
   without italic faces drops the carried italic `@font-face` rules and keeps no reference to a
   Noto file; the generated back cover falls back to `body-regular` when `body-bold` is absent
   (`test/unit/web/back-cover.test.ts`)
 
 ### Implementation (code support)
 
-- [ ] T020 [US3] Implement optional roles and the new set ids in `src/fonts/manifest.ts` and
+- [X] T020 [US3] Implement optional roles and the new set ids in `src/fonts/manifest.ts` and
   `src/config/language.ts` (`FontSetId`), dropping omitted roles in `substituteFonts`
   (`src/web/assets.ts`), the back-cover fallback (`src/web/back-cover.ts`), and the QA typeface
   line listing only present styles (`src/qa/report.ts`); pass T018 and T019

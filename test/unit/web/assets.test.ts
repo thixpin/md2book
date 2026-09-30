@@ -1,6 +1,11 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { hashedName, readerScript, stylesheet } from "../../../src/web/assets.ts";
+import {
+  epubStylesheets,
+  hashedName,
+  readerScript,
+  stylesheet,
+} from "../../../src/web/assets.ts";
 import { loadManifest } from "../../../src/fonts/manifest.ts";
 import { FIXTURE_MANIFEST } from "../../helpers/fonts.ts";
 
@@ -22,6 +27,27 @@ describe("web assets", () => {
     expect(css).toContain('url("fonts/NotoSans-Bold.ttf")');
     expect(css).toContain('url("fonts/NotoSansMono-Regular.ttf")');
     expect(css).toContain('"Noto Sans Mono"');
+  });
+
+  it("drops the @font-face rules of faces a set does not have (spec 006)", async () => {
+    const { sets } = await loadManifest(FIXTURE_MANIFEST);
+    const sans = sets["my-sans"];
+    const set = {
+      ...sans,
+      id: "my-padauk" as const,
+      body_family: "Padauk",
+      faces: [
+        { ...sans.faces[0]!, file: "Padauk-Regular.ttf" },
+        { ...sans.faces[2]!, file: "Padauk-Bold.ttf" },
+        ...sans.faces.slice(5),
+      ],
+    };
+    const css = `${stylesheet(set)}\n${epubStylesheets(set).epub}`;
+    expect(css).toContain('font-family: "Padauk"');
+    expect(css).toContain("Padauk-Regular.ttf");
+    expect(css).toContain("Padauk-Bold.ttf");
+    expect(css).not.toContain("NotoSansMyanmar-");
+    expect(css).toContain("NotoSansMono-Regular.ttf");
   });
 
   it("names assets by the first 12 hex digits of their content hash", () => {

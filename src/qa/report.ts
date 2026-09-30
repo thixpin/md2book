@@ -23,6 +23,13 @@ export interface ReportInput {
 }
 
 const n = (value: number) => value.toLocaleString("en-US");
+const BODY_STYLES = [
+  ["body-regular", "Regular"],
+  ["body-bold", "Bold"],
+  ["body-italic", "Italic"],
+  ["body-bolditalic", "Bold Italic"],
+] as const;
+
 /** Python's str() of a float: `170.0`, `239.9`. */
 const pyFloat = (value: number) => (Number.isInteger(value) ? value.toFixed(1) : String(value));
 
@@ -110,7 +117,15 @@ export function qaReport(input: ReportInput): string {
   add("## Unicode / Burmese text checks", "", ...formatIssues(input.issues), "");
 
   add("## Typeface coverage", "");
-  add(`- Body text: ${body} (Regular, Bold, Italic, Bold Italic).`);
+  const styles = BODY_STYLES.filter(([role]) => set.faces.some((face) => face.role === role));
+  const synthesised = BODY_STYLES.filter(([role]) => !styles.some(([r]) => r === role));
+  add(
+    `- Body text: ${body} (${styles.map(([, name]) => name).join(", ")})${
+      synthesised.length
+        ? `; ${synthesised.map(([, name]) => name).join(", ")} synthesised by the renderer`
+        : ""
+    }.`,
+  );
   add(`- Chapter titles: ${body} Bold. Chapter numbers and section headings: ${body} SemiBold.`);
   add(`- Terminal output, commands, logs and inline code: ${mono} (Regular, Bold).`);
   if (coverage) {

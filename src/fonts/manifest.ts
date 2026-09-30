@@ -9,9 +9,10 @@ export const SHIPPED_MANIFEST = fileURLToPath(
   new URL("../../assets/fonts-manifest.json", import.meta.url),
 );
 
-export const FONT_SET_IDS: FontSetId[] = LANGUAGES.flatMap((l) =>
-  FONT_STYLES.map((s) => fontSetId(l, s)),
-);
+const NOTO_SET_IDS = LANGUAGES.flatMap((l) => FONT_STYLES.map((s) => fontSetId(l, s)));
+/** Spec 006: Myanmar families shipped unmodified (Padauk) or merged with Noto Sans Latin. */
+const NEW_SET_IDS = ["my-padauk", "my-masterpiece"] as const;
+export const FONT_SET_IDS: FontSetId[] = [...NOTO_SET_IDS, ...NEW_SET_IDS];
 const ROLES = [
   "body-regular",
   "body-semibold",
@@ -21,6 +22,12 @@ const ROLES = [
   "mono-regular",
   "mono-bold",
 ] as const;
+
+const REQUIRED_ROLES: readonly (typeof ROLES)[number][] = [
+  "body-regular",
+  "mono-regular",
+  "mono-bold",
+];
 
 const sha256 = z.string().regex(/^[0-9a-f]{64}$/);
 const faceSchema = z.object({
@@ -32,21 +39,34 @@ const faceSchema = z.object({
 });
 const setSchema = z.object({
   language: z.enum(LANGUAGES),
-  style: z.enum(FONT_STYLES),
+  style: z.enum(FONT_STYLES).optional(),
   body_family: z.string().min(1),
   mono_family: z.string().min(1),
-  faces: z
-    .array(faceSchema)
-    .refine((faces) => ROLES.every((role, i) => faces[i]?.role === role) && faces.length === 7, {
-      message: `faces must be the seven roles ${ROLES.join(", ")}`,
-    }),
+  // In role order; semibold, bold and italic faces may be absent (the renderer synthesises them).
+  faces: z.array(faceSchema).refine(
+    (faces) => {
+      const roles = faces.map((face) => face.role);
+      return (
+        REQUIRED_ROLES.every((role) => roles.includes(role)) &&
+        roles.every((role, i) => i === 0 || ROLES.indexOf(role) > ROLES.indexOf(roles[i - 1]!))
+      );
+    },
+    {
+      message: `faces must include ${REQUIRED_ROLES.join(", ")}, in the order ${ROLES.join(", ")}`,
+    },
+  ),
   licence: z.object({ file: z.string().min(1), sha256 }),
 });
 const manifestSchema = z.object({
   version: z.literal(1),
   release: z.string(),
   base_url: z.string(),
-  sets: z.object(Object.fromEntries(FONT_SET_IDS.map((id) => [id, setSchema]))).strict(),
+  sets: z
+    .object({
+      ...Object.fromEntries(NOTO_SET_IDS.map((id) => [id, setSchema])),
+      ...Object.fromEntries(NEW_SET_IDS.map((id) => [id, setSchema.optional()])),
+    })
+    .strict(),
 });
 
 export type FontFace = z.infer<typeof faceSchema>;
@@ -78,7 +98,9 @@ export async function loadManifest(manifestPath = SHIPPED_MANIFEST): Promise<Fon
     );
   }
   const sets = Object.fromEntries(
-    Object.entries(parsed.data.sets).map(([id, set]) => [id, { ...set, id: id as FontSetId }]),
+    Object.entries(parsed.data.sets)
+      .filter(([, set]) => set !== undefined)
+      .map(([id, set]) => [id, { ...set, id: id as FontSetId }]),
   ) as Record<FontSetId, FontSet>;
   return { ...parsed.data, sets };
 }
@@ -95,6 +117,13 @@ export function fontSetById(manifest: FontManifest, id: string): FontSet {
   const set = (manifest.sets as Record<string, FontSet | undefined>)[id];
   if (!set) throw new BookError(id, `unknown font set; valid sets: ${FONT_SET_IDS.join(", ")}`);
   return set;
+}
+
+/** A face's file, or the regular body face when the set has no such face. */
+export function faceFile(set: FontSet, role: FontFace["role"]): string {
+  const face =
+    set.faces.find((f) => f.role === role) ?? set.faces.find((f) => f.role === "body-regular")!;
+  return face.file;
 }
 
 /** Faces plus licence, each file once. */

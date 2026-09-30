@@ -3,7 +3,8 @@ export const FONT_STYLES = ["sans", "serif"] as const;
 
 export type Language = (typeof LANGUAGES)[number];
 export type FontStyle = (typeof FONT_STYLES)[number];
-export type FontSetId = `${Language}-${FontStyle}`;
+/** The four Noto sets (`<language>-<style>`) and the Myanmar families added in spec 006. */
+export type FontSetId = `${Language}-${FontStyle}` | "my-padauk" | "my-masterpiece";
 
 export interface SeriesStrings {
   chapter_label: string;
@@ -17,7 +18,7 @@ export interface SeriesStrings {
 }
 
 /** Body family of each curated font set; supplies the `typeface_line` default. */
-export const FONT_FAMILIES: Record<FontSetId, string> = {
+export const FONT_FAMILIES: Record<`${Language}-${FontStyle}`, string> = {
   "my-sans": "Noto Sans Myanmar",
   "my-serif": "Noto Serif Myanmar",
   "en-sans": "Noto Sans",
@@ -36,7 +37,7 @@ const PROFILES: Record<
   en: { chapter_label: "Chapter", chapter_digits: "ascii", contents_heading: "Contents" },
 };
 
-export function fontSetId(language: Language, style: FontStyle): FontSetId {
+export function fontSetId(language: Language, style: FontStyle): `${Language}-${FontStyle}` {
   return `${language}-${style}`;
 }
 

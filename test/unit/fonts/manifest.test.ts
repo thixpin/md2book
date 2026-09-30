@@ -1,7 +1,7 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { configFontSet, fontSetById, loadManifest } from "../../../src/fonts/manifest.ts";
+import { configFontSet, faceFile, fontSetById, loadManifest } from "../../../src/fonts/manifest.ts";
 import { BookError } from "../../../src/errors.ts";
 import { FIXTURE_MANIFEST } from "../../helpers/fonts.ts";
 import { tempDir } from "../../helpers/temp.ts";
@@ -17,7 +17,7 @@ const ROLES = [
 ];
 
 interface RawManifest {
-  sets: Record<string, { faces: { sha256: string }[] }>;
+  sets: Record<string, { faces: { role: string; sha256: string }[] }>;
 }
 
 function brokenManifest(change: (m: RawManifest) => unknown): string {
@@ -56,7 +56,7 @@ describe("font manifest (fixture)", () => {
     expect(() => fontSetById(manifest, "xx-sans")).toThrow(
       new BookError(
         "xx-sans",
-        "unknown font set; valid sets: my-sans, my-serif, en-sans, en-serif",
+        "unknown font set; valid sets: my-sans, my-serif, en-sans, en-serif, my-padauk, my-masterpiece",
       ),
     );
   });
@@ -68,5 +68,31 @@ describe("font manifest (fixture)", () => {
   ])("fails validation for %s", async (_case, change) => {
     const error: unknown = await loadManifest(brokenManifest(change)).catch((e: unknown) => e);
     expect(error).toBeInstanceOf(BookError);
+  });
+
+  // Spec 006 research R-07: new families may lack semibold, bold and italic faces.
+  it("accepts a new set without semibold, bold or italic faces", async () => {
+    const path = brokenManifest((m) => {
+      const sans = m.sets["my-sans"]!;
+      m.sets["my-masterpiece"] = {
+        ...sans,
+        faces: sans.faces.filter((f) =>
+          ["body-regular", "mono-regular", "mono-bold"].includes(f.role),
+        ),
+      };
+    });
+    const set = fontSetById(await loadManifest(path), "my-masterpiece");
+    expect(set.faces.map((f) => f.role)).toEqual(["body-regular", "mono-regular", "mono-bold"]);
+    expect(faceFile(set, "body-bold")).toBe(faceFile(set, "body-regular"));
+  });
+
+  it.each(["body-regular", "mono-regular", "mono-bold"])("still requires %s", async (role) => {
+    const path = brokenManifest((m) => {
+      const set = m.sets["my-sans"]!;
+      set.faces = set.faces.filter((f) => f.role !== role);
+    });
+    const error: unknown = await loadManifest(path).catch((e: unknown) => e);
+    expect(error).toBeInstanceOf(BookError);
+    expect((error as BookError).reason).toContain(role);
   });
 });

@@ -3,7 +3,7 @@ import { extname, join } from "node:path";
 import { chromium } from "playwright";
 import type { BookConfig } from "../config/load.ts";
 import { BookError } from "../errors.ts";
-import type { FontSet } from "../fonts/manifest.ts";
+import { faceFile, type FontFace, type FontSet } from "../fonts/manifest.ts";
 import { escapeHtml } from "../manuscript/text.ts";
 import type { CoverFacts } from "./images.ts";
 
@@ -30,8 +30,8 @@ export async function writeBackCover(
   }
 
   const height = Math.round(WIDTH / facts.ratio);
-  const font = (role: string) => {
-    const file = set.faces.find((face) => face.role === role)!.file;
+  const font = (role: FontFace["role"]) => {
+    const file = faceFile(set, role);
     return `data:font/ttf;base64,${readFileSync(join(fontsDir, file)).toString("base64")}`;
   };
   const [r, g, b] = facts.edge;
