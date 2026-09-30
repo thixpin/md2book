@@ -120,6 +120,9 @@
   // shortTitle, href, page }. Pages before the first chapter are the cover
   // and the contents; they carry no folio.
   let chapterStarts = [];
+  // md2book: each top-level section of the flow and its pages: { el, start, pages }.
+  let sections = [];
+  let prepareTimer = 0;
   let frontPages = 0;
   // In two-page spreads the closed book shows the cover alone on the right,
   // so page 0 is an empty left side that no text flows into: text page k
@@ -281,18 +284,94 @@
       position: `${x - originX}px ${(g.height - height) / 2}px`, color: coverEdge };
   }
 
+  // md2book: a surface holds copies of only the sections (a chapter, the contents, the back
+  // matter) of the pages it shows, instead of the whole book: 25 whole-book copies made a long
+  // book's turns take seconds and its memory grow with its length. Each section starts a new
+  // page, so it paginates the same alone. prepareTurns() makes the copies for the next and the
+  // previous turn while the reader is idle, so a turn starts without cloning anything.
   function makeSurface(el, originX) {
-    const copy = flow.cloneNode(true);
-    copy.classList.add("turn-copy");
-    copy.classList.remove("is-measuring");
-    copy.querySelectorAll("[id]").forEach((node) => node.removeAttribute("id"));
     const number = document.createElement("span");
     number.className = "page-number";
     const head = document.createElement("span");
     head.className = "page-head";
-    el.replaceChildren(copy, number, head);
-    return { el, copy, number, head, originX };
+    el.replaceChildren(number, head);
+    return { el, copy: null, copies: new Map(), number, head, originX };
   }
+
+  function copyFor(surface, section) {
+    let copy = surface.copies.get(section);
+    if (!copy) {
+      copy = flow.cloneNode(false);
+      copy.classList.add("turn-copy");
+      copy.classList.remove("is-measuring");
+      copy.append(section.el.cloneNode(true));
+      copy.querySelectorAll("[id]").forEach((node) => node.removeAttribute("id"));
+      const styles = getComputedStyle(flow);
+      const padding = parseFloat(styles.paddingLeft) + parseFloat(styles.paddingRight);
+      copy.style.columnCount = `${section.pages}`;
+      copy.style.width = `${section.pages * pageWidth + (section.pages - 1) * pageGap + padding}px`;
+      copy.style.visibility = "hidden";
+      surface.el.prepend(copy);
+      surface.copies.set(section, copy);
+    }
+    return copy;
+  }
+
+  function useSection(surface, section) {
+    const copy = copyFor(surface, section);
+    if (surface.copy && surface.copy !== copy) surface.copy.style.visibility = "hidden";
+    surface.copy = copy;
+  }
+
+  // The pages a turn from the current spread to `targetTurn` shows on the sheet's front and back
+  // and under it (as startTurn places them).
+  function turnPages(direction, targetTurn) {
+    const currentStart = turn * pagesPerView;
+    const targetStart = targetTurn * pagesPerView;
+    return {
+      front: (direction > 0 ? currentStart : targetStart) + pagesPerView - 1,
+      back: pagesPerView === 2 ? (direction > 0 ? targetStart : currentStart) : null,
+      under: direction > 0 ? targetStart + pagesPerView - 1 : targetStart,
+    };
+  }
+
+  function prepareTurns() {
+    window.clearTimeout(prepareTimer);
+    if (!surfaces || animating) return;
+    const lastTurn = Math.floor((pageCount - 1) / pagesPerView);
+    const wanted = new Map([...surfaces.strips.flatMap(({ front, back }) => [front, back]), surfaces.under]
+      .map((surface) => [surface, new Set()]));
+    for (const direction of [1, -1]) {
+      const target = turn + direction;
+      if (target < 0 || target > lastTurn) continue;
+      const pages = turnPages(direction, target);
+      const need = (surface, page) => {
+        if (page === null || page < pageShift || page >= pageCount) return;
+        const section = sectionAt(page);
+        copyFor(surface, section);
+        wanted.get(surface).add(section);
+      };
+      surfaces.strips.forEach(({ front, back }) => {
+        need(front, pages.front);
+        need(back, pages.back);
+      });
+      need(surfaces.under, pages.under);
+    }
+    for (const [surface, sections] of wanted) {
+      for (const [section, copy] of surface.copies) {
+        if (sections.has(section) || copy === surface.copy) continue;
+        copy.remove();
+        surface.copies.delete(section);
+      }
+    }
+  }
+
+  function schedulePrepare() {
+    window.clearTimeout(prepareTimer);
+    prepareTimer = window.setTimeout(prepareTurns, 120);
+  }
+
+  const sectionAt = (page) => sections.findLast((section) => section.start <= page) ?? sections[0];
 
   // Points a prepared surface at a page. Nothing is created or laid out:
   // only a transform, the folio and visibility change.
@@ -300,6 +379,8 @@
     const exists = pageIndex !== null && pageIndex >= pageShift && pageIndex < pageCount;
     const back = exists && pageIndex === backCoverPage;
     const cover = back || (exists && pageIndex === coverPage());
+    const section = sectionAt(exists ? pageIndex : pageShift);
+    useSection(surface, section);
     surface.copy.style.visibility = exists && !cover ? "" : "hidden";
     surface.number.style.visibility = exists && pageIndex >= frontPages && pageIndex < bodyEnd ? "" : "hidden";
     surface.head.style.visibility = exists && hasHead(pageIndex) ? "" : "hidden";
@@ -309,7 +390,7 @@
     if (!exists) return;
     const firstVisible = pagesPerView === 2 ? pageIndex - (pageIndex % 2) : pageIndex;
     surface.copy.style.transform =
-      `translateX(${-(firstVisible - pageShift) * (pageWidth + pageGap) - surface.originX}px)`;
+      `translateX(${-(firstVisible - section.start) * (pageWidth + pageGap) - surface.originX}px)`;
     placeFolio(surface.number, pageIndex, surface.originX);
     placeHead(surface.head, pageIndex, surface.originX);
   }
@@ -387,6 +468,7 @@
     band.className = "turn-cast-band";
     turnCast.replaceChildren(band);
     surfaces = { g, w, strips, band, under: makeSurface(turnUnder, 0) };
+    schedulePrepare();
   }
 
   function scheduleBuild() {
@@ -646,6 +728,7 @@
     storage.write(positionKey, { page: firstPage, pageCount });
     syncAddress(Math.min(firstPage + pagesPerView - 1, pageCount - 1));
     updateControls();
+    schedulePrepare();
   }
 
   function applyTextScale(scale) {
@@ -735,6 +818,14 @@
       page: pageOf(section.getClientRects()[0]),
     }));
     frontPages = chapterStarts.length ? chapterStarts[0].page : pageCount;
+    // md2book: the page range of each top-level section, for the turn surfaces (makeSurface).
+    sections = [...flow.children].flatMap((el) => {
+      const rects = el.getClientRects();
+      return rects.length ? [{ el, start: pageOf(rects[0]) }] : [];
+    });
+    sections.forEach((section, i) => {
+      section.pages = Math.max(1, (sections[i + 1]?.start ?? pageCount) - section.start);
+    });
     const page = keep ? mapPage(keep.page, keep.pageCount) : initialPage();
     turn = Math.floor(page / pagesPerView);
     showTurn();
@@ -756,8 +847,7 @@
     const targetStart = targetTurn * pagesPerView;
     const current = stackRatios(turn);
     const target = stackRatios(targetTurn);
-    const frontPage = (direction > 0 ? currentStart : targetStart) + pagesPerView - 1;
-    const backPage = two ? (direction > 0 ? targetStart : currentStart) : null;
+    const { front: frontPage, back: backPage } = turnPages(direction, targetTurn);
     strips.forEach(({ front, back }) => {
       showPage(front, frontPage);
       showPage(back, backPage);
