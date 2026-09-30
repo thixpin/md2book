@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import { runCli } from "../../src/cli.ts";
@@ -71,5 +72,62 @@ describe("runCli", () => {
     ]) {
       expect(help).toContain(flag);
     }
+  });
+
+  it.each([["-v"], ["--version"]])("prints the package version with %s", async (flag) => {
+    const { version } = JSON.parse(
+      readFileSync(new URL("../../package.json", import.meta.url), "utf8"),
+    ) as { version: string };
+    const io = capture();
+    expect(await runCli([flag], io.deps)).toBe(0);
+    expect(io.out.join("")).toBe(`${version}\n`);
+  });
+
+  it.each([
+    [
+      ["init"],
+      [
+        "-l, --lang",
+        "-t, --title",
+        "-a, --author",
+        "-p, --page-size",
+        "-f, --font-family",
+        "-s, --font-size",
+      ],
+    ],
+    [["fonts"], ["-c, --config", "-s, --set"]],
+    [["cover"], ["-o, --output", "-d, --dpi", "-c, --config", "-s, --set"]],
+    [
+      ["build", "pdf"],
+      ["-c, --config", "-o, --out", "-p, --printed"],
+    ],
+    [
+      ["build", "epub"],
+      ["-c, --config", "-o, --out"],
+    ],
+    [
+      ["build", "web"],
+      ["-c, --config", "-o, --out"],
+    ],
+    [
+      ["build", "all"],
+      ["-c, --config", "-o, --out", "-p, --printed"],
+    ],
+    [["qa"], ["-c, --config", "-o, --out", "-p, --printed"]],
+    [["serve"], ["-c, --config", "-o, --out", "-p, --port"]],
+  ])("offers short options for %j", async (command, flags) => {
+    const io = capture();
+    await runCli([...command, "-h"], io.deps);
+    const help = io.out.join("");
+    for (const flag of flags) expect(help).toContain(flag);
+  });
+
+  it("reads short options like long ones", async () => {
+    const io = capture();
+    const code = await runCli(["build", "pdf", "-c", "no-such-book.json", "-p"], io.deps);
+    expect(code).toBe(1);
+    expect(io.err.join("")).toBe(
+      `md2book: ${resolve("no-such-book.json")}: cannot read config file\n`,
+    );
   });
 });

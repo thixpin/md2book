@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { Writable } from "node:stream";
 import { Command, CommanderError } from "commander";
 import { BookError } from "./errors.ts";
@@ -9,6 +10,13 @@ import { runEpub } from "./epub/command.ts";
 import { runPdf } from "./pdf/command.ts";
 import { runCover } from "./cover/command.ts";
 import { runAll, runQa } from "./qa/command.ts";
+
+// package.json sits one folder up from both src/cli.ts and the built dist/cli.js.
+const VERSION = (
+  JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8")) as {
+    version: string;
+  }
+).version;
 
 export interface CliDeps {
   stdout?: (text: string) => void;
@@ -26,6 +34,7 @@ export async function runCli(argv: string[], deps: CliDeps = {}): Promise<number
 
   const program = new Command("md2book")
     .description("Build books from Markdown manuscripts.")
+    .version(VERSION, "-v, --version", "print the md2book version")
     .exitOverride()
     .configureOutput({ writeOut: stdout, writeErr: stderr });
 
@@ -33,13 +42,13 @@ export async function runCli(argv: string[], deps: CliDeps = {}): Promise<number
     .command("init")
     .description("Create a new book project: book.json and a first chapter.")
     .argument("[dir]", "target directory", ".")
-    .option("--lang <lang>", "book language: my (Myanmar; mm accepted) or en (English)")
+    .option("-l, --lang <lang>", "book language: my (Myanmar; mm accepted) or en (English)")
     .option("--font <set>", "font set: sans (default) or serif")
-    .option("--title <text>", "book title")
-    .option("--author <text>", "book author")
-    .option("--page-size <size>", "PDF page size: default (170 × 240 mm), a5, b5, a4 or letter")
-    .option("--font-family <id>", "font family, for example noto-sans-myanmar")
-    .option("--font-size <size>", "PDF font size: xs, s, m (default), l or xl")
+    .option("-t, --title <text>", "book title")
+    .option("-a, --author <text>", "book author")
+    .option("-p, --page-size <size>", "PDF page size: default (170 × 240 mm), a5, b5, a4 or letter")
+    .option("-f, --font-family <id>", "font family, for example noto-sans-myanmar")
+    .option("-s, --font-size <size>", "PDF font size: xs, s, m (default), l or xl")
     .option("--chapters <folder>", "chapter folder inside the book folder (default chapters)")
     .action(async (dir: string, flags: InitAnswers) => {
       const stdin = deps.stdin ?? process.stdin;
@@ -79,10 +88,10 @@ export async function runCli(argv: string[], deps: CliDeps = {}): Promise<number
     .command("fonts")
     .description("Fetch and verify the book's font set into the local cache.")
     .option(
-      "--config <path>",
+      "-c, --config <path>",
       "book config (default book.json); its language and font_set pick the set",
     )
-    .option("--set <id>", "font set id: my-sans, my-serif, en-sans, en-serif")
+    .option("-s, --set <id>", "font set id: my-sans, my-serif, en-sans, en-serif")
     .option("--fonts <dir>", "font cache root (overrides MD2BOOK_FONTS)")
     .action(async (options: { config?: string; set?: string; fonts?: string }) => {
       const { dir } = await runFonts(
@@ -97,9 +106,9 @@ export async function runCli(argv: string[], deps: CliDeps = {}): Promise<number
   build
     .command("pdf")
     .description("Build the 170 × 240 mm PDF (screen edition, or --printed for the print shop).")
-    .option("--config <path>", "book config", "book.json")
-    .option("--out <dir>", "output directory (default dist/<config name>/)")
-    .option("--printed", "print-shop interior: no cover page, no colour")
+    .option("-c, --config <path>", "book config", "book.json")
+    .option("-o, --out <dir>", "output directory (default dist/<config name>/)")
+    .option("-p, --printed", "print-shop interior: no cover page, no colour")
     .action(async (options: { config: string; out?: string; printed?: boolean }) => {
       await runPdf(options, deps.manifestPath, (line) => stdout(`${line}\n`));
     });
@@ -107,8 +116,8 @@ export async function runCli(argv: string[], deps: CliDeps = {}): Promise<number
   build
     .command("epub")
     .description("Build the reflowable EPUB 3 of the whole book.")
-    .option("--config <path>", "book config", "book.json")
-    .option("--out <dir>", "output directory (default dist/<config name>/)")
+    .option("-c, --config <path>", "book config", "book.json")
+    .option("-o, --out <dir>", "output directory (default dist/<config name>/)")
     .action(async (options: { config: string; out?: string }) => {
       await runEpub(options, deps.manifestPath, (line) => stdout(`${line}\n`));
     });
@@ -116,9 +125,9 @@ export async function runCli(argv: string[], deps: CliDeps = {}): Promise<number
   program
     .command("qa")
     .description("Write QA-REPORT.md: manuscript, Unicode, typeface, PDF and EPUB checks.")
-    .option("--config <path>", "book config", "book.json")
-    .option("--out <dir>", "output directory (default dist/<config name>/)")
-    .option("--printed", "check the printed edition's PDF")
+    .option("-c, --config <path>", "book config", "book.json")
+    .option("-o, --out <dir>", "output directory (default dist/<config name>/)")
+    .option("-p, --printed", "check the printed edition's PDF")
     .action(async (options: { config: string; out?: string; printed?: boolean }) => {
       await runQa(options, deps.manifestPath, (line) => stdout(`${line}\n`));
     });
@@ -126,9 +135,9 @@ export async function runCli(argv: string[], deps: CliDeps = {}): Promise<number
   build
     .command("all")
     .description("Build the PDF, the EPUB and the web edition, then write the QA report.")
-    .option("--config <path>", "book config", "book.json")
-    .option("--out <dir>", "output directory (default dist/<config name>/)")
-    .option("--printed", "build and check the printed edition's PDF")
+    .option("-c, --config <path>", "book config", "book.json")
+    .option("-o, --out <dir>", "output directory (default dist/<config name>/)")
+    .option("-p, --printed", "build and check the printed edition's PDF")
     .action(async (options: { config: string; out?: string; printed?: boolean }) => {
       await runAll(options, deps.manifestPath, (line) => stdout(`${line}\n`));
     });
@@ -136,8 +145,8 @@ export async function runCli(argv: string[], deps: CliDeps = {}): Promise<number
   build
     .command("web")
     .description("Build the static web edition of the published chapters.")
-    .option("--config <path>", "book config", "book.json")
-    .option("--out <dir>", "output directory (default dist/<config name>/)")
+    .option("-c, --config <path>", "book config", "book.json")
+    .option("-o, --out <dir>", "output directory (default dist/<config name>/)")
     .action(async (options: { config: string; out?: string }) => {
       stdout(`${webWrittenLine(await runWeb(options, deps.manifestPath))}\n`);
     });
@@ -145,9 +154,9 @@ export async function runCli(argv: string[], deps: CliDeps = {}): Promise<number
   program
     .command("serve")
     .description("Build the web edition and preview it at http://127.0.0.1:<port>/.")
-    .option("--config <path>", "book config", "book.json")
-    .option("--out <dir>", "output directory (default dist/<config name>/)")
-    .option("--port <n>", "port on 127.0.0.1", "8000")
+    .option("-c, --config <path>", "book config", "book.json")
+    .option("-o, --out <dir>", "output directory (default dist/<config name>/)")
+    .option("-p, --port <n>", "port on 127.0.0.1", "8000")
     .action(async (options: { config: string; out?: string; port: string }) => {
       const port = Number(options.port);
       if (!Number.isInteger(port) || port < 0 || port > 65535) {
@@ -165,12 +174,12 @@ export async function runCli(argv: string[], deps: CliDeps = {}): Promise<number
     .description("Render a one-page HTML cover to PNG with the book fonts.")
     .argument("<file>", "cover HTML file")
     .option("-o, --output <png>", "PNG to write (default cover.png next to the HTML)")
-    .option("--dpi <n>", "resolution in dots per inch", "300")
+    .option("-d, --dpi <n>", "resolution in dots per inch", "300")
     .option(
-      "--config <path>",
+      "-c, --config <path>",
       "book config (default book.json); its language and font_set pick the fonts",
     )
-    .option("--set <id>", "font set id instead of a config")
+    .option("-s, --set <id>", "font set id instead of a config")
     .option("--fonts <dir>", "font cache root (overrides MD2BOOK_FONTS)")
     .action(
       async (
