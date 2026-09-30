@@ -123,7 +123,13 @@ describe("toolbar panels", () => {
         const centre = (button.left + button.right) / 2;
         expect(centre, id).toBeGreaterThanOrEqual(panel.left);
         expect(centre, id).toBeLessThanOrEqual(panel.right);
-        if (panel.left > 8) expect(Math.abs(panel.right - button.right), id).toBeLessThan(2);
+        // The text size panel is set 14 px to the right of its button (visual balance).
+        const shift = id === "reader-text" ? 14 : 0;
+        if (panel.left > 8)
+          expect(
+            Math.abs(panel.right - Math.min(button.right + shift, width - 8)),
+            id,
+          ).toBeLessThan(2);
         await page.keyboard.press("Escape");
         await page.waitForTimeout(100);
       }

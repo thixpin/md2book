@@ -9,6 +9,11 @@ const REFERENCE_SHA256 = "bb980615d4c6973b16cc0d9c6005054dbb81c149b3e7f816c90275
 // section-sized, preloaded turn surfaces recorded in specs/decision-log.md):
 // [edited text, reference text].
 export const READER_EDITS: [string, string][] = [
+  // md2book: the text size panel sits 14 px right of its button (specs/decision-log.md).
+  [
+    '    const width = Math.min(window.innerWidth * 0.9, 24 * rem);\n    // The text size panel sits 14 px further right for balance; its pointer still meets the Aa button.\n    const shift = panel.id === "reader-text" ? 14 : 0;\n    const right = Math.min(\n      Math.max(8, window.innerWidth - rect.right - shift),\n      window.innerWidth - 8 - width,\n    );\n    panel.style.right = `${Math.max(0, right)}px`;\n',
+    "    const width = Math.min(window.innerWidth * 0.9, 24 * rem);\n    const right = Math.min(Math.max(8, window.innerWidth - rect.right), window.innerWidth - 8 - width);\n    panel.style.right = `${Math.max(0, right)}px`;\n",
+  ],
   // md2book: glass panels scroll in an inner body and point at their button
   // (specs/decision-log.md).
   [

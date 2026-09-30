@@ -780,7 +780,12 @@
     // The panels are min(90vw, 24rem) wide (web.css): keep the whole panel inside the window.
     const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
     const width = Math.min(window.innerWidth * 0.9, 24 * rem);
-    const right = Math.min(Math.max(8, window.innerWidth - rect.right), window.innerWidth - 8 - width);
+    // The text size panel sits 14 px further right for balance; its pointer still meets the Aa button.
+    const shift = panel.id === "reader-text" ? 14 : 0;
+    const right = Math.min(
+      Math.max(8, window.innerWidth - rect.right - shift),
+      window.innerWidth - 8 - width,
+    );
     panel.style.right = `${Math.max(0, right)}px`;
     // The pointer (web.css ::before) at the button's centre.
     const left = window.innerWidth - Math.max(0, right) - width;
