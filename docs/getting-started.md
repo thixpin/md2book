@@ -32,9 +32,13 @@ created my-book/chapters/chapter-01.md
 $ cd my-book
 ```
 
-In a terminal, `init` asks for anything you leave out. Use `--lang my`
-for a Myanmar book and `--font serif` for serif type. `init` never
-overwrites files.
+Run just `md2book init my-book` in a terminal and it asks how to set
+the book up: **Use default configuration** asks only for the language,
+title and author; **Configure with wizard** also lets you pick the page
+size (A5, B5, A4, Letter), the font family (for Myanmar books Noto Sans
+Myanmar, Masterpiece Uni Round or Padauk), the font size and the chapter
+folder. Every choice is also a flag (see
+[`init`](commands.md#init)), and `init` never overwrites files.
 
 Every other command reads `book.json` from the current folder, so the
 rest of this guide runs inside `my-book/`.

@@ -21,9 +21,9 @@ See how md2book turns a Markdown manuscript into a real Burmese tech book.
 
 ## Features
 
-- **PDF:** a 170 × 240 mm book with cover, title and copyright pages,
-  contents with page numbers, running headers, and a black-and-white
-  print-shop edition.
+- **PDF:** a 170 × 240 mm, A5, B5, A4 or Letter book in five type
+  sizes, with cover, title and copyright pages, contents with page
+  numbers, running headers, and a black-and-white print-shop edition.
 - **EPUB 3:** reflowable, with the book's fonts embedded.
 - **Web edition:** a static site that reads like a real book, with page
   turns, two-page spreads, search, bookmarks and adjustable text size.
@@ -32,7 +32,8 @@ See how md2book turns a Markdown manuscript into a real Burmese tech book.
 - **Covers:** designed in HTML and CSS, rendered to PNG with the book's
   fonts.
 - **Myanmar script:** Burmese headings and page numbers, syllable-based
-  line breaking and curated Noto fonts, verified and cached for offline
+  line breaking and curated fonts (Noto, Padauk, Masterpiece Uni Round),
+  verified and cached for offline
   use.
 - **Tested code:** chapters include code from source files, whole or by
   region.

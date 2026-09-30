@@ -1,17 +1,37 @@
 # Fonts
 
-md2book typesets every edition with one of four curated font sets. The
-book's `language` and `font_set` pick the set:
+md2book typesets every edition with one of six curated font sets. The
+book's [`font.family`](configuration.md#page-and-fonts) picks the set
+(or the older `font_set`, which picks the Noto set of the language):
 
-| Set        | `language` | `font_set` | Body family        | Covers          |
-| ---------- | ---------- | ---------- | ------------------ | --------------- |
-| `my-sans`  | `my`       | `sans`     | Noto Sans Myanmar  | Myanmar + Latin |
-| `my-serif` | `my`       | `serif`    | Noto Serif Myanmar | Myanmar + Latin |
-| `en-sans`  | `en`       | `sans`     | Noto Sans          | Latin           |
-| `en-serif` | `en`       | `serif`    | Noto Serif         | Latin           |
+| `font.family`           | Set              | Body typeface         | Styles                                       |
+| ----------------------- | ---------------- | --------------------- | -------------------------------------------- |
+| `noto-sans-myanmar`     | `my-sans`        | Noto Sans Myanmar     | regular, semibold, bold, italic, bold italic |
+| `masterpiece-uni-round` | `my-masterpiece` | Masterpiece Uni Round | regular                                      |
+| `padauk`                | `my-padauk`      | Padauk                | regular, semibold, bold                      |
+| `noto-serif-myanmar`    | `my-serif`       | Noto Serif Myanmar    | regular, semibold, bold, italic, bold italic |
+| `noto-sans`             | `en-sans`        | Noto Sans             | regular, semibold, bold, italic, bold italic |
+| `noto-serif`            | `en-serif`       | Noto Serif            | regular, semibold, bold, italic, bold italic |
 
-Each set has regular, semibold, bold, italic and bold italic body faces,
-plus Noto Sans Mono (with Myanmar) in regular and bold for code.
+Every Myanmar set also covers Latin text. Where a set has no bold or
+italic face, the renderer draws a synthetic bold or slant, and the QA
+report says so. Code and terminal blocks always use Noto Sans Mono
+(with Myanmar) in regular and bold, whatever the family.
+
+## Licences
+
+Every font md2book downloads is licensed under the
+[SIL Open Font License 1.1](https://openfontlicense.org), and its
+licence file is saved with it.
+
+| Typeface                                  | Source and version                      | Notes                                                                 |
+| ----------------------------------------- | --------------------------------------- | --------------------------------------------------------------------- |
+| Noto Sans/Serif (Myanmar), Noto Sans Mono | Google Noto releases                    | Myanmar faces merged with the Noto Latin faces                        |
+| Padauk                                    | SIL, version 6.000                      | shipped unmodified: its licence reserves the name "Padauk"            |
+| Masterpiece Uni Round                     | Prahita Opensource Project, version 1.0 | merged with Noto Sans Latin (it has no Latin letters); space narrowed |
+
+Myanmar Census and NamKhone Unicode were considered but are not
+offered, because their licences do not clearly allow redistribution.
 
 ## Fetching
 
@@ -62,8 +82,3 @@ to it and point `MD2BOOK_FONTS` at it.
 | `MD2BOOK_FONTS`        | cache root                                     |
 | `MD2BOOK_FONTS_SOURCE` | mirror URL or local folder with the same files |
 | `XDG_CACHE_HOME`       | base of the default cache root                 |
-
-## Licence
-
-The fonts are licensed under the SIL Open Font License 1.1;
-`LICENSE-OFL.txt` is installed next to them.

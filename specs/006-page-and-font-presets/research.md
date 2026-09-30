@@ -135,6 +135,9 @@ is excluded.
   - `my-masterpiece`: Masterpiece Uni Round 1.0 merged with Noto Sans Latin (scale 0.93, the same
     merge as `my-sans`), Regular only, with its OFL text as `OFL.txt`. Bold and italic are
     synthesised by the renderer (the documented fallback of FR-010).
+    Its units-per-em (2048) differs from Noto Sans (1000), so the Latin is rescaled to 2048 before
+    the merge; after the visual review (T026) its space (0.62 em, 2.4 × Noto's) is narrowed to the
+    merged Latin space width, which removed wide gaps in justified lines.
   - Both use the shared Noto Sans Mono (with Myanmar) faces for code (FR-012).
 - The manifest schema allows a set to omit `body-semibold`, `body-bold`, `body-italic` and
   `body-bolditalic`; `body-regular`, `mono-regular` and `mono-bold` stay required.

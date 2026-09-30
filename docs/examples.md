@@ -33,7 +33,8 @@ $ md2book build pdf --printed
 $ md2book qa --printed
 ```
 
-`<output_name>-170x240-printed.pdf` has no cover page and no colour, for
+`<output_name>-170x240-printed.pdf` (or the size of your `page.size`)
+has no cover page and no colour, for
 a black-and-white interior; the printer takes the cover separately.
 Render the cover at print resolution:
 
@@ -43,6 +44,18 @@ $ md2book cover cover/cover.html --dpi 300
 
 For a book that opens every chapter on a right-hand page, set
 `"recto_chapter_start": true` in `book.json` first.
+
+For a printer's trim size, set the page and, if you like, the type
+size in `book.json`; the file name follows the size:
+
+```json
+"page": { "size": "a5" },
+"font": { "size": "s" }
+```
+
+```console
+$ md2book build pdf --printed    # dist/book/<output_name>-148x210-printed.pdf
+```
 
 ## Publish the web edition
 

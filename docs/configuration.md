@@ -3,7 +3,7 @@
 A book is described by one JSON file, `book.json` by convention.
 `md2book init` writes a starting one with the required keys.
 
-This example sets every key. Only `title`, `author`, `year`,
+This example sets every key except the legacy `font_set`. Only `title`, `author`, `year`,
 `identifier`, `output_name`, `cover` and `chapter_glob` are required;
 leave out any other key to use its default, described in the tables
 below.
@@ -17,7 +17,6 @@ below.
   "year": "2026",
   "isbn": "978-0-00-000000-0",
   "language": "en",
-  "font_set": "serif",
   "identifier": "urn:uuid:0b0f6f7e-2f7a-4c1b-9d0e-5f2b3c4d5e6f",
   "output_name": "practical-python",
 
@@ -30,6 +29,9 @@ below.
   "favicon": "cover/favicon.svg",
   "end_image": "cover/end.png",
   "end_image_after": "chapter-12.md",
+
+  "page": { "size": "a5" },
+  "font": { "family": "noto-serif", "size": "s" },
 
   "recto_chapter_start": true,
   "running_headers": true,
@@ -86,10 +88,9 @@ The full JSON Schema is
 | `identifier`  | yes      | unique book id for the EPUB, e.g. `urn:uuid:…`              |
 | `output_name` | yes      | base name of the built files (`<output_name>.epub`, …)      |
 | `language`    | no       | `my` (default) or `en`                                      |
-| `font_set`    | no       | `sans` (default) or `serif`                                 |
 
-`language` and `font_set` together pick the [font set](fonts.md)
-(`my-sans`, `en-serif`, …) and the default [strings](#strings).
+`language` picks the default [strings](#strings) and, with
+`font.family`, the [fonts](#page-and-fonts).
 
 A value that contains `PLACEHOLDER` in `title`, `subtitle`, `author`,
 `publisher`, `year` or `isbn` is listed in the QA report as metadata to
@@ -114,6 +115,46 @@ See [Writing chapters](writing.md).
 | `favicon`         | no       | web edition icon, SVG                                                         |
 | `end_image`       | no       | closing image after the last chapter                                          |
 | `end_image_after` | no       | chapter file that must exist before `end_image` appears, e.g. `chapter-03.md` |
+
+## Page and fonts
+
+| Key           | Default                | Values                                   |
+| ------------- | ---------------------- | ---------------------------------------- |
+| `page.size`   | `default`              | PDF page size, see below                 |
+| `font.family` | the language's default | the book's typeface, see below           |
+| `font.size`   | `m`                    | PDF type size: `xs`, `s`, `m`, `l`, `xl` |
+
+| `page.size` | Page (mm) | PDF file suffix |
+| ----------- | --------- | --------------- |
+| `default`   | 170 × 240 | `-170x240`      |
+| `a5`        | 148 × 210 | `-148x210`      |
+| `b5`        | 176 × 250 | `-176x250`      |
+| `a4`        | 210 × 297 | `-210x297`      |
+| `letter`    | 216 × 279 | `-216x279`      |
+
+Margins and the front-matter spacing scale with the page, so every
+size keeps the same proportions. `font.size` scales all the PDF's type
+together — body, headings, code, tables, callouts, contents, headers
+and page numbers — by 0.85 (`xs`), 0.92 (`s`), 1 (`m`), 1.1 (`l`) or
+1.2 (`xl`). Page size and font size apply to the PDF only; the EPUB and
+the web edition reflow and have their own text size.
+
+| `font.family`           | Language | Typeface                    |
+| ----------------------- | -------- | --------------------------- |
+| `noto-sans-myanmar`     | `my`     | Noto Sans Myanmar (default) |
+| `masterpiece-uni-round` | `my`     | Masterpiece Uni Round       |
+| `padauk`                | `my`     | Padauk                      |
+| `noto-serif-myanmar`    | `my`     | Noto Serif Myanmar          |
+| `noto-sans`             | `en`     | Noto Sans (default)         |
+| `noto-serif`            | `en`     | Noto Serif                  |
+
+The family sets the typeface of every edition; code and terminal
+blocks always use Noto Sans Mono. See [Fonts](fonts.md) for each
+family's styles and licence.
+
+The older `font_set` key (`sans` or `serif`) still works and picks the
+Noto family of the book's language. Set either `font_set` or
+`font.family`; if both are set they must name the same family.
 
 ## PDF
 

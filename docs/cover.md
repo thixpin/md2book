@@ -16,14 +16,14 @@ Run it from the book folder, or give `--config`. The config's cover
 image does not have to exist yet, so the first cover can be rendered
 from a new project.
 
-| Option               | Meaning                                                                          |
-| -------------------- | -------------------------------------------------------------------------------- |
-| `<file>`             | the cover HTML (required)                                                        |
-| `-o, --output <png>` | PNG to write (default `cover.png` next to the HTML)                              |
-| `--dpi <n>`          | resolution, 1–1200 (default 300)                                                 |
-| `--config <path>`    | book config whose `language` and `font_set` pick the fonts (default `book.json`) |
-| `--set <id>`         | font set instead of a config: `my-sans`, `my-serif`, `en-sans`, `en-serif`       |
-| `--fonts <dir>`      | font cache root (overrides `MD2BOOK_FONTS`)                                      |
+| Option               | Meaning                                                                                                   |
+| -------------------- | --------------------------------------------------------------------------------------------------------- |
+| `<file>`             | the cover HTML (required)                                                                                 |
+| `-o, --output <png>` | PNG to write (default `cover.png` next to the HTML)                                                       |
+| `--dpi <n>`          | resolution, 1–1200 (default 300)                                                                          |
+| `--config <path>`    | book config whose `language` and `font_set` pick the fonts (default `book.json`)                          |
+| `--set <id>`         | font set instead of a config: `my-sans`, `my-serif`, `my-padauk`, `my-masterpiece`, `en-sans`, `en-serif` |
+| `--fonts <dir>`      | font cache root (overrides `MD2BOOK_FONTS`)                                                               |
 
 Give either `--config` or `--set`, not both. The set must have been
 fetched with `md2book fonts`, and the command needs Chromium

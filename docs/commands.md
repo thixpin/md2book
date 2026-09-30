@@ -40,27 +40,52 @@ $ md2book help <command>
 ## `init`
 
 ```console
-$ md2book init [dir] [--lang <lang>] [--font <set>] [--title <text>] [--author <text>]
+$ md2book init [dir] [--lang <lang>] [--title <text>] [--author <text>]
+    [--page-size <size>] [--font-family <id>] [--font-size <size>]
+    [--chapters <folder>] [--font <set>]
 ```
 
-Creates `book.json` and `chapters/chapter-01.md` in `dir` (default: the
-current folder). It never overwrites existing files. In a terminal it
-asks for any value you leave out; elsewhere (scripts, CI) `--lang`,
-`--title` and `--author` are required.
+Creates `book.json` and the first chapter in `dir` (default: the
+current folder). It never overwrites existing files.
 
-| Option            | Values                                                          |
-| ----------------- | --------------------------------------------------------------- |
-| `--lang <lang>`   | `my` (Myanmar; `mm` and `myanmar` accepted) or `en` (`english`) |
-| `--font <set>`    | `sans` (default) or `serif`                                     |
-| `--title <text>`  | book title                                                      |
-| `--author <text>` | book author                                                     |
+In a terminal, `init` first asks how to set the book up:
+
+```text
+? How would you like to configure your book?
+❯ Use default configuration
+  Configure with wizard
+```
+
+- **Use default configuration** asks only for the language, title and
+  author, and uses the defaults for everything else.
+- **Configure with wizard** also asks, one at a time, for the page
+  size, font family, font size and chapter folder. Each is a list with
+  the default pre-selected (↑/↓ or a digit, then Enter); only a custom
+  chapter folder is typed.
+
+Anything given as a flag is not asked. Outside a terminal (scripts, CI)
+nothing is asked: `--lang`, `--title` and `--author` are required and
+the rest default.
+
+| Option                | Values                                                          | Default          |
+| --------------------- | --------------------------------------------------------------- | ---------------- |
+| `--lang <lang>`       | `my` (Myanmar; `mm` and `myanmar` accepted) or `en` (`english`) |                  |
+| `--title <text>`      | book title                                                      |                  |
+| `--author <text>`     | book author                                                     |                  |
+| `--page-size <size>`  | `default` (170 × 240 mm), `a5`, `b5`, `a4`, `letter`            | `default`        |
+| `--font-family <id>`  | a family of the book's language, e.g. `padauk`                  | language default |
+| `--font-size <size>`  | `xs`, `s`, `m`, `l`, `xl`                                       | `m`              |
+| `--chapters <folder>` | a folder inside `dir`                                           | `chapters`       |
+| `--font <set>`        | `sans` or `serif`: the older way to pick the Noto family        |                  |
 
 The new `book.json` gets a random `identifier`, an `output_name` made
-from the title, `cover: "cover/cover.png"` and
-`chapter_glob: "chapters/chapter-*.md"`.
+from the title, `cover: "cover/cover.png"`, `chapter_glob:
+"<folder>/chapter-*.md"`, and the chosen `page.size`, `font.family` and
+`font.size` (see [Configuration](configuration.md#page-and-fonts)).
 
 ```console
-$ md2book init my-book --lang my --font serif --title "ကျွန်ုပ်တို့ စာအုပ်" --author "Me"
+$ md2book init my-book --lang my --title "ကျွန်ုပ်တို့ စာအုပ်" --author "Me" \
+    --page-size a5 --font-family padauk --font-size s
 ```
 
 ## `fonts`
@@ -73,11 +98,11 @@ Downloads the book's font set, checks every file's SHA-256 and caches
 it; prints the cache folder. Already-cached sets are not downloaded
 again.
 
-| Option            | Meaning                                                                        |
-| ----------------- | ------------------------------------------------------------------------------ |
-| `--config <path>` | pick the set from the config's `language` and `font_set` (default `book.json`) |
-| `--set <id>`      | pick a set by id instead: `my-sans`, `my-serif`, `en-sans`, `en-serif`         |
-| `--fonts <dir>`   | cache root (overrides `MD2BOOK_FONTS`)                                         |
+| Option            | Meaning                                                                                               |
+| ----------------- | ----------------------------------------------------------------------------------------------------- |
+| `--config <path>` | pick the set from the config's `language` and `font_set` (default `book.json`)                        |
+| `--set <id>`      | pick a set by id instead: `my-sans`, `my-serif`, `my-padauk`, `my-masterpiece`, `en-sans`, `en-serif` |
+| `--fonts <dir>`   | cache root (overrides `MD2BOOK_FONTS`)                                                                |
 
 See [Fonts](fonts.md) for the cache location and offline mirrors.
 
@@ -107,13 +132,15 @@ Give either `--config` or `--set`, not both. The full guide is in
 $ md2book build pdf [--config <path>] [--out <dir>] [--printed]
 ```
 
-Builds the 170 × 240 mm PDF: `<out>/<output_name>-170x240.pdf`.
+Builds the PDF at the book's `page.size` (170 × 240 mm by default):
+`<out>/<output_name>-<size>.pdf`, for example `-170x240.pdf` or
+`-148x210.pdf` for A5.
 
-| Option            | Meaning                                                                                       |
-| ----------------- | --------------------------------------------------------------------------------------------- |
-| `--config <path>` | book config (default `book.json`)                                                             |
-| `--out <dir>`     | output folder (default `dist/<config name>/`)                                                 |
-| `--printed`       | the print-shop interior: no cover page, no colour; writes `<output_name>-170x240-printed.pdf` |
+| Option            | Meaning                                                                                      |
+| ----------------- | -------------------------------------------------------------------------------------------- |
+| `--config <path>` | book config (default `book.json`)                                                            |
+| `--out <dir>`     | output folder (default `dist/<config name>/`)                                                |
+| `--printed`       | the print-shop interior: no cover page, no colour; writes `<output_name>-<size>-printed.pdf` |
 
 See [Editions: PDF](editions.md#pdf).
 

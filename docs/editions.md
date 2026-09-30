@@ -3,14 +3,14 @@
 Every build writes to `dist/<config name>/` under the current folder
 (`dist/book/` for `book.json`), or to `--out <dir>`:
 
-| File                                | Built by                        |
-| ----------------------------------- | ------------------------------- |
-| `<output_name>-170x240.pdf`         | `build pdf`                     |
-| `<output_name>-170x240-printed.pdf` | `build pdf --printed`           |
-| `<output_name>.epub`                | `build epub`                    |
-| `web/`                              | `build web`, `serve`            |
-| `QA-REPORT.md`, `qa-pages/`         | `qa`                            |
-| `src/`                              | working files kept for checking |
+| File                               | Built by                        |
+| ---------------------------------- | ------------------------------- |
+| `<output_name>-<size>.pdf`         | `build pdf`                     |
+| `<output_name>-<size>-printed.pdf` | `build pdf --printed`           |
+| `<output_name>.epub`               | `build epub`                    |
+| `web/`                             | `build web`, `serve`            |
+| `QA-REPORT.md`, `qa-pages/`        | `qa`                            |
+| `src/`                             | working files kept for checking |
 
 ## PDF
 
@@ -19,9 +19,13 @@ $ md2book build pdf
 $ md2book build pdf --printed
 ```
 
-The 170 × 240 mm book, in this order: cover, title page, copyright
-page, contents with page numbers, then the chapters, with running
-headers and page numbers.
+The book at its page size — 170 × 240 mm unless
+[`page.size`](configuration.md#page-and-fonts) says A5, B5, A4 or
+Letter — in this order: cover, title page, copyright page, contents
+with page numbers, then the chapters, with running headers and page
+numbers. `<size>` in the file name is the page in millimetres
+(`170x240`, `148x210`, …). [`font.size`](configuration.md#page-and-fonts)
+makes all the type smaller or larger together.
 
 - Page 1 is the first page of chapter one. Myanmar books number pages
   in Myanmar digits (`chapter_digits`).
@@ -34,7 +38,7 @@ headers and page numbers.
   `end_image_after` exists.
 
 **Printed edition.** `--printed` writes the print-shop interior,
-`<output_name>-170x240-printed.pdf`: no cover page (the title page is
+`<output_name>-<size>-printed.pdf`: no cover page (the title page is
 page 1), no colour and no dark fills, so code and terminal blocks print
 cleanly in black and white.
 

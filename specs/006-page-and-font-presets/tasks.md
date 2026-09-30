@@ -202,11 +202,11 @@ gains `pageSize`, `fontFamily`, `fontSize`, `chapters` (FR-023).
 
 ## Phase 7: Polish & Cross-Cutting Concerns
 
-- [ ] T027 [P] Update `docs/configuration.md` (`page`, `font` keys; the example with every key),
+- [X] T027 [P] Update `docs/configuration.md` (`page`, `font` keys; the example with every key),
   `docs/commands.md` (new init flags, PDF file names), `docs/fonts.md` (families, licences,
   excluded fonts), `docs/getting-started.md` (the two init flows), `docs/editions.md` (page
   size and font size in the PDF)
-- [ ] T028 [P] Update `specs/decision-log.md`: presets, file-name suffixes, proportional margins,
+- [X] T028 [P] Update `specs/decision-log.md`: presets, file-name suffixes, proportional margins,
   font-size factors, init writes `font.family` instead of `font_set`, new font release
 - [ ] T029 Run `npm run check`, `npm run test:e2e`, `npm run equivalence:pdf` (with `DEVBOOK`)
   and `npm run docs:build`; fix anything that fails
