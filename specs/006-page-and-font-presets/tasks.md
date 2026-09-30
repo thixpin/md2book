@@ -214,9 +214,12 @@ gains `pageSize`, `fontFamily`, `fontSize`, `chapters` (FR-023).
   `coverage` (95.7/88.8/93.1/96.3 %) and `package:check` pass; `equivalence:pdf` NOT RUN
   (`DEVBOOK`, the reference development-book checkout, is not on this machine); ESLint now also
   ignores `examples/*/dist/` (build output of the demo book)
-- [ ] T030 Build sample PDFs of `examples/demo-book` for a representative set (every page size
+- [X] T030 Build sample PDFs of `examples/demo-book` for a representative set (every page size
   at `m`, `a5` at `xs` and `xl`, `a4` at `xl`, each supported family at `default`/`m`) and
   review them per quickstart.md §2–3
+  — result 2026-09-30: demo book at every page size (m), A5 xs/xl, A4 xl, and each family built
+  with the real fonts; page sizes and file names as specified, page counts ordered by font size
+  (A5: 18/20/23 for xs/m/xl); the default screen and printed PDFs are byte-identical to v0.1.4's
 
 ---
 
