@@ -212,6 +212,6 @@ $ md2book deploy github-pages [--config <path>] [--force]
 
 Writes `.github/workflows/md2book-pages.yml` at the root of the book's
 git repository: a GitHub Actions workflow that builds the web edition
-and deploys it to GitHub Pages when you start it from the Actions tab.
+and deploys it to GitHub Pages each time a `v*` version tag is pushed.
 It does not build or publish anything itself. `-f, --force` replaces an
 existing workflow. See [GitHub Pages](github-pages.md).

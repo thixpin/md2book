@@ -193,8 +193,10 @@ export async function runCli(argv: string[], deps: CliDeps = {}): Promise<number
           `Site URL: ${webUrl ?? "the one GitHub Pages reports (set web_url for a custom domain)"}\n` +
           "Next:\n" +
           "  1. On GitHub: Settings → Pages → Build and deployment → Source: GitHub Actions\n" +
-          "  2. Commit and push the workflow\n" +
-          '  3. Actions → "Deploy web edition to GitHub Pages" → Run workflow\n',
+          "  2. Settings → Environments → github-pages → Deployment branches and tags:\n" +
+          "     add a tag rule v*\n" +
+          "  3. Commit and push the workflow\n" +
+          "  4. Tag a release to deploy: git tag v1.0.0 && git push origin v1.0.0\n",
       );
     });
 

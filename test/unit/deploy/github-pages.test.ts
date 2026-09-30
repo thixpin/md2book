@@ -29,9 +29,10 @@ function repository(bookDir = ".", webUrl?: string): { root: string; config: str
 describe("pagesWorkflow", () => {
   const workflow = pagesWorkflow({ version: "1.2.3", bookDir: ".", configFile: "book.json" });
 
-  it("runs only when started by hand", () => {
-    expect(workflow).toMatch(/^on:\n( {2}#.*\n)* {2}workflow_dispatch:\n\n/m);
-    expect(workflow).not.toMatch(/^ {2}push:/m);
+  it("runs only when a version tag is pushed", () => {
+    expect(workflow).toMatch(/^on:\n( {2}#.*\n)* {2}push:\n {4}tags: \["v\*"\]\n\n/m);
+    expect(workflow).not.toContain("workflow_dispatch");
+    expect(workflow).not.toMatch(/^ {4}branches:/m);
   });
 
   it("builds the web edition with the pinned md2book, then deploys it to Pages", () => {
@@ -134,5 +135,7 @@ describe("md2book deploy github-pages", () => {
     expect(code).toBe(0);
     expect(out.join("")).toContain(`created ${join(root, WORKFLOW_PATH)}\n`);
     expect(out.join("")).toContain("Source: GitHub Actions");
+    expect(out.join("")).toContain("add a tag rule v*");
+    expect(out.join("")).toContain("git tag v1.0.0 && git push origin v1.0.0");
   });
 });
