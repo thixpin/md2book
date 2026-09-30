@@ -47,6 +47,19 @@ describe("runCli", () => {
     },
   );
 
+  it("accepts only an absolute http(s) URL for build web --web-url", async () => {
+    const io = capture();
+    const config = resolve("test/fixtures/book-en/book.json");
+    const code = await runCli(
+      ["build", "web", "-c", config, "--web-url", "book.example.com"],
+      io.deps,
+    );
+    expect(code).toBe(1);
+    expect(io.err.join("")).toBe(
+      "md2book: --web-url: must be an absolute http(s) URL, like https://book.example.com/\n",
+    );
+  });
+
   it("maps a thrown BookError to exit code 1 with a one-line message", async () => {
     const io = capture();
     const code = await runCli(["cover", "/no/such/cover.html"], io.deps);

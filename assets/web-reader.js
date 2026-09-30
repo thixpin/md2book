@@ -66,6 +66,8 @@
   const coverEdge = reader.dataset.coverEdge;
   const backCoverEl = reader.querySelector("[data-book-back-cover]");
   const backCoverSrc = reader.dataset.backCoverSrc;
+  // md2book: the home page's path, "/" unless the site is served under a path (project Pages).
+  const homePath = reader.dataset.siteRoot || "/";
   const backMatter = [...flow.querySelectorAll(".back-matter")];
   const backEndpaper = flow.querySelector(".back-endpaper");
   const backCoverSection = flow.querySelector(".back-cover-page");
@@ -610,7 +612,7 @@
       if (link.dataset.chapter === current?.slug) link.setAttribute("aria-current", "page");
       else link.removeAttribute("aria-current");
     });
-    const path = current ? current.href : "/";
+    const path = current ? current.href : homePath;
     if (window.location.pathname === path) return;
     try {
       history.replaceState(null, "", path);
@@ -1360,7 +1362,7 @@
       event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     const url = new URL(link.href, window.location.href);
     if (url.origin !== window.location.origin) return;
-    const page = url.pathname === "/" ? 0 : chapterStarts.find((start) => start.href === url.pathname)?.page;
+    const page = url.pathname === homePath ? 0 : chapterStarts.find((start) => start.href === url.pathname)?.page;
     if (page === undefined) return;
     event.preventDefault();
     link.closest(".reader-panel")?.hidePopover();

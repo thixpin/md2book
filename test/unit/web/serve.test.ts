@@ -60,6 +60,22 @@ describe("serveDir", () => {
     expect((await get(port, "/sitemap.xml")).type).toBe("application/xml; charset=utf-8");
   });
 
+  it("serves the site under its path, as GitHub project Pages do", async () => {
+    const server = await serveDir(site(), 0, "/my-book");
+    servers.push(server);
+    expect(server.url).toBe(`http://127.0.0.1:${server.port}/my-book/`);
+    expect(await get(server.port, "/my-book/")).toMatchObject({ status: 200, body: "<p>home</p>" });
+    expect(await get(server.port, "/my-book")).toMatchObject({ status: 200, body: "<p>home</p>" });
+    expect(await get(server.port, "/my-book/chapters/ch01.html")).toMatchObject({
+      status: 200,
+      body: "<p>one</p>",
+    });
+    expect(await get(server.port, "/chapters/ch01.html")).toMatchObject({
+      status: 404,
+      body: "<p>missing</p>",
+    });
+  });
+
   it("answers unknown paths with 404.html and status 404", async () => {
     const { port } = await start();
     expect(await get(port, "/nope.html")).toMatchObject({ status: 404, body: "<p>missing</p>" });

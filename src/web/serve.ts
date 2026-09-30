@@ -24,8 +24,11 @@ export interface Served {
   close(): Promise<void>;
 }
 
-/** Local preview of a built site on 127.0.0.1; unknown paths get `404.html` with status 404. */
-export function serveDir(root: string, port = 8000): Promise<Served> {
+/**
+ * Local preview of a built site on 127.0.0.1; unknown paths get `404.html` with status 404.
+ * `sitePath` (like `/repo`) serves the site under that path, as GitHub project Pages do.
+ */
+export function serveDir(root: string, port = 8000, sitePath = ""): Promise<Served> {
   const base = resolve(root);
   const server = createServer((req, res) => {
     let path: string;
@@ -33,6 +36,10 @@ export function serveDir(root: string, port = 8000): Promise<Served> {
       path = decodeURIComponent(new URL(req.url ?? "/", "http://localhost").pathname);
     } catch {
       path = "/";
+    }
+    if (sitePath) {
+      path =
+        path === sitePath || path.startsWith(`${sitePath}/`) ? path.slice(sitePath.length) : "/404";
     }
     let file = resolve(join(base, path));
     if (file === base || (existsSync(file) && statSync(file).isDirectory())) {
@@ -59,7 +66,7 @@ export function serveDir(root: string, port = 8000): Promise<Served> {
     server.listen(port, "127.0.0.1", () => {
       const actual = (server.address() as AddressInfo).port;
       resolvePromise({
-        url: `http://127.0.0.1:${actual}/`,
+        url: `http://127.0.0.1:${actual}${sitePath}/`,
         port: actual,
         close: () =>
           new Promise<void>((done) => {

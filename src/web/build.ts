@@ -52,7 +52,7 @@ export async function buildWeb(
   const facts = await coverFacts(config.cover);
   await writeFavicons(config, web, facts);
   await writeOgImage(config.cover, web, facts);
-  const { base } = site(config);
+  const { base, root } = site(config);
   if (!config.web_url) {
     warn(
       "web_url is not set; canonical and og:url are omitted, og:image is relative and there is no sitemap.xml",
@@ -74,7 +74,7 @@ export async function buildWeb(
     ...common,
     script: assets.script,
     headerTools: readerToolbar(),
-    preloadImage: `/${coverName}`,
+    preloadImage: `${root}/${coverName}`,
   };
   writeFileSync(
     join(web, "index.html"),
@@ -106,7 +106,7 @@ export async function buildWeb(
     page(config, {
       ...common,
       title: `${config.title} | Page not found`,
-      content: '<h1>Page not found</h1><p><a href="/">Open the book</a></p>',
+      content: `<h1>Page not found</h1><p><a href="${root}/">Open the book</a></p>`,
       description: bookDescription,
       path: null,
     }),

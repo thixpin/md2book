@@ -150,7 +150,8 @@ export async function runCli(argv: string[], deps: CliDeps = {}): Promise<number
     .description("Build the static web edition of the published chapters.")
     .option("-c, --config <path>", "book config", "book.json")
     .option("-o, --out <dir>", "output directory (default dist/<config name>/)")
-    .action(async (options: { config: string; out?: string }) => {
+    .option("--web-url <url>", "the site's public URL for this build, in place of web_url")
+    .action(async (options: { config: string; out?: string; webUrl?: string }) => {
       const { runWeb, webWrittenLine } = await import("./web/command.ts");
       stdout(`${webWrittenLine(await runWeb(options, deps.manifestPath))}\n`);
     });
@@ -161,7 +162,8 @@ export async function runCli(argv: string[], deps: CliDeps = {}): Promise<number
     .option("-c, --config <path>", "book config", "book.json")
     .option("-o, --out <dir>", "output directory (default dist/<config name>/)")
     .option("-p, --port <n>", "port on 127.0.0.1", "8000")
-    .action(async (options: { config: string; out?: string; port: string }) => {
+    .option("--web-url <url>", "the site's public URL for this build, in place of web_url")
+    .action(async (options: { config: string; out?: string; port: string; webUrl?: string }) => {
       const port = Number(options.port);
       if (!Number.isInteger(port) || port < 0 || port > 65535) {
         throw new BookError("--port", `not a valid port: ${options.port}`);

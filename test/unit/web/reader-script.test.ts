@@ -9,6 +9,20 @@ const REFERENCE_SHA256 = "bb980615d4c6973b16cc0d9c6005054dbb81c149b3e7f816c90275
 // section-sized, preloaded turn surfaces recorded in specs/decision-log.md):
 // [edited text, reference text].
 export const READER_EDITS: [string, string][] = [
+  // md2book: a site served under a path (GitHub project Pages) has its home there
+  // (specs/decision-log.md).
+  [
+    '  const backCoverSrc = reader.dataset.backCoverSrc;\n  // md2book: the home page\'s path, "/" unless the site is served under a path (project Pages).\n  const homePath = reader.dataset.siteRoot || "/";\n',
+    "  const backCoverSrc = reader.dataset.backCoverSrc;\n",
+  ],
+  [
+    "    const path = current ? current.href : homePath;\n",
+    '    const path = current ? current.href : "/";\n',
+  ],
+  [
+    "    const page = url.pathname === homePath ? 0 :",
+    '    const page = url.pathname === "/" ? 0 :',
+  ],
   // md2book: no page view for an address change caused by a (re)layout (specs/decision-log.md).
   [
     '  let running = null;\n  // md2book: true while measure() shows the (re)laid-out book (syncAddress sends no page view).\n  let laying = false;\n  let paperKey = "";\n',

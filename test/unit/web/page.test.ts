@@ -64,6 +64,32 @@ describe("page head", () => {
     expect(meta(build({}, null), "generator")).toEqual(["md2book"]);
   });
 
+  it("prefixes every link with the path of web_url (GitHub project Pages)", () => {
+    const html = page(config({ web_url: "https://owner.github.io/my-book/" }), {
+      title: "T",
+      content: "<p>x</p>",
+      description: "D",
+      stylesheet: "style.abc.css",
+      script: "reader.abc.js",
+      path: "/chapters/ch01.html",
+      favicon: true,
+      preloadImage: "/my-book/cover.png",
+    });
+    expect(links(html, "canonical")).toEqual([
+      "https://owner.github.io/my-book/chapters/ch01.html",
+    ]);
+    expect(links(html, "stylesheet")).toEqual(["/my-book/style.abc.css"]);
+    expect(links(html, "icon")).toEqual(["/my-book/favicon.svg", "/my-book/favicon-32.png"]);
+    expect(links(html, "apple-touch-icon")).toEqual(["/my-book/apple-touch-icon.png"]);
+    expect(meta(html, "og:image")).toEqual(["https://owner.github.io/my-book/og-image.png"]);
+    expect(find(html, (el) => el.tagName === "script").map((el) => attr(el, "src"))).toEqual([
+      "/my-book/reader.abc.js",
+    ]);
+    expect(
+      find(html, (el) => attr(el, "data-home") !== undefined).map((el) => attr(el, "href")),
+    ).toEqual(["/my-book/"]);
+  });
+
   it("marks the 404 page noindex, without canonical or script", () => {
     const html = build({ web_url: "https://book.example" }, null);
     expect(meta(html, "robots")).toEqual(["noindex"]);

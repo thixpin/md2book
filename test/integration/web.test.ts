@@ -2,6 +2,7 @@ import { existsSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { buildWeb } from "../../src/web/build.ts";
+import { runWeb } from "../../src/web/command.ts";
 import { BookError } from "../../src/errors.ts";
 import { bookEn, bookMm } from "../helpers/fixture-config.ts";
 import { FIXTURE_MANIFEST } from "../helpers/fonts.ts";
@@ -105,6 +106,56 @@ describe("buildWeb", { timeout: 60_000 }, () => {
         '<meta name="generator" content="md2book">',
       );
     }
+  });
+
+  it("serves a site under the path of web_url (GitHub project Pages)", async () => {
+    const { web } = await build(async () => ({
+      ...(await bookEn()),
+      web_url: "https://owner.github.io/my-book/",
+    }));
+    const index = readFileSync(join(web, "index.html"), "utf8");
+    expect(index).toContain('data-site-root="/my-book/"');
+    expect(index).toContain('data-href="/my-book/chapters/ch01.html"');
+    expect(index).toContain('<a href="/my-book/chapters/ch02.html" data-chapter="ch02">');
+    expect(index).toContain('data-cover-src="/my-book/cover.png"');
+    expect(index).toContain('<a href="/my-book/" data-home>');
+    expect(index).not.toMatch(/(href|src)="\/(?!my-book\/)/);
+    expect(readFileSync(join(web, "404.html"), "utf8")).toContain(
+      '<a href="/my-book/">Open the book</a>',
+    );
+    expect(readFileSync(join(web, "sitemap.xml"), "utf8")).toContain(
+      "<loc>https://owner.github.io/my-book/chapters/ch01.html</loc>",
+    );
+  });
+
+  it("takes the site's URL from --web-url in place of web_url", async () => {
+    const config = await bookEn();
+    vi.stubEnv("MD2BOOK_FONTS", await fixtureFontCache(config));
+    const { dir } = await runWeb(
+      {
+        config: fixture("book-en", "book.json"),
+        out: tempDir(),
+        webUrl: "https://owner.github.io/my-book",
+      },
+      FIXTURE_MANIFEST,
+    );
+    vi.unstubAllEnvs();
+    expect(readFileSync(join(dir, "index.html"), "utf8")).toContain(
+      '<link rel="canonical" href="https://owner.github.io/my-book/">',
+    );
+    expect(readFileSync(join(dir, "robots.txt"), "utf8")).toContain(
+      "Sitemap: https://owner.github.io/my-book/sitemap.xml",
+    );
+  });
+
+  it("keeps the site at the root without a path in web_url", async () => {
+    const { web } = await build(async () => ({
+      ...(await bookEn()),
+      web_url: "https://book.example.com",
+    }));
+    const index = readFileSync(join(web, "index.html"), "utf8");
+    expect(index).not.toContain("data-site-root");
+    expect(index).toContain('data-href="/chapters/ch01.html"');
   });
 
   it("empties web/ before building and is deterministic", async () => {

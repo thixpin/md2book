@@ -5,13 +5,15 @@ import { chromium, type Browser, type BrowserContextOptions, type Page } from "p
 import type { BookConfig } from "../../src/config/load.ts";
 import { buildWeb } from "../../src/web/build.ts";
 import { serveDir, type Served } from "../../src/web/serve.ts";
+import { site } from "../../src/web/site.ts";
 import { FIXTURE_MANIFEST } from "../helpers/fonts.ts";
 import { FIXTURE_FONTS } from "../helpers/fonts.ts";
 import { fetchFontSet } from "../../src/fonts/fetch.ts";
 import { configFontSet, loadManifest } from "../../src/fonts/manifest.ts";
 
 /**
- * Builds a fixture book's web edition and serves it on a random local port. The files live in
+ * Builds a fixture book's web edition and serves it on a random local port (under the path of its
+ * `web_url`, if any). The files live in
  * their own temp dir (not the per-test `tempDir()` helper, which is emptied after each test) and
  * are removed by `close()`.
  */
@@ -26,7 +28,7 @@ export async function serveFixture(config: BookConfig): Promise<Served> {
     fontsDir: join(root, "fonts"),
     manifestPath: FIXTURE_MANIFEST,
   });
-  const served = await serveDir(dir, 0);
+  const served = await serveDir(dir, 0, site(config).root);
   return {
     ...served,
     close: async () => {

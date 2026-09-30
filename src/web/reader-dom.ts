@@ -7,6 +7,7 @@ import type { Part } from "../manuscript/parts.ts";
 import { tocListHtml } from "../manuscript/toc.ts";
 import { escapeHtml as esc } from "../manuscript/text.ts";
 import { icon } from "./icons.ts";
+import { site } from "./site.ts";
 import { edgeCss, type CoverFacts } from "./images.ts";
 
 // Port of development-book/publish/web.py `reader()` (d235dbd): same elements, classes and data-*
@@ -67,17 +68,23 @@ function readerOptions(config: BookConfig): string {
   const running = JSON.stringify(config.running);
   const runningAttr =
     running === JSON.stringify(defaultLayout) ? "" : ` data-running="${esc(running)}"`;
+  // md2book: the home path, only when the site is served under a path (GitHub project Pages).
+  const { root } = site(config);
+  const rootAttr = root ? ` data-site-root="${esc(root)}/"` : "";
   return (
     options
       .filter(([, value, fallback]) => value !== fallback)
       .map(([name, value]) => ` ${name}="${esc(value)}"`)
-      .join("") + runningAttr
+      .join("") +
+    runningAttr +
+    rootAttr
   );
 }
 
 export function readerHtml(book: WebBook, openChapter: string): string {
   const { config, chapters, parts, facts } = book;
   const title = esc(config.title);
+  const { root } = site(config);
   const back =
     '<section class="back-matter back-filler" data-front-matter aria-hidden="true"></section>' +
     '<section class="back-matter endpaper-page back-endpaper" data-front-matter aria-hidden="true"></section>' +
@@ -88,12 +95,12 @@ export function readerHtml(book: WebBook, openChapter: string): string {
     `aria-label="${title} cover"></section>` +
     '<section class="front-page endpaper-page" data-front-matter aria-hidden="true"></section>' +
     '<section class="front-page contents-page" data-front-matter>' +
-    `<h2>${esc(config.strings.contents_heading)}</h2>${tocListHtml(parts, chapters, CHAPTER_PATH)}</section>`;
+    `<h2>${esc(config.strings.contents_heading)}</h2>${tocListHtml(parts, chapters, root + CHAPTER_PATH)}</section>`;
   const sections = chapters
     .map(
       (ch) =>
         `<section class="book-chapter" data-chapter="${ch.slug}" data-title="${esc(ch.fullTitle)}" ` +
-        `data-short-title="${esc(ch.title)}" data-href="${chapterHref(ch.slug)}">` +
+        `data-short-title="${esc(ch.title)}" data-href="${root}${chapterHref(ch.slug)}">` +
         `<header class="chapter-head"><p class="book-name">${title}</p>` +
         `<p class="chapter-number">${esc(ch.label)}</p><h1>${esc(ch.title)}</h1></header>` +
         `<div class="chapter-body">${ch.html ?? ""}</div></section>`,
@@ -102,7 +109,7 @@ export function readerHtml(book: WebBook, openChapter: string): string {
   const contents = chapters
     .map(
       (ch) =>
-        `<li><a href="${chapterHref(ch.slug)}" data-chapter="${ch.slug}">${esc(ch.fullTitle)}</a></li>`,
+        `<li><a href="${root}${chapterHref(ch.slug)}" data-chapter="${ch.slug}">${esc(ch.fullTitle)}</a></li>`,
     )
     .join("");
 
@@ -111,14 +118,14 @@ export function readerHtml(book: WebBook, openChapter: string): string {
     // (it removes the class); before that the flow is unpaginated and runs across the spine.
     `<div class="reader-shell is-loading" data-reader data-book-key="${book.bookKey}" ` +
     `data-book-title="${title}" data-author="${esc(config.author)}" data-open-chapter="${openChapter}" ` +
-    `data-cover-src="/${book.coverName}" data-back-cover-src="/${book.backCoverName}" ` +
+    `data-cover-src="${root}/${book.coverName}" data-back-cover-src="${root}/${book.backCoverName}" ` +
     `data-cover-ratio="${facts.ratio.toFixed(5)}" ` +
     `data-cover-edge="${edgeCss(facts.edge)}" style="--cover-edge: ${edgeCss(facts.edge)}"` +
     `${readerOptions(config)}>` +
     '<div class="book" data-book>' +
     // md2book: first in the book, before the book text, so the cover is fetched at once.
     '<div class="reader-loading" data-reader-loading>' +
-    `<img class="reader-loading-cover" src="/${book.coverName}" alt="" fetchpriority="high"/>` +
+    `<img class="reader-loading-cover" src="${root}/${book.coverName}" alt="" fetchpriority="high"/>` +
     '<span class="visually-hidden" role="status">Loading the book…</span></div>' +
     '<svg class="book-paper" data-book-paper aria-hidden="true"></svg>' +
     '<div class="reader-window" role="region" aria-label="Book page">' +

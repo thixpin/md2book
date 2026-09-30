@@ -22,7 +22,8 @@ export interface PageOptions {
 
 /**
  * One HTML page (port of web.py `_page`). All links are root-relative: the site is hosted at the
- * root of its domain and the reader changes the address between chapters.
+ * root of its domain, or under the path of `web_url` (GitHub project Pages), and the reader
+ * changes the address between chapters.
  */
 export function page(config: BookConfig, options: PageOptions): string {
   const { title, content, description, stylesheet, path } = options;
@@ -30,11 +31,11 @@ export function page(config: BookConfig, options: PageOptions): string {
   const preload = options.preloadImage
     ? `<link rel="preload" as="image" href="${esc(options.preloadImage)}" fetchpriority="high">`
     : "";
-  const { base } = site(config);
+  const { base, root } = site(config);
   const icons = favicon
-    ? '<link rel="icon" href="/favicon.svg" type="image/svg+xml">' +
-      '<link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">' +
-      '<link rel="apple-touch-icon" href="/apple-touch-icon.png">'
+    ? `<link rel="icon" href="${root}/favicon.svg" type="image/svg+xml">` +
+      `<link rel="icon" href="${root}/favicon-32.png" sizes="32x32" type="image/png">` +
+      `<link rel="apple-touch-icon" href="${root}/apple-touch-icon.png">`
     : "";
   const social =
     (base && path ? `<link rel="canonical" href="${base}${path}">` : "") +
@@ -56,10 +57,10 @@ export function page(config: BookConfig, options: PageOptions): string {
 <meta name="description" content="${esc(description)}">
 <meta name="generator" content="md2book">
 ${social}
-${preload}<link rel="stylesheet" href="/${stylesheet}">${icons}${path ? analyticsHead(config.web_analytics) : ""}</head>
-<body><header class="site-header"><a href="/" data-home><span class="site-title">${esc(config.title)}</span>
+${preload}<link rel="stylesheet" href="${root}/${stylesheet}">${icons}${path ? analyticsHead(config.web_analytics) : ""}</head>
+<body><header class="site-header"><a href="${root}/" data-home><span class="site-title">${esc(config.title)}</span>
 <span class="site-subtitle">${esc(config.subtitle ?? "")}</span></a>${headerTools}</header>
 <main>${content}</main><footer class="footer">${esc(config.author)}</footer>
-${script ? `<script src="/${script}" defer></script>` : ""}</body></html>
+${script ? `<script src="${root}/${script}" defer></script>` : ""}</body></html>
 `;
 }
