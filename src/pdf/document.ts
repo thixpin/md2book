@@ -5,6 +5,7 @@ import { frontMatterHtml } from "../epub/front-matter.ts";
 import { tocListHtml } from "../manuscript/toc.ts";
 import { escapeHtml } from "../manuscript/text.ts";
 import { chapterHeadHtml } from "../markdown/chapter-head.ts";
+import { bookHrefs, linksHome } from "../markdown/links.ts";
 import { pageLayout } from "../config/presets.ts";
 
 // Print measure: the text block (128 mm on the 170 mm page) minus 5 mm of pre padding; the
@@ -110,7 +111,9 @@ export function printDocument(book: Book, options: PrintDocumentOptions): string
   pieces.push(
     `<section class="front">${titlePage}</section>`,
     `<section class="front">${copyrightPage}</section>`,
-    `<section class="front toc-page"><h1>${escapeHtml(config.strings.contents_heading)}</h1>` +
+    // md2book: an id only when a chapter links to the book's start, so other PDFs stay as they were.
+    `<section class="front toc-page"${chapters.some((ch) => linksHome(ch.html ?? "")) ? ' id="contents"' : ""}>` +
+      `<h1>${escapeHtml(config.strings.contents_heading)}</h1>` +
       `${tocListHtml(parts, chapters, "#{slug}")}</section>`,
   );
   for (const ch of chapters) {
@@ -120,10 +123,13 @@ export function printDocument(book: Book, options: PrintDocumentOptions): string
       `<section class="${classes.join(" ")}" id="${ch.slug}">` +
         chapterHeadHtml(ch) +
         isolateCodeNewlines(
-          fitPreBlocks(addSyllableBreaks(ch.html ?? ""), {
-            textWidth: pageLayout(config.page).textWidth,
-            factor: config.font.size.factor,
-          }),
+          fitPreBlocks(
+            addSyllableBreaks(bookHrefs(ch.html ?? "", (slug) => `#${slug}`, "#contents")),
+            {
+              textWidth: pageLayout(config.page).textWidth,
+              factor: config.font.size.factor,
+            },
+          ),
         ) +
         "</section>",
     );

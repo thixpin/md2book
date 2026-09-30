@@ -16,7 +16,7 @@ export async function loadBook(config: BookConfig): Promise<Book> {
   const parts = await loadParts(config, chapters);
   for (const ch of chapters) {
     expandSnippets(ch, config.code_root);
-    renderChapter(ch, config.strings);
+    renderChapter(ch, config.strings, chapters);
   }
   return { config, chapters, parts };
 }

@@ -87,6 +87,27 @@ A bare `https://…` stays plain text; wrap it in `<…>` to make it a
 link. The QA report's HTML check also lists `<…>` autolinks, because
 they look like tags; `[text](url)` avoids that.
 
+### Links between chapters
+
+A manuscript written to be read on GitHub often links its chapter files
+to each other and to the repository's `README.md`. md2book turns those
+links into links inside each edition:
+
+```markdown
+[← Chapter 1](01-intro.md) · [Contents](../README.md) · [Chapter 3 →](03-tools.md)
+```
+
+| Link to                                           | Becomes                                                                                           |
+| ------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| a chapter file of the book                        | a link to that chapter (its page on the web, its document in the EPUB, its first page in the PDF) |
+| `README.md` (any folder)                          | a link to the book's start: the web edition's home page, the contents in the EPUB and the PDF     |
+| any other `.md` file, like an unpublished chapter | its text only, without a link                                                                     |
+
+Paths are relative to the chapter file, as on GitHub; a `#section` after
+the file name is dropped. Web addresses, `#anchors`, root paths and
+other files stay as written. On the web edition, following a chapter
+link turns the book to that chapter.
+
 ## Lists
 
 ```markdown

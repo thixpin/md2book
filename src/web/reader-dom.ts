@@ -4,6 +4,7 @@ import type { BookConfig } from "../config/load.ts";
 import { defaultLayout } from "../config/presets.ts";
 import type { Chapter } from "../manuscript/chapters.ts";
 import type { Part } from "../manuscript/parts.ts";
+import { bookHrefs } from "../markdown/links.ts";
 import { tocListHtml } from "../manuscript/toc.ts";
 import { escapeHtml as esc } from "../manuscript/text.ts";
 import { icon } from "./icons.ts";
@@ -103,7 +104,7 @@ export function readerHtml(book: WebBook, openChapter: string): string {
         `data-short-title="${esc(ch.title)}" data-href="${root}${chapterHref(ch.slug)}">` +
         `<header class="chapter-head"><p class="book-name">${title}</p>` +
         `<p class="chapter-number">${esc(ch.label)}</p><h1>${esc(ch.title)}</h1></header>` +
-        `<div class="chapter-body">${ch.html ?? ""}</div></section>`,
+        `<div class="chapter-body">${bookHrefs(ch.html ?? "", (slug) => root + chapterHref(slug), `${root}/`)}</div></section>`,
     )
     .join("");
   const contents = chapters

@@ -3,6 +3,7 @@ import type { BookConfig } from "../config/load.ts";
 import { tocListHtml } from "../manuscript/toc.ts";
 import { escapeHtml as esc } from "../manuscript/text.ts";
 import { chapterHeadHtml } from "../markdown/chapter-head.ts";
+import { bookHrefs } from "../markdown/links.ts";
 import { frontMatterHtml } from "./front-matter.ts";
 
 export interface EpubDocument {
@@ -79,7 +80,8 @@ export function epubDocuments(
     },
   ];
   for (const ch of chapters) {
-    const body = `<section epub:type="chapter" id="${ch.slug}">${chapterHeadHtml(ch)}${ch.html ?? ""}</section>`;
+    const html = bookHrefs(ch.html ?? "", (slug) => `${slug}.xhtml`, "nav.xhtml");
+    const body = `<section epub:type="chapter" id="${ch.slug}">${chapterHeadHtml(ch)}${html}</section>`;
     docs.push({
       id: ch.slug,
       href: `text/${ch.slug}.xhtml`,
