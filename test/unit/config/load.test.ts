@@ -189,6 +189,41 @@ describe("loadConfig", () => {
     expect(warnings).toEqual(["unknown key: page.width"]);
   });
 
+  it("defaults the running heads and feet to the current layout", async () => {
+    const { config } = await loadConfig(book(base));
+    expect(config.running).toEqual({
+      top: { inner: "chapter-title", center: "none", outer: "author" },
+      bottom: { inner: "book-title", center: "none", outer: "page-number" },
+    });
+  });
+
+  it("merges a partial running layout over the defaults", async () => {
+    const { config } = await loadConfig(
+      book({
+        ...base,
+        running: { bottom: { inner: "none", center: "page-number", outer: "none" } },
+      }),
+    );
+    expect(config.running).toEqual({
+      top: { inner: "chapter-title", center: "none", outer: "author" },
+      bottom: { inner: "none", center: "page-number", outer: "none" },
+    });
+  });
+
+  it("stops on an unknown running value, listing the values", async () => {
+    const error = await loadError(book({ ...base, running: { top: { center: "date" } } }));
+    expect(error.reason).toBe(
+      "running.top.center: must be one of author, book-title, chapter-title, page-number, none",
+    );
+  });
+
+  it("warns about an unknown running slot", async () => {
+    const { warnings } = await loadConfig(
+      book({ ...base, running: { top: { middle: "author" } } }),
+    );
+    expect(warnings).toEqual(["unknown key: running.top.middle"]);
+  });
+
   it("stops on invalid JSON, naming the file", async () => {
     const dir = tempDir({ "book.json": "{ nope" });
     const error = await loadError(join(dir, "book.json"));

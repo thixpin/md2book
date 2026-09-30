@@ -147,6 +147,82 @@
         }
       }
     },
+    "running": {
+      "description": "Running heads and feet of the PDF and web edition: top/bottom × inner/center/outer, each author, book-title, chapter-title, page-number or none. Defaults: top chapter-title / none / author, bottom book-title / none / page-number.",
+      "type": "object",
+      "properties": {
+        "top": {
+          "type": "object",
+          "properties": {
+            "inner": {
+              "type": "string",
+              "enum": [
+                "author",
+                "book-title",
+                "chapter-title",
+                "page-number",
+                "none"
+              ]
+            },
+            "center": {
+              "type": "string",
+              "enum": [
+                "author",
+                "book-title",
+                "chapter-title",
+                "page-number",
+                "none"
+              ]
+            },
+            "outer": {
+              "type": "string",
+              "enum": [
+                "author",
+                "book-title",
+                "chapter-title",
+                "page-number",
+                "none"
+              ]
+            }
+          }
+        },
+        "bottom": {
+          "type": "object",
+          "properties": {
+            "inner": {
+              "type": "string",
+              "enum": [
+                "author",
+                "book-title",
+                "chapter-title",
+                "page-number",
+                "none"
+              ]
+            },
+            "center": {
+              "type": "string",
+              "enum": [
+                "author",
+                "book-title",
+                "chapter-title",
+                "page-number",
+                "none"
+              ]
+            },
+            "outer": {
+              "type": "string",
+              "enum": [
+                "author",
+                "book-title",
+                "chapter-title",
+                "page-number",
+                "none"
+              ]
+            }
+          }
+        }
+      }
+    },
     "code_root": {
       "type": "string",
       "description": "Base for snippet paths. Default: nearest ancestor with .git, else this file's directory."

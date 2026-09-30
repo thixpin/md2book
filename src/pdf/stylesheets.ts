@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import type { BookConfig } from "../config/load.ts";
-import { pageLayout } from "../config/presets.ts";
+import { pageLayout, type SlotValue } from "../config/presets.ts";
 import type { FontSet } from "../fonts/manifest.ts";
 import { substituteFonts } from "../web/assets.ts";
 
@@ -28,26 +28,53 @@ function cssString(text: string): string {
 function bookCss(config: BookConfig, carried: string[]): string {
   const style = config.strings.chapter_digits === "myanmar" ? ", myanmar" : "";
   const type = `font-size: ${pt(9 * config.font.size.factor)}; color: #777;`;
-  const head = config.running_headers
-    ? (content: string) =>
-        `content: ${content}; ${type} vertical-align: bottom; padding-bottom: 7.5mm;`
-    : () => "content: none;";
-  // assets/paged-handler.js writes each page's number as --md2book-folio.
-  const foot = (content: string) =>
-    `content: ${content}; ${type} vertical-align: top; padding-top: 4mm;`;
-  const author = cssString(config.author);
-  const title = cssString(config.title);
-  const chapter = "string(chaptertitle)";
-  const folio = "var(--md2book-folio)";
+  // What each running value prints; assets/paged-handler.js writes each page's number as
+  // --md2book-folio.
+  const CONTENT: Record<SlotValue, string | null> = {
+    author: cssString(config.author),
+    "book-title": cssString(config.title),
+    "chapter-title": "string(chaptertitle)",
+    "page-number": "var(--md2book-folio)",
+    none: null,
+  };
   const none = "content: none;";
-  const noMargins = `@top-left { ${none} } @top-right { ${none} } @bottom-left { ${none} } @bottom-right { ${none} }`;
+  const slot = (value: SlotValue, line: "top" | "bottom") => {
+    const content = CONTENT[value];
+    if (content === null) return none;
+    return line === "top"
+      ? `content: ${content}; ${type} vertical-align: bottom; padding-bottom: 7.5mm;`
+      : `content: ${content}; ${type} vertical-align: top; padding-top: 4mm;`;
+  };
+  // running_headers: false (PDF only) empties the whole top line.
+  const running = config.running_headers
+    ? config.running
+    : { ...config.running, top: { inner: "none", center: "none", outer: "none" } as const };
+  // Outer is the edge away from the spine: left on a left page, right on a right page. Center
+  // boxes are written only when a center slot is used, so the default output is unchanged.
+  const lines = ["top", "bottom"] as const;
+  const centred = lines.filter((line) => running[line].center !== "none");
+  const page = (side: "left" | "right") => {
+    const [leftSlot, rightSlot] =
+      side === "left" ? (["outer", "inner"] as const) : (["inner", "outer"] as const);
+    const boxes = lines.flatMap((line) => [
+      `@${line}-left { ${slot(running[line][leftSlot], line)} }`,
+      `@${line}-right { ${slot(running[line][rightSlot], line)} }`,
+    ]);
+    for (const line of centred)
+      boxes.push(`@${line}-center { ${slot(running[line].center, line)} }`);
+    return `@page :${side} { ${boxes.join(" ")} }`;
+  };
+  const noMargins = [
+    ...lines.flatMap((line) => [`@${line}-left { ${none} }`, `@${line}-right { ${none} }`]),
+    ...centred.map((line) => `@${line}-center { ${none} }`),
+  ].join(" ");
   const factor = config.font.size.factor;
   const sizes = factor === 1 ? [] : carried.map((css) => scaleFontSizes(css, factor));
   return [
     ...sizes,
     `@page { @bottom-center { ${none} } }`,
-    `@page :left { @top-left { ${head(author)} } @top-right { ${head(chapter)} } @bottom-left { ${foot(folio)} } @bottom-right { ${foot(title)} } }`,
-    `@page :right { @top-left { ${head(chapter)} } @top-right { ${head(author)} } @bottom-left { ${foot(title)} } @bottom-right { ${foot(folio)} } }`,
+    page("left"),
+    page("right"),
     `@page :blank { ${noMargins} }`,
     `@page front { ${noMargins} }`,
     `@page cover { ${noMargins} }`,

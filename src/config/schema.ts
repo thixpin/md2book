@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { FONT_STYLES, LANGUAGES } from "./language.ts";
-import { FONT_FAMILIES, FONT_SIZE_IDS, PAGE_SIZE_IDS } from "./presets.ts";
+import { FONT_FAMILIES, FONT_SIZE_IDS, PAGE_SIZE_IDS, slotValues } from "./presets.ts";
 
 // Mirrors specs/001-core-manuscript-pipeline/contracts/book-config.schema.json (the
 // compatibility surface); test/unit/config/schema.test.ts keeps the two in step.
@@ -53,6 +53,25 @@ export const bookConfigSchema = z.object({
     .object({
       family: z.enum(Object.keys(FONT_FAMILIES) as [string, ...string[]]),
       size: z.enum(FONT_SIZE_IDS),
+    })
+    .partial()
+    .optional(),
+  running: z
+    .object({
+      top: z
+        .object({
+          inner: z.enum(slotValues),
+          center: z.enum(slotValues),
+          outer: z.enum(slotValues),
+        })
+        .partial(),
+      bottom: z
+        .object({
+          inner: z.enum(slotValues),
+          center: z.enum(slotValues),
+          outer: z.enum(slotValues),
+        })
+        .partial(),
     })
     .partial()
     .optional(),

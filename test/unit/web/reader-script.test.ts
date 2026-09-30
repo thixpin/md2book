@@ -9,6 +9,31 @@ const REFERENCE_SHA256 = "bb980615d4c6973b16cc0d9c6005054dbb81c149b3e7f816c90275
 // section-sized, preloaded turn surfaces recorded in specs/decision-log.md):
 // [edited text, reference text].
 export const READER_EDITS: [string, string][] = [
+  // md2book: the running heads and feet follow the book's `running` layout (specs/decision-log.md).
+  [
+    '  const asciiFolios = reader.dataset.folioDigits === "ascii";\n  // md2book: the running heads and feet (data-running; absent means this default layout).\n  const defaultLayout = {\n    top: { inner: "chapter-title", center: "none", outer: "author" },\n    bottom: { inner: "book-title", center: "none", outer: "page-number" },\n  };\n  const layout = reader.dataset.running ? JSON.parse(reader.dataset.running) : defaultLayout;\n  const burmeseDigits = (number) =>\n',
+    '  const asciiFolios = reader.dataset.folioDigits === "ascii";\n  const burmeseDigits = (number) =>\n',
+  ],
+  [
+    "  function placeFolio(el, pageIndex, originX) {\n    placeLine(el, pageIndex, originX, layout.bottom, false);\n  }\n",
+    "  function placeFolio(el, pageIndex, originX) {\n    placeLine(el, pageIndex, originX, burmeseDigits(pageLabel(pageIndex)), bookTitle, false);\n  }\n",
+  ],
+  [
+    "  function placeHead(el, pageIndex, originX) {\n    placeLine(el, pageIndex, originX, layout.top, true);\n  }\n",
+    '  function placeHead(el, pageIndex, originX) {\n    placeLine(el, pageIndex, originX, bookAuthor, chapterAt(pageIndex)?.shortTitle ?? "", true);\n  }\n',
+  ],
+  [
+    '  }\n\n  // md2book: what each running slot shows (the book\'s `running` layout, passed as data-running\n  // when it is not the default below).\n  const runningText = {\n    author: () => bookAuthor,\n    "book-title": () => bookTitle,\n    "chapter-title": (page) => chapterAt(page)?.shortTitle ?? "",\n    "page-number": (page) => burmeseDigits(pageLabel(page)),\n    none: () => "",\n  };\n\n',
+    "  }\n\n",
+  ],
+  [
+    "\n  function placeLine(el, pageIndex, originX, slots, top) {\n    const styles = getComputedStyle(flow);\n",
+    "\n  function placeLine(el, pageIndex, originX, outside, inside, top) {\n    const styles = getComputedStyle(flow);\n",
+  ],
+  [
+    '      : windowEl.clientHeight - parseFloat(styles.paddingBottom) * 0.36;\n    const part = (className, value) => {\n      const span = document.createElement("span");\n      span.className = className;\n      span.textContent = runningText[value](pageIndex);\n      return span;\n    };\n    const outer = part("outside", slots.outer);\n    const inner = part("inside", slots.inner);\n    // The center part only when used, so the default line is unchanged.\n    const center = slots.center === "none" ? [] : [part("center", slots.center)];\n    el.replaceChildren(...(onLeft ? [outer, ...center, inner] : [inner, ...center, outer]));\n    el.style.width = `${pageWidth}px`;\n',
+    '      : windowEl.clientHeight - parseFloat(styles.paddingBottom) * 0.36;\n    const outer = document.createElement("span");\n    outer.className = "outside";\n    outer.textContent = outside;\n    const inner = document.createElement("span");\n    inner.className = "inside";\n    inner.textContent = inside;\n    el.replaceChildren(...(onLeft ? [outer, inner] : [inner, outer]));\n    el.style.width = `${pageWidth}px`;\n',
+  ],
   // md2book: Contents and Bookmarks as two tabs of the contents panel (specs/decision-log.md).
   [
     '\n  // md2book: Contents and Bookmarks as the two tabs of the contents panel. Built here, so the\n  // page markup stays the reference\'s (without the script both lists show). Contents is selected\n  // first; the arrow keys, Home and End move between the tabs, not the pages.\n  function makeNavigationTabs() {\n    const body = contentsPanel.querySelector(".reader-panel-body");\n    const [contentsHeading, bookmarksHeading] = body.querySelectorAll(":scope > h2");\n    const sections = [\n      { name: "contents", label: contentsHeading.textContent, nodes: [contentsHeading.nextElementSibling] },\n      { name: "bookmarks", label: bookmarksHeading.textContent, nodes: [bookmarkList, bookmarkEmpty] },\n    ];\n    const tablist = document.createElement("div");\n    tablist.className = "panel-tabs";\n    tablist.setAttribute("role", "tablist");\n    tablist.setAttribute("aria-label", "Navigation");\n    const tabs = [];\n    const panels = [];\n    for (const { name, label, nodes } of sections) {\n      const tab = document.createElement("button");\n      tab.type = "button";\n      tab.id = `reader-tab-${name}`;\n      tab.textContent = label;\n      tab.setAttribute("role", "tab");\n      tab.setAttribute("aria-controls", `reader-tabpanel-${name}`);\n      const panel = document.createElement("div");\n      panel.id = `reader-tabpanel-${name}`;\n      panel.className = "panel-tab";\n      panel.setAttribute("role", "tabpanel");\n      panel.setAttribute("aria-labelledby", tab.id);\n      panel.append(...nodes);\n      tabs.push(tab);\n      panels.push(panel);\n    }\n    const select = (index, focus = false) => {\n      tabs.forEach((tab, i) => {\n        tab.setAttribute("aria-selected", String(i === index));\n        tab.tabIndex = i === index ? 0 : -1;\n        panels[i].hidden = i !== index;\n      });\n      if (focus) tabs[index].focus();\n    };\n    tabs.forEach((tab, i) => tab.addEventListener("click", () => select(i)));\n    tablist.addEventListener("keydown", (event) => {\n      const current = tabs.findIndex((tab) => tab.getAttribute("aria-selected") === "true");\n      const moves = { ArrowLeft: current - 1, ArrowRight: current + 1, Home: 0, End: tabs.length - 1 };\n      if (!(event.key in moves)) return;\n      event.preventDefault();\n      event.stopPropagation();\n      select((moves[event.key] + tabs.length) % tabs.length, true);\n    });\n    tablist.append(...tabs);\n    body.replaceChildren(tablist, ...panels);\n    body.classList.add("has-tabs");\n    select(0);\n  }\n\n  // md2book: toolbar panels open just below their button, right-aligned with it and kept in the\n',

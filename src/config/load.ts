@@ -8,21 +8,28 @@ import { defaultStrings, type SeriesStrings } from "./language.ts";
 import {
   FONT_SIZES,
   PAGE_SIZES,
+  defaultLayout,
   familyForStyle,
   fontFamily,
   type FontFamily,
   type FontSizeId,
   type PageSize,
   type PageSizeId,
+  type Layout,
 } from "./presets.ts";
 import { bookConfigSchema, type RawBookConfig } from "./schema.ts";
 
-export type BookConfig = Omit<RawBookConfig, "strings" | "code_root" | "page" | "font"> & {
+export type BookConfig = Omit<
+  RawBookConfig,
+  "strings" | "code_root" | "page" | "font" | "running"
+> & {
   configPath: string;
   configDir: string;
   code_root: string;
   strings: SeriesStrings;
   page: PageSize & { id: PageSizeId };
+  /** Running heads and feet of the PDF and the web edition, defaults filled in. */
+  running: Layout;
   font: {
     family: string;
     setId: string;
@@ -62,7 +69,7 @@ export async function loadConfig(
   warnings.forEach(warn);
 
   const configDir = dirname(path);
-  const { strings, code_root, page, font, ...fields } = parsed.data;
+  const { strings, code_root, page, font, running, ...fields } = parsed.data;
   const family = resolveFamily(path, fields, font?.family, hasKey(raw, "font_set"));
   const pageId = page?.size ?? "default";
   const sizeId = font?.size ?? "m";
@@ -81,6 +88,10 @@ export async function loadConfig(
       strings,
     ),
     page: { id: pageId, ...PAGE_SIZES[pageId] },
+    running: {
+      top: { ...defaultLayout.top, ...running?.top },
+      bottom: { ...defaultLayout.bottom, ...running?.bottom },
+    },
     font: { family: family.id, setId: family.setId, size: { id: sizeId, ...FONT_SIZES[sizeId] } },
   };
   for (const key of PATH_KEYS) {

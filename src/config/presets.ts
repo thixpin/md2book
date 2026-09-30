@@ -132,3 +132,24 @@ export function familyForStyle(language: Language, style: FontStyle): FontFamily
 export function familiesFor(language: Language): FontFamily[] {
   return FAMILY_LIST.filter((f) => f.language === language && f.wizard);
 }
+
+/** What a running head or foot slot shows (`running` in the book config). */
+export const slotValues = ["author", "book-title", "chapter-title", "page-number", "none"] as const;
+export type SlotValue = (typeof slotValues)[number];
+export interface LayoutLine {
+  /** Toward the spine. */
+  inner: SlotValue;
+  center: SlotValue;
+  /** Away from the spine (the page's outer edge). */
+  outer: SlotValue;
+}
+export interface Layout {
+  top: LayoutLine;
+  bottom: LayoutLine;
+}
+
+/** The layout before `running` existed: PDF and web output are unchanged with it. */
+export const defaultLayout: Layout = {
+  top: { inner: "chapter-title", center: "none", outer: "author" },
+  bottom: { inner: "book-title", center: "none", outer: "page-number" },
+};

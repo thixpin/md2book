@@ -483,3 +483,8 @@ pre { line-height: 1.7; }
 .has-tabs .panel-tab { flex: 1 1 auto; min-height: 0; overflow: auto; padding: 0 .4rem; }
 .has-tabs .panel-tab[hidden] { display: none; }
 
+/* md2book addition (specs/decision-log.md): a running head or foot's center part (the book's
+   `running` layout) sits in the middle of the page, whatever the outer and inner parts hold. */
+.page-number > .center, .page-head > .center { position: absolute; left: 50%; translate: -50% 0;
+  max-width: 50%; }
+

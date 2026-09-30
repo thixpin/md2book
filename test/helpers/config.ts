@@ -1,7 +1,7 @@
 import { join } from "node:path";
 import { defaultStrings, type FontStyle, type Language } from "../../src/config/language.ts";
 import type { BookConfig } from "../../src/config/load.ts";
-import { FONT_SIZES, PAGE_SIZES, familyForStyle } from "../../src/config/presets.ts";
+import { FONT_SIZES, PAGE_SIZES, defaultLayout, familyForStyle } from "../../src/config/presets.ts";
 
 /** A resolved config for tests that do not need loadConfig. */
 export function testConfig(
@@ -25,6 +25,7 @@ export function testConfig(
     configDir: dir,
     code_root: dir,
     page: { id: "default", ...PAGE_SIZES.default },
+    running: defaultLayout,
     font: { family: family.id, setId: family.setId, size: { id: "m", ...FONT_SIZES.m } },
     ...overrides,
     language,

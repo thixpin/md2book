@@ -121,6 +121,19 @@ describe("reader DOM", () => {
     expect(html).toContain('<span class="visually-hidden" role="status">Loading the book…</span>');
   });
 
+  it("passes a non-default running layout to the reader, and nothing for the default", async () => {
+    const book = await webBook(await bookMm());
+    const [shell] = find(readerHtml(book, ""), (el) => matches(el, "div[data-reader]"));
+    expect(attr(shell!, "data-running")).toBeUndefined();
+    const running = {
+      top: { inner: "author", center: "book-title", outer: "none" },
+      bottom: { inner: "none", center: "page-number", outer: "none" },
+    } as const;
+    const custom = { ...book, config: { ...book.config, running } };
+    const [customShell] = find(readerHtml(custom, ""), (el) => matches(el, "div[data-reader]"));
+    expect(JSON.parse(attr(customShell!, "data-running")!)).toEqual(running);
+  });
+
   it("gives CSS the cover's edge colour for the hardcover case", async () => {
     const [shell] = find(readerHtml(await webBook(await bookMm()), ""), (el) =>
       matches(el, "div[data-reader]"),

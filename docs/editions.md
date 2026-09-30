@@ -31,6 +31,9 @@ makes all the type smaller or larger together.
   in Myanmar digits (`chapter_digits`).
 - `recto_chapter_start: true` starts every chapter on a right-hand page;
   `running_headers: false` removes the page headers.
+- The running heads and feet (author, book and chapter titles, page
+  number) follow the book's [`running`](configuration.md#running-heads-and-feet)
+  layout, mirrored on left and right pages.
 - Burmese lines break between syllables, never inside one.
 - A section heading never sits alone at the foot of a page; it moves to
   the next page with its first lines.
@@ -67,6 +70,9 @@ A static site of the chapters listed in `web_published_chapters`; other
 chapter files are never read, so unpublished drafts never reach the
 site. It reads like a real book: it opens from a closed cover, pages
 turn with a curled sheet, and wide screens show a two-page spread.
+
+Each page carries the same running head and foot as the PDF, set by
+[`running`](configuration.md#running-heads-and-feet).
 
 Readers get a toolbar with the contents, search, text size, bookmarks
 and fullscreen, and these keys:

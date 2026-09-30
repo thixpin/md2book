@@ -156,6 +156,12 @@
   // Folios are printed with Myanmar digits (U+1040–U+1049), like the book,
   // unless the page asks for ASCII digits (data-folio-digits="ascii").
   const asciiFolios = reader.dataset.folioDigits === "ascii";
+  // md2book: the running heads and feet (data-running; absent means this default layout).
+  const defaultLayout = {
+    top: { inner: "chapter-title", center: "none", outer: "author" },
+    bottom: { inner: "book-title", center: "none", outer: "page-number" },
+  };
+  const layout = reader.dataset.running ? JSON.parse(reader.dataset.running) : defaultLayout;
   const burmeseDigits = (number) =>
     asciiFolios
       ? `${number}`
@@ -407,18 +413,28 @@
   // Both span the text block, in the padding where no text flows. `originX` is the window x of
   // the left edge of the element they are drawn in.
   function placeFolio(el, pageIndex, originX) {
-    placeLine(el, pageIndex, originX, burmeseDigits(pageLabel(pageIndex)), bookTitle, false);
+    placeLine(el, pageIndex, originX, layout.bottom, false);
   }
 
   function placeHead(el, pageIndex, originX) {
-    placeLine(el, pageIndex, originX, bookAuthor, chapterAt(pageIndex)?.shortTitle ?? "", true);
+    placeLine(el, pageIndex, originX, layout.top, true);
   }
+
+  // md2book: what each running slot shows (the book's `running` layout, passed as data-running
+  // when it is not the default below).
+  const runningText = {
+    author: () => bookAuthor,
+    "book-title": () => bookTitle,
+    "chapter-title": (page) => chapterAt(page)?.shortTitle ?? "",
+    "page-number": (page) => burmeseDigits(pageLabel(page)),
+    none: () => "",
+  };
 
   // Numbered pages carry a head, except a chapter's first page, whose own head shows the titles.
   const hasHead = (page) =>
     page >= frontPages && page < bodyEnd && !chapterStarts.some((start) => start.page === page);
 
-  function placeLine(el, pageIndex, originX, outside, inside, top) {
+  function placeLine(el, pageIndex, originX, slots, top) {
     const styles = getComputedStyle(flow);
     const onLeft = pagesPerView === 2 && pageIndex % 2 === 0;
     const left = onLeft
@@ -427,13 +443,17 @@
     const y = top
       ? parseFloat(styles.paddingTop) * 0.36
       : windowEl.clientHeight - parseFloat(styles.paddingBottom) * 0.36;
-    const outer = document.createElement("span");
-    outer.className = "outside";
-    outer.textContent = outside;
-    const inner = document.createElement("span");
-    inner.className = "inside";
-    inner.textContent = inside;
-    el.replaceChildren(...(onLeft ? [outer, inner] : [inner, outer]));
+    const part = (className, value) => {
+      const span = document.createElement("span");
+      span.className = className;
+      span.textContent = runningText[value](pageIndex);
+      return span;
+    };
+    const outer = part("outside", slots.outer);
+    const inner = part("inside", slots.inner);
+    // The center part only when used, so the default line is unchanged.
+    const center = slots.center === "none" ? [] : [part("center", slots.center)];
+    el.replaceChildren(...(onLeft ? [outer, ...center, inner] : [inner, ...center, outer]));
     el.style.width = `${pageWidth}px`;
     el.style.transform = `translate(${left - originX}px, ${y}px) translateY(${top ? 0 : -100}%)`;
   }

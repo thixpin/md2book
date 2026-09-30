@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import { basename } from "node:path";
 import type { BookConfig } from "../config/load.ts";
+import { defaultLayout } from "../config/presets.ts";
 import type { Chapter } from "../manuscript/chapters.ts";
 import type { Part } from "../manuscript/parts.ts";
 import { tocListHtml } from "../manuscript/toc.ts";
@@ -62,10 +63,16 @@ function readerOptions(config: BookConfig): string {
     ["data-name-contents", s.page_names.contents, "Contents"],
     ["data-name-back-cover", s.page_names.back_cover, "Back cover"],
   ];
-  return options
-    .filter(([, value, fallback]) => value !== fallback)
-    .map(([name, value]) => ` ${name}="${esc(value)}"`)
-    .join("");
+  // md2book: the running layout, only when it differs from the default (the reader's own).
+  const running = JSON.stringify(config.running);
+  const runningAttr =
+    running === JSON.stringify(defaultLayout) ? "" : ` data-running="${esc(running)}"`;
+  return (
+    options
+      .filter(([, value, fallback]) => value !== fallback)
+      .map(([name, value]) => ` ${name}="${esc(value)}"`)
+      .join("") + runningAttr
+  );
 }
 
 export function readerHtml(book: WebBook, openChapter: string): string {

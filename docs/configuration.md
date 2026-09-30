@@ -35,6 +35,10 @@ below.
 
   "recto_chapter_start": true,
   "running_headers": true,
+  "running": {
+    "top": { "inner": "chapter-title", "center": "none", "outer": "author" },
+    "bottom": { "inner": "book-title", "center": "none", "outer": "page-number" }
+  },
 
   "web_published_chapters": ["chapter-01.md", "chapter-02.md"],
   "web_url": "https://book.example.com/",
@@ -161,7 +165,63 @@ Noto family of the book's language. Set either `font_set` or
 | Key                   | Default | Meaning                                  |
 | --------------------- | ------- | ---------------------------------------- |
 | `recto_chapter_start` | `false` | start every chapter on a right-hand page |
-| `running_headers`     | `true`  | book and chapter titles in page headers  |
+| `running_headers`     | `true`  | `false` empties the PDF's whole top line |
+
+## Running heads and feet
+
+`running` sets what the line at the top (the running head) and at the
+bottom (the running foot) of each page show, in the PDF and the web
+edition alike. Each line has three slots:
+
+| Slot     | Where                                                                   |
+| -------- | ----------------------------------------------------------------------- |
+| `inner`  | toward the spine: the right of a left page, the left of a right page    |
+| `center` | the middle of the text block                                            |
+| `outer`  | away from the spine: the left of a left page, the right of a right page |
+
+Inner and outer mirror between left and right pages, like a printed
+book. Each slot shows one of:
+
+| Value           | Shows                                 |
+| --------------- | ------------------------------------- |
+| `author`        | the book's `author`                   |
+| `book-title`    | the book's `title`                    |
+| `chapter-title` | the current chapter's title           |
+| `page-number`   | the page number, in the book's digits |
+| `none`          | nothing: the slot stays empty         |
+
+The default is the classic layout, and a book without `running` keeps
+it exactly:
+
+```json
+"running": {
+  "top": { "inner": "chapter-title", "center": "none", "outer": "author" },
+  "bottom": { "inner": "book-title", "center": "none", "outer": "page-number" }
+}
+```
+
+Set only what changes; the other slots keep their defaults. A centred
+page number and nothing else at the foot:
+
+```json
+"running": {
+  "bottom": { "inner": "none", "center": "page-number", "outer": "none" }
+}
+```
+
+The book title centred at the top, the chapter title at the outer
+edge and no author:
+
+```json
+"running": {
+  "top": { "inner": "none", "center": "book-title", "outer": "chapter-title" }
+}
+```
+
+A value outside the list stops the command, naming the slot and the
+allowed values. The front matter and each chapter's first page carry
+no running head, as before. `running_headers: false` still empties the
+whole top line, in the PDF only.
 
 ## Web edition
 

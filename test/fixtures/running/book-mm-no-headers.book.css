@@ -1,0 +1,8 @@
+@page { @bottom-center { content: none; } }
+@page :left { @top-left { content: none; } @top-right { content: none; } @bottom-left { content: var(--md2book-folio); font-size: 9pt; color: #777; vertical-align: top; padding-top: 4mm; } @bottom-right { content: "မြန်မာ စမ်းသပ်စာအုပ်"; font-size: 9pt; color: #777; vertical-align: top; padding-top: 4mm; } }
+@page :right { @top-left { content: none; } @top-right { content: none; } @bottom-left { content: "မြန်မာ စမ်းသပ်စာအုပ်"; font-size: 9pt; color: #777; vertical-align: top; padding-top: 4mm; } @bottom-right { content: var(--md2book-folio); font-size: 9pt; color: #777; vertical-align: top; padding-top: 4mm; } }
+@page :blank { @top-left { content: none; } @top-right { content: none; } @bottom-left { content: none; } @bottom-right { content: none; } }
+@page front { @top-left { content: none; } @top-right { content: none; } @bottom-left { content: none; } @bottom-right { content: none; } }
+@page cover { @top-left { content: none; } @top-right { content: none; } @bottom-left { content: none; } @bottom-right { content: none; } }
+#ch01 { counter-reset: page 1; }
+.toc-page li a::after { content: target-counter(attr(href url), page, myanmar); }
