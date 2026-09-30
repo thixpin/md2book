@@ -1,6 +1,6 @@
 {
   "name": "@thixpin/md2book",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Build print PDF, EPUB and web editions of Markdown books, with first-class Myanmar script support.",
   "keywords": [
     "book",
