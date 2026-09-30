@@ -41,7 +41,7 @@ describe("pagesWorkflow", () => {
       'node "$(npm root -g)/@thixpin/md2book/node_modules/playwright/cli.js" install --with-deps chromium\n',
     );
     expect(workflow).toContain('run: md2book fonts --config "book.json"\n');
-    expect(workflow).toContain("uses: actions/configure-pages@v5\n");
+    expect(workflow).toContain("uses: actions/configure-pages@v6\n");
     expect(workflow).toContain('path: "dist/pages/web"\n');
     expect(workflow).toContain("uses: actions/deploy-pages@v5\n");
     expect(workflow).toContain("      pages: write\n      id-token: write\n");

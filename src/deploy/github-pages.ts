@@ -66,7 +66,7 @@ jobs:
         with:
           node-version: 26
       - id: pages
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@v6
       - name: Install md2book and Chromium
         run: |
           npm install -g @thixpin/md2book@${version}
