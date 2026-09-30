@@ -1,11 +1,6 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import {
-  epubStylesheets,
-  hashedName,
-  readerScript,
-  stylesheet,
-} from "../../../src/web/assets.ts";
+import { epubStylesheets, hashedName, readerScript, stylesheet } from "../../../src/web/assets.ts";
 import { loadManifest } from "../../../src/fonts/manifest.ts";
 import { FIXTURE_MANIFEST } from "../../helpers/fonts.ts";
 

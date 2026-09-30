@@ -43,7 +43,7 @@ describe("md2book fonts", () => {
     const result = await cli(["fonts", "--set", "xx-sans"]);
     expect(result.code).toBe(1);
     expect(result.err).toBe(
-      "md2book: xx-sans: unknown font set; valid sets: my-sans, my-serif, en-sans, en-serif\n",
+      "md2book: xx-sans: unknown font set; valid sets: my-sans, my-serif, en-sans, en-serif, my-padauk, my-masterpiece\n",
     );
   });
 
