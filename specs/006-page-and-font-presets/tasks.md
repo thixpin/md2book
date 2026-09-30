@@ -186,9 +186,13 @@ gains `pageSize`, `fontFamily`, `fontSize`, `chapters` (FR-023).
   font, extracted text equals the source (0 replacement characters, 0 stray glyph-ID letters),
   code and terminal text is in the mono font, and the QA Burmese checks pass; the EPUB embeds the
   set's files with its licence file; make it pass
-- [ ] T025 [US3] **Blocks the next npm release**: the manifest now points at `fonts-v2`. Maintainer step (needs approval): create the `fonts-v2` GitHub release and upload
+- [X] T025 [US3] **Blocks the next npm release**: the manifest now points at `fonts-v2`. Maintainer step (needs approval): create the `fonts-v2` GitHub release and upload
   `build/fonts/` (every set's files and licences); confirm `md2book fonts --set my-padauk` and
   `--set my-masterpiece` download and verify
+  — done 2026-09-30: release `fonts-v2` published; `md2book fonts --set` downloads and verifies
+  all six sets from it. It also carries a stray `NotoSans-Regular-rescaled.ttf` (a temporary file
+  the first `--add-families` run left in `build/fonts/`; the script now writes it to its scratch
+  folder), which no manifest references
 - [X] T026 [US3] Visual verification (SC-003): build `test/fixtures/book-fonts` with each family
   using the real fonts, at `default`/`m` and `a5`/`xl`; render sample pages to PNG; review
   shaping, stacking, Latin, bold/italic, code, terminal, tables, callouts, chapter openings,

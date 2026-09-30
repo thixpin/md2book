@@ -374,12 +374,12 @@ def fetch_pinned(url: str, expected: str) -> bytes:
     return data
 
 
-def rescaled(path: Path, upem: int, scale: float) -> Path:
-    """The font's outlines at `scale`, expressed in `upem` units (for merging fonts of other upems)."""
+def rescaled(path: Path, upem: int, scale: float, tmp: Path) -> Path:
+    """The font's outlines at `scale`, in `upem` units (for merging fonts of other upems), in `tmp`."""
     font = TTFont(str(path))
     scale_upem(font, int(round(upem * scale)))
     font["head"].unitsPerEm = upem
-    out = path.with_name(path.stem + "-rescaled.ttf")
+    out = tmp / (path.stem + "-rescaled.ttf")
     font.save(str(out))
     return out
 
@@ -423,7 +423,7 @@ def add_families() -> int:
     base = TTFont(str(source))
     upem = base["head"].unitsPerEm
     (OUT / "MasterpieceUniRound-OFL.txt").write_bytes(licence_from_name_table(base))
-    merged = Merger().merge([str(source), str(rescaled(OUT / "NotoSans-Regular.ttf", upem, LATIN_SCALE))])
+    merged = Merger().merge([str(source), str(rescaled(OUT / "NotoSans-Regular.ttf", upem, LATIN_SCALE, tmp))])
     set_style(merged, "Masterpiece Uni Round", "MasterpieceUniRound", 400, False)
     # Its own space is 0.62 em (Noto's is 0.26 em), which opens wide gaps in justified lines;
     # give it the merged Noto Sans Latin space width instead (visual review, spec 006 T026).
