@@ -157,6 +157,8 @@ export function readerHtml(book: WebBook, openChapter: string): string {
     '<button type="button" class="reader-tool" data-text-smaller aria-label="Smaller text" title="Smaller text (-)">' +
     '<span class="text-step-small" aria-hidden="true">A</span></button>' +
     '<output data-text-size aria-live="polite">100%</output>' +
+    // md2book: shown while the book re-paginates at the new size.
+    '<span class="text-size-busy" data-text-busy aria-hidden="true" hidden></span>' +
     '<button type="button" class="reader-tool" data-text-larger aria-label="Larger text" title="Larger text (+)">' +
     '<span class="text-step-large" aria-hidden="true">A</span></button>' +
     "</div></div></div>"

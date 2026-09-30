@@ -9,6 +9,20 @@ const REFERENCE_SHA256 = "bb980615d4c6973b16cc0d9c6005054dbb81c149b3e7f816c90275
 // section-sized, preloaded turn surfaces recorded in specs/decision-log.md):
 // [edited text, reference text].
 export const READER_EDITS: [string, string][] = [
+  // md2book: toolbar panels open below their button; a spinner while the text size re-paginates
+  // (specs/decision-log.md).
+  [
+    '  const textSizeOutput = reader.querySelector("[data-text-size]");\n  // md2book: the text size panel and its spinner (stepTextScale).\n  const textPanel = document.getElementById("reader-text");\n  const textBusy = document.querySelector("[data-text-busy]");\n  let resizing = false;\n  let textScale = TEXT_SCALES.includes(storage.read(textScaleKey, 1)) ? storage.read(textScaleKey, 1) : 1;\n',
+    '  const textSizeOutput = reader.querySelector("[data-text-size]");\n  let textScale = TEXT_SCALES.includes(storage.read(textScaleKey, 1)) ? storage.read(textScaleKey, 1) : 1;\n',
+  ],
+  [
+    '    const index = TEXT_SCALES.indexOf(textScale) + delta;\n    if (animating || resizing || index < 0 || index >= TEXT_SCALES.length) return;\n    // md2book: re-paginating a long book takes a moment; the panel shows a spinner (painted\n    // before the work starts) and its buttons wait until the new layout is done.\n    resizing = true;\n    textPanel?.setAttribute("aria-busy", "true");\n    if (textBusy) textBusy.hidden = false;\n    if (textSmaller) textSmaller.disabled = true;\n    if (textLarger) textLarger.disabled = true;\n    requestAnimationFrame(() => window.setTimeout(() => {\n      applyTextScale(TEXT_SCALES[index]);\n      storage.write(textScaleKey, textScale);\n      measure();\n      resizing = false;\n      textPanel?.setAttribute("aria-busy", "false");\n      if (textBusy) textBusy.hidden = true;\n    }, 0));\n  }\n\n  // md2book: toolbar panels open just below their button, right-aligned with it and kept in the\n  // window, instead of in the middle of the screen, so the pointer barely has to move.\n  function placePanel(panel) {\n    const button = document.querySelector(`[popovertarget="${panel.id}"]`);\n    if (!button) return;\n    const rect = button.getBoundingClientRect();\n    const top = rect.bottom + 6;\n    panel.style.inset = "auto";\n    panel.style.margin = "0";\n    panel.style.top = `${top}px`;\n    // The panels are min(90vw, 24rem) wide (web.css): keep the whole panel inside the window.\n    const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);\n    const width = Math.min(window.innerWidth * 0.9, 24 * rem);\n    const right = Math.min(Math.max(8, window.innerWidth - rect.right), window.innerWidth - 8 - width);\n    panel.style.right = `${Math.max(0, right)}px`;\n    panel.style.maxHeight = `min(70vh, 32rem, ${Math.max(160, window.innerHeight - top - 12)}px)`;\n  }\n',
+    "    const index = TEXT_SCALES.indexOf(textScale) + delta;\n    if (animating || index < 0 || index >= TEXT_SCALES.length) return;\n    applyTextScale(TEXT_SCALES[index]);\n    storage.write(textScaleKey, textScale);\n    measure();\n  }\n",
+  ],
+  [
+    '\n  for (const panel of document.querySelectorAll(".reader-panel")) {\n    panel.addEventListener("beforetoggle", (event) => {\n      if (event.newState === "open") placePanel(panel);\n    });\n  }\n  window.addEventListener("resize", () => {\n    const open = document.querySelector(".reader-panel:popover-open");\n    if (open) placePanel(open);\n  });\n  bookmarkToggle.addEventListener("click", toggleBookmark);\n',
+    '\n  bookmarkToggle.addEventListener("click", toggleBookmark);\n',
+  ],
   // md2book: 400 ms turns, a press during a turn lands it at once, and the loading cover fades
   // away (specs/decision-log.md).
   [

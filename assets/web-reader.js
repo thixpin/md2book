@@ -78,6 +78,10 @@
   const textSmaller = reader.querySelector("[data-text-smaller]");
   const textLarger = reader.querySelector("[data-text-larger]");
   const textSizeOutput = reader.querySelector("[data-text-size]");
+  // md2book: the text size panel and its spinner (stepTextScale).
+  const textPanel = document.getElementById("reader-text");
+  const textBusy = document.querySelector("[data-text-busy]");
+  let resizing = false;
   let textScale = TEXT_SCALES.includes(storage.read(textScaleKey, 1)) ? storage.read(textScaleKey, 1) : 1;
   applyTextScale(textScale);
   // Two pages on wide, landscape screens and on foldables spanning their
@@ -745,10 +749,40 @@
 
   function stepTextScale(delta) {
     const index = TEXT_SCALES.indexOf(textScale) + delta;
-    if (animating || index < 0 || index >= TEXT_SCALES.length) return;
-    applyTextScale(TEXT_SCALES[index]);
-    storage.write(textScaleKey, textScale);
-    measure();
+    if (animating || resizing || index < 0 || index >= TEXT_SCALES.length) return;
+    // md2book: re-paginating a long book takes a moment; the panel shows a spinner (painted
+    // before the work starts) and its buttons wait until the new layout is done.
+    resizing = true;
+    textPanel?.setAttribute("aria-busy", "true");
+    if (textBusy) textBusy.hidden = false;
+    if (textSmaller) textSmaller.disabled = true;
+    if (textLarger) textLarger.disabled = true;
+    requestAnimationFrame(() => window.setTimeout(() => {
+      applyTextScale(TEXT_SCALES[index]);
+      storage.write(textScaleKey, textScale);
+      measure();
+      resizing = false;
+      textPanel?.setAttribute("aria-busy", "false");
+      if (textBusy) textBusy.hidden = true;
+    }, 0));
+  }
+
+  // md2book: toolbar panels open just below their button, right-aligned with it and kept in the
+  // window, instead of in the middle of the screen, so the pointer barely has to move.
+  function placePanel(panel) {
+    const button = document.querySelector(`[popovertarget="${panel.id}"]`);
+    if (!button) return;
+    const rect = button.getBoundingClientRect();
+    const top = rect.bottom + 6;
+    panel.style.inset = "auto";
+    panel.style.margin = "0";
+    panel.style.top = `${top}px`;
+    // The panels are min(90vw, 24rem) wide (web.css): keep the whole panel inside the window.
+    const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
+    const width = Math.min(window.innerWidth * 0.9, 24 * rem);
+    const right = Math.min(Math.max(8, window.innerWidth - rect.right), window.innerWidth - 8 - width);
+    panel.style.right = `${Math.max(0, right)}px`;
+    panel.style.maxHeight = `min(70vh, 32rem, ${Math.max(160, window.innerHeight - top - 12)}px)`;
   }
 
   function measure() {
@@ -1179,6 +1213,15 @@
     }));
   }
 
+  for (const panel of document.querySelectorAll(".reader-panel")) {
+    panel.addEventListener("beforetoggle", (event) => {
+      if (event.newState === "open") placePanel(panel);
+    });
+  }
+  window.addEventListener("resize", () => {
+    const open = document.querySelector(".reader-panel:popover-open");
+    if (open) placePanel(open);
+  });
   bookmarkToggle.addEventListener("click", toggleBookmark);
   contentsPanel.addEventListener("toggle", (event) => {
     if (event.newState === "open") renderBookmarks();

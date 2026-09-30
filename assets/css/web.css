@@ -428,3 +428,14 @@ pre { line-height: 1.7; }
   .reader-loading-cover { animation: none; }
   .reader-shell.is-ready .reader-loading { transition: none; }
 }
+
+/* md2book addition (specs/decision-log.md): toolbar panels open just below their button (the
+   reader sets their position), and the text size panel shows a spinner while the book
+   re-paginates; the spin is a transform, so it keeps turning while the page is busy. */
+.text-size-busy { flex: none; width: 1.1rem; height: 1.1rem; border-radius: 50%;
+  border: 2px solid var(--rule); border-top-color: var(--accent);
+  animation: md2book-spin .7s linear infinite; }
+.text-size-busy[hidden] { display: none; }
+@keyframes md2book-spin { to { transform: rotate(1turn); } }
+@media (prefers-reduced-motion: reduce) { .text-size-busy { animation: none; } }
+

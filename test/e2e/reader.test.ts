@@ -94,6 +94,65 @@ describe("loading screen", () => {
   });
 });
 
+describe("toolbar panels", () => {
+  const rects = (page: Page, id: string) =>
+    page.evaluate((panelId) => {
+      const box = (el: Element) => {
+        const r = el.getBoundingClientRect();
+        return { top: r.top, bottom: r.bottom, left: r.left, right: r.right };
+      };
+      return {
+        button: box(document.querySelector(`[popovertarget="${panelId}"]`)!),
+        panel: box(document.getElementById(panelId)!),
+        width: window.innerWidth,
+      };
+    }, id);
+
+  for (const device of [desktop, phone]) {
+    it(`opens each panel just below its toolbar button (${device.name})`, async () => {
+      const page = await open(`${mm.url}chapters/ch01.html`, device);
+      for (const id of ["reader-contents", "reader-search", "reader-text"]) {
+        await page.click(`[popovertarget="${id}"]`);
+        await page.waitForTimeout(150);
+        const { button, panel, width } = await rects(page, id);
+        expect(panel.top, id).toBeGreaterThanOrEqual(button.bottom);
+        expect(panel.top - button.bottom, id).toBeLessThan(16);
+        expect(panel.left, id).toBeGreaterThanOrEqual(0);
+        expect(panel.right, id).toBeLessThanOrEqual(width);
+        // Under its button: right-aligned with it when there is room, otherwise kept in the window.
+        const centre = (button.left + button.right) / 2;
+        expect(centre, id).toBeGreaterThanOrEqual(panel.left);
+        expect(centre, id).toBeLessThanOrEqual(panel.right);
+        if (panel.left > 8) expect(Math.abs(panel.right - button.right), id).toBeLessThan(2);
+        await page.keyboard.press("Escape");
+        await page.waitForTimeout(100);
+      }
+      await page.context().close();
+    });
+  }
+
+  it("shows a spinner in the text size panel while the book re-paginates", async () => {
+    const page = await open(`${mm.url}chapters/ch01.html`);
+    await page.click('[popovertarget="reader-text"]');
+    await page.evaluate(() => {
+      const w = window as unknown as { busy: string[] };
+      w.busy = [];
+      const panel = document.getElementById("reader-text")!;
+      new MutationObserver(() => w.busy.push(panel.getAttribute("aria-busy") ?? "none")).observe(
+        panel,
+        { attributes: true, attributeFilter: ["aria-busy"] },
+      );
+    });
+    await page.click("[data-text-larger]");
+    await page.waitForTimeout(600);
+    const busy = await page.evaluate(() => (window as unknown as { busy: string[] }).busy);
+    expect(busy).toEqual(["true", "false"]);
+    expect(await page.textContent("[data-text-size]")).toBe("110%");
+    expect(await page.locator("[data-text-busy]").isVisible()).toBe(false);
+    await page.context().close();
+  });
+});
+
 describe("reader behaviour (SC-004)", () => {
   it("starts closed on the cover, opens with → and turns back with ←", async () => {
     const page = await open(mm.url);
