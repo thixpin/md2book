@@ -58,4 +58,18 @@ describe("runCli", () => {
     const code = await runCli(["nope"], io.deps);
     expect(code).not.toBe(0);
   });
+
+  it("lists the init presets in its help (spec 006)", async () => {
+    const io = capture();
+    await runCli(["init", "--help"], io.deps);
+    const help = io.out.join("");
+    for (const flag of [
+      "--page-size <size>",
+      "--font-family <id>",
+      "--font-size <size>",
+      "--chapters <folder>",
+    ]) {
+      expect(help).toContain(flag);
+    }
+  });
 });

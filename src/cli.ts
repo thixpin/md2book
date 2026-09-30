@@ -1,3 +1,4 @@
+import { Writable } from "node:stream";
 import { Command, CommanderError } from "commander";
 import { BookError } from "./errors.ts";
 import { runFonts } from "./fonts/command.ts";
@@ -30,19 +31,28 @@ export async function runCli(argv: string[], deps: CliDeps = {}): Promise<number
 
   program
     .command("init")
-    .description("Create a new book project: book.json and chapters/chapter-01.md.")
+    .description("Create a new book project: book.json and a first chapter.")
     .argument("[dir]", "target directory", ".")
     .option("--lang <lang>", "book language: my (Myanmar; mm accepted) or en (English)")
     .option("--font <set>", "font set: sans (default) or serif")
     .option("--title <text>", "book title")
     .option("--author <text>", "book author")
+    .option("--page-size <size>", "PDF page size: default (170 × 240 mm), a5, b5, a4 or letter")
+    .option("--font-family <id>", "font family, for example noto-sans-myanmar")
+    .option("--font-size <size>", "PDF font size: xs, s, m (default), l or xl")
+    .option("--chapters <folder>", "chapter folder inside the book folder (default chapters)")
     .action(async (dir: string, flags: InitAnswers) => {
       const stdin = deps.stdin ?? process.stdin;
       let answers = flags;
       if (stdin.isTTY) {
         answers = await promptMissing(flags, {
           input: stdin as NodeJS.ReadableStream,
-          output: process.stdout,
+          output: new Writable({
+            write(chunk: Buffer, _encoding, done) {
+              stdout(chunk.toString());
+              done();
+            },
+          }),
         });
       } else {
         for (const key of ["lang", "title", "author"] as const) {
@@ -54,6 +64,10 @@ export async function runCli(argv: string[], deps: CliDeps = {}): Promise<number
         dir,
         lang: answers.lang!,
         font: answers.font,
+        fontFamily: answers.fontFamily,
+        pageSize: answers.pageSize,
+        fontSize: answers.fontSize,
+        chapters: answers.chapters,
         title: answers.title!,
         author: answers.author!,
       });

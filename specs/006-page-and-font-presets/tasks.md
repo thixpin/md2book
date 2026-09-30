@@ -118,10 +118,10 @@ gains `pageSize`, `fontFamily`, `fontSize`, `chapters` (FR-023).
 
 ### Tests ⚠️
 
-- [ ] T013 [P] [US4] Write `test/unit/init/select.test.ts`: the prompt renders the question,
+- [X] T013 [P] [US4] Write `test/unit/init/select.test.ts`: the prompt renders the question,
   marks the pre-selected first choice with `❯`, moves with ↑/↓ (escape sequences on the input
   stream), selects with Enter and with a digit, and works without a TTY `setRawMode`
-- [ ] T014 [P] [US4] Update `test/integration/init.test.ts`: (a) default branch → config has
+- [X] T014 [P] [US4] Update `test/integration/init.test.ts`: (a) default branch → config has
   `page.size` `default`, `font.family` `noto-sans-myanmar`, `font.size` `m`, `chapter_glob`
   `chapters/chapter-*.md`, and no `font_set`; asks exactly mode, language, title, author;
   (b) wizard branch choosing A5, Large and Custom `src` → config `a5`/`l`, `chapter_glob`
@@ -132,13 +132,13 @@ gains `pageSize`, `fontFamily`, `fontSize`, `chapters` (FR-023).
   `--page-size`/`--font-size`/`--font-family` → one line listing valid values; `--font serif`
   with `--font-family noto-sans-myanmar` → one line naming both; `--chapters /abs`, `../out` or
   empty → one line naming the flag; existing files are never overwritten
-- [ ] T015 [P] [US4] Update `test/unit/cli.test.ts` and the public-API test: `init --help` lists
+- [X] T015 [P] [US4] Update `test/unit/cli.test.ts` and the public-API test: `init --help` lists
   `--page-size`, `--font-family`, `--font-size`, `--chapters`; `InitOptions` accepts the same
 
 ### Implementation
 
-- [ ] T016 [US4] Implement `src/init/select.ts` (research R-04); pass T013
-- [ ] T017 [US4] Implement the mode question and wizard in `src/init/prompts.ts`, flag
+- [X] T016 [US4] Implement `src/init/select.ts` (research R-04); pass T013
+- [X] T017 [US4] Implement the mode question and wizard in `src/init/prompts.ts`, flag
   validation in `src/init/options.ts`, config writing in `src/init/templates.ts` (page, font,
   `chapter_glob`, no `font_set`), the chapter folder in `src/init/init.ts`, the new flags in
   `src/cli.ts` and `InitOptions` in `src/index.ts`; pass T014 and T015
