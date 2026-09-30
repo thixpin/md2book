@@ -119,6 +119,8 @@
   let animating = false;
   // md2book: the page turn being animated, if any: { jump() } (runTurn).
   let running = null;
+  // md2book: true while measure() shows the (re)laid-out book (syncAddress sends no page view).
+  let laying = false;
   let paperKey = "";
   let surfaces = null;
   let buildTimer;
@@ -618,7 +620,9 @@
     }
     // md2book: the page shows another chapter; web analytics (if the book has it) counts a
     // page view from this event. The reader itself knows no analytics provider.
-    document.dispatchEvent(new CustomEvent("md2book:pageview", { detail: { path, title: document.title } }));
+    if (!laying) {
+      document.dispatchEvent(new CustomEvent("md2book:pageview", { detail: { path, title: document.title } }));
+    }
   }
 
   function renderBookmarks() {
@@ -953,7 +957,10 @@
     });
     const page = keep ? mapPage(keep.page, keep.pageCount) : initialPage();
     turn = Math.floor(page / pagesPerView);
+    // md2book: an address change from a (re)layout is not a page the reader chose: no page view.
+    laying = true;
     showTurn();
+    laying = false;
     requestAnimationFrame(() => flow.classList.remove("is-measuring"));
     // md2book: the book is laid out; the loading cover fades away over it (web.css).
     reader.classList.replace("is-loading", "is-ready");

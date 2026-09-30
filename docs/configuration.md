@@ -231,33 +231,18 @@ whole top line, in the PDF only.
 | `web_published_chapters` | chapter file names to publish, e.g. `["chapter-01.md"]`; required for `build web` |
 | `web_url`                | the site's public URL, for canonical and share links                              |
 | `description`            | the site's description (default: `subtitle`, then `title`)                        |
-| `web_analytics`          | opt-in page-view analytics, see below                                             |
+| `web_analytics`          | opt-in page-view analytics, see [Analytics](analytics.md)                         |
 
 ### Analytics
 
-The web edition loads nothing from other servers unless you add
-`web_analytics`. With it, every page of the site loads the provider's
-tag, and each chapter a reader turns to counts as a page view (the
-reader changes the address without reloading, so md2book sends these
-itself):
-
-| `provider`    | `id`                                                    | Notes                                      |
-| ------------- | ------------------------------------------------------- | ------------------------------------------ |
-| `google`      | measurement id, `G-XXXXXXXXXX`                          | Google Analytics 4; sets cookies           |
-| `plausible`   | the site's domain in Plausible, `book.example.com`      | no cookies                                 |
-| `goatcounter` | the site code, the `mybook` in `mybook.goatcounter.com` | no cookies                                 |
-| `cloudflare`  | the 32-character Web Analytics token                    | no cookies; follows chapter changes itself |
+`web_analytics` turns on page-view analytics with Google Analytics,
+Plausible, GoatCounter or Cloudflare Web Analytics; it is off by
+default. See [Analytics](analytics.md) for the setup of each service,
+what is counted, and privacy.
 
 ```json
 "web_analytics": { "provider": "plausible", "id": "book.example.com" }
 ```
-
-A provider or id in the wrong form stops the build and says what is
-expected. If a reader's browser blocks the provider's script, the book
-reads normally and nothing is counted. Google Analytics uses cookies,
-which in many countries (for example the EU and the UK) require the
-readers' consent; the cookieless providers usually do not. The 404
-page is never counted.
 
 ## Strings
 

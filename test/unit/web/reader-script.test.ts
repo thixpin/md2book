@@ -9,6 +9,23 @@ const REFERENCE_SHA256 = "bb980615d4c6973b16cc0d9c6005054dbb81c149b3e7f816c90275
 // section-sized, preloaded turn surfaces recorded in specs/decision-log.md):
 // [edited text, reference text].
 export const READER_EDITS: [string, string][] = [
+  // md2book: no page view for an address change caused by a (re)layout (specs/decision-log.md).
+  [
+    '  let running = null;\n  // md2book: true while measure() shows the (re)laid-out book (syncAddress sends no page view).\n  let laying = false;\n  let paperKey = "";\n',
+    '  let running = null;\n  let paperKey = "";\n',
+  ],
+  [
+    '    // page view from this event. The reader itself knows no analytics provider.\n    if (!laying) {\n      document.dispatchEvent(new CustomEvent("md2book:pageview", { detail: { path, title: document.title } }));\n    }\n  }\n',
+    '    // page view from this event. The reader itself knows no analytics provider.\n    document.dispatchEvent(new CustomEvent("md2book:pageview", { detail: { path, title: document.title } }));\n  }\n',
+  ],
+  [
+    "    turn = Math.floor(page / pagesPerView);\n    // md2book: an address change from a (re)layout is not a page the reader chose: no page view.\n    laying = true;\n    showTurn();\n",
+    "    turn = Math.floor(page / pagesPerView);\n    showTurn();\n",
+  ],
+  [
+    '    showTurn();\n    laying = false;\n    requestAnimationFrame(() => flow.classList.remove("is-measuring"));\n',
+    '    showTurn();\n    requestAnimationFrame(() => flow.classList.remove("is-measuring"));\n',
+  ],
   // md2book: a md2book:pageview event on each chapter change, for web analytics
   // (specs/decision-log.md).
   [

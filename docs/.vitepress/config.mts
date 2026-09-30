@@ -33,6 +33,7 @@ export default defineConfig({
           { text: "Markdown syntax", link: "/markdown" },
           { text: "Covers", link: "/cover" },
           { text: "Usage examples", link: "/examples" },
+          { text: "Analytics", link: "/analytics" },
         ],
       },
       {

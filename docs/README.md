@@ -16,6 +16,8 @@ Myanmar (Burmese) script.
   PNG with the book's fonts.
 - [Usage examples](examples.md): recipes for common jobs, from a
   Myanmar book to a print-shop PDF and a published web edition.
+- [Analytics](analytics.md): count readers of the web edition with
+  Google Analytics, Plausible, GoatCounter or Cloudflare.
 
 ## Reference
 

@@ -97,6 +97,39 @@ describe("web analytics", { timeout: 120_000 }, () => {
     await served.close();
   });
 
+  it("counts no page view while the reader lays the book out, even when fonts arrive late", async () => {
+    // On a slow machine the first layout runs before the stylesheet and fonts, and the relayout
+    // can move the address through "/" before it settles: that is not a page the reader chose.
+    const served = await serveFixture({
+      ...base,
+      web_analytics: { provider: "goatcounter", id: "mybook" },
+    });
+    const desktop = DEVICES.find((d) => d.name === "Desktop (mouse)")!;
+    const context = await browser.newContext(contextOptions(desktop));
+    await context.route(PROVIDERS, (route) => route.abort());
+    await context.route(/\.(css|ttf)$/, async (route) => {
+      await new Promise((r) => setTimeout(r, 1500));
+      await route.continue();
+    });
+    await context.addInitScript(
+      "window.counted = []; window.goatcounter = { count: (vars) => window.counted.push(vars) };",
+    );
+    const page = await context.newPage();
+    // As slow as a CI runner.
+    await (await context.newCDPSession(page)).send("Emulation.setCPUThrottlingRate", { rate: 6 });
+    await page.goto(`${served.url}chapters/ch01.html`);
+    await page.waitForTimeout(3500);
+    const counted = () =>
+      page.evaluate(() =>
+        (window as unknown as { counted: { path: string }[] }).counted.map((v) => v.path),
+      );
+    expect(await counted()).toEqual([]);
+    await readOn(page);
+    expect(await counted()).toEqual(["/chapters/ch02.html"]);
+    await context.close();
+    await served.close();
+  });
+
   it("keeps reading when the provider's script is blocked", async () => {
     const { page, served } = await reader({
       provider: "cloudflare",

@@ -91,6 +91,7 @@ in [`docs/`](docs/README.md):
 - [Markdown syntax](docs/markdown.md): supported and unsupported syntax
 - [Covers](docs/cover.md)
 - [Usage examples](docs/examples.md)
+- [Analytics](docs/analytics.md): opt-in page-view analytics for the web edition
 - [Commands](docs/commands.md): every command and option
 - [Configuration](docs/configuration.md): every `book.json` key
 - [Editions](docs/editions.md): the PDF, EPUB, web edition and QA report
