@@ -17,6 +17,20 @@ check stops the script with a non-zero exit.
 
   python scripts/build-fonts.py        (needs fontTools and network access once)
 Output: build/fonts/ (git-ignored; uploaded to the fonts-v1 release) and assets/fonts-manifest.json.
+
+Spec 006 adds two Myanmar families without rebuilding the four sets above (whose upstream is the
+latest Noto release, so a rebuild could change their bytes):
+
+  my-padauk       Padauk 6.000 (SIL), Regular/SemiBold/Bold copied unmodified: its OFL
+                  reserves the name "Padauk", so it is never merged or obliqued
+  my-masterpiece  Masterpiece Uni Round 1.0 + Noto Sans Latin (scaled 0.93), Regular only; its
+                  OFL (no reserved name) is taken from the font's name table
+
+  python scripts/build-fonts.py --add-families
+
+Needs the existing build/fonts/ (matching the manifest); downloads are pinned by SHA-256. Writes
+the new files next to the old ones and the manifest with release fonts-v2, which then holds
+every set's files.
 """
 from __future__ import annotations
 
@@ -335,5 +349,105 @@ def main() -> int:
     return 0
 
 
+ADDED_RELEASE = "fonts-v2"
+ADDED_BASE_URL = "https://github.com/thixpin/md2book/releases/download/fonts-v2/"
+PADAUK_ZIP = (
+    "https://github.com/silnrsi/font-padauk/releases/download/v6.000/Padauk-6.000.zip",
+    "4f5fd3e50292d07467cea545cceb326506d6d4efeefcc1204375c0c2a3ebcad9",
+)
+MASTERPIECE_TTF = (
+    "https://sourceforge.net/projects/prahita/files/Myanmar%20Unicode%20Fonts/"
+    "MasterpieceUniRound/MasterpieceUniRound.ttf/download",
+    "982bc5b540b8e5204fea26c5123cd65411dc9b957b6c1fdacb6f616b57c9545c",
+)
+PADAUK_FACES = {"body-regular": "Regular", "body-semibold": "SemiBold", "body-bold": "Bold"}
+
+
+def fetch_pinned(url: str, expected: str) -> bytes:
+    print(f"Downloading {url}")
+    request = urllib.request.Request(url, headers={"User-Agent": "md2book build-fonts"})
+    with urllib.request.urlopen(request, timeout=600) as r:
+        data = r.read()
+    actual = hashlib.sha256(data).hexdigest()
+    if actual != expected:
+        fail(f"{url}: SHA-256 {actual} does not match the pinned {expected}")
+    return data
+
+
+def rescaled(path: Path, upem: int, scale: float) -> Path:
+    """The font's outlines at `scale`, expressed in `upem` units (for merging fonts of other upems)."""
+    font = TTFont(str(path))
+    scale_upem(font, int(round(upem * scale)))
+    font["head"].unitsPerEm = upem
+    out = path.with_name(path.stem + "-rescaled.ttf")
+    font.save(str(out))
+    return out
+
+
+def licence_from_name_table(font: TTFont) -> bytes:
+    text = font["name"].getDebugName(13)
+    if not text or "SIL Open Font License" not in text:
+        fail("no OFL text in the font's name table (ID 13)")
+    return (text.replace("\r\n", "\n").strip() + "\n").encode()
+
+
+def face_entry(role: str, name: str) -> dict:
+    return {"role": role, "file": name, "weight": STYLE[role][1], "italic": STYLE[role][2], "sha256": sha256(name)}
+
+
+def add_families() -> int:
+    manifest = json.loads(MANIFEST.read_text())
+    sets = manifest["sets"]
+    for entry in sets.values():
+        for face in [*entry["faces"], entry["licence"]]:
+            if not (OUT / face["file"]).exists() or sha256(face["file"]) != face["sha256"]:
+                fail(f"build/fonts/{face['file']} does not match the manifest; restore it first")
+    mono = [face for face in sets["my-sans"]["faces"] if face["role"].startswith("mono-")]
+
+    padauk = zipfile.ZipFile(io.BytesIO(fetch_pinned(*PADAUK_ZIP)))
+    faces = []
+    for role, face in PADAUK_FACES.items():
+        name = f"Padauk-{face}.ttf"
+        (OUT / name).write_bytes(padauk.read(f"Padauk-6.000/{name}"))
+        faces.append(face_entry(role, name))
+    (OUT / "Padauk-OFL.txt").write_bytes(padauk.read("Padauk-6.000/OFL.txt"))
+    sets["my-padauk"] = {
+        "language": "my", "body_family": "Padauk", "mono_family": "Noto Sans Mono",
+        "faces": faces + mono, "licence": {"file": "Padauk-OFL.txt", "sha256": sha256("Padauk-OFL.txt")},
+    }
+
+    tmp = OUT / "_src"
+    tmp.mkdir(exist_ok=True)
+    source = tmp / "MasterpieceUniRound.ttf"
+    source.write_bytes(fetch_pinned(*MASTERPIECE_TTF))
+    base = TTFont(str(source))
+    upem = base["head"].unitsPerEm
+    (OUT / "MasterpieceUniRound-OFL.txt").write_bytes(licence_from_name_table(base))
+    merged = Merger().merge([str(source), str(rescaled(OUT / "NotoSans-Regular.ttf", upem, LATIN_SCALE))])
+    set_style(merged, "Masterpiece Uni Round", "MasterpieceUniRound", 400, False)
+    merged.save(str(OUT / "MasterpieceUniRound-Regular.ttf"))
+    for p in tmp.iterdir():
+        p.unlink()
+    tmp.rmdir()
+    sets["my-masterpiece"] = {
+        "language": "my", "body_family": "Masterpiece Uni Round", "mono_family": "Noto Sans Mono",
+        "faces": [face_entry("body-regular", "MasterpieceUniRound-Regular.ttf")] + mono,
+        "licence": {"file": "MasterpieceUniRound-OFL.txt", "sha256": sha256("MasterpieceUniRound-OFL.txt")},
+    }
+
+    for set_id in ("my-padauk", "my-masterpiece"):
+        for face in sets[set_id]["faces"]:
+            cmap = TTFont(str(OUT / face["file"])).getBestCmap()
+            for cp in (0x1000, 0x61):
+                if cp not in cmap:
+                    fail(f"{set_id}: {face['file']} lacks U+{cp:04X}")
+            print(f"{set_id} {face['file']}: {len(cmap)} codepoints")
+
+    manifest.update({"release": ADDED_RELEASE, "base_url": ADDED_BASE_URL, "sets": sets})
+    MANIFEST.write_text(json.dumps(manifest, indent=2) + "\n")
+    print(f"Added my-padauk and my-masterpiece to {OUT}; manifest written to {MANIFEST}")
+    return 0
+
+
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(add_families() if "--add-families" in sys.argv else main())

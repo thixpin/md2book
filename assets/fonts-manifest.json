@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "release": "fonts-v1",
-  "base_url": "https://github.com/thixpin/md2book/releases/download/fonts-v1/",
+  "release": "fonts-v2",
+  "base_url": "https://github.com/thixpin/md2book/releases/download/fonts-v2/",
   "sets": {
     "my-sans": {
       "language": "my",
@@ -245,6 +245,84 @@
       "licence": {
         "file": "LICENSE-OFL.txt",
         "sha256": "246a75859267af7da466823969d2e2b407ed8455ee5f74f4c8d63d8783be9b57"
+      }
+    },
+    "my-padauk": {
+      "language": "my",
+      "body_family": "Padauk",
+      "mono_family": "Noto Sans Mono",
+      "faces": [
+        {
+          "role": "body-regular",
+          "file": "Padauk-Regular.ttf",
+          "weight": 400,
+          "italic": false,
+          "sha256": "3dd5406194518d903c423fc77822be4e8b6c9e6a75dfacda2eafc1a54e64cade"
+        },
+        {
+          "role": "body-semibold",
+          "file": "Padauk-SemiBold.ttf",
+          "weight": 600,
+          "italic": false,
+          "sha256": "5acd54422ffa854a5d36a7f6805913d4d27d6c183d2f540fefcd3c5d6d22d59d"
+        },
+        {
+          "role": "body-bold",
+          "file": "Padauk-Bold.ttf",
+          "weight": 700,
+          "italic": false,
+          "sha256": "61aa2f322143229e477a3eeefdc157020ad8f477d9574685f73ecdcbe16fa0b5"
+        },
+        {
+          "role": "mono-regular",
+          "file": "NotoSansMono-Regular.ttf",
+          "weight": 400,
+          "italic": false,
+          "sha256": "a45fb11bb1bf49bc2d21563ce6feb153c87dd2e5440601efecc4d9a29fcdf4a8"
+        },
+        {
+          "role": "mono-bold",
+          "file": "NotoSansMono-Bold.ttf",
+          "weight": 700,
+          "italic": false,
+          "sha256": "fe99ebe0d8134edd363c4ce5fedf0b13b71f8f11633e38172bc4a2c47d35b059"
+        }
+      ],
+      "licence": {
+        "file": "Padauk-OFL.txt",
+        "sha256": "481f3db6a2a44668f5b60d05f9f26d58464df1bad86dd3baae1fc0b3a053d0e4"
+      }
+    },
+    "my-masterpiece": {
+      "language": "my",
+      "body_family": "Masterpiece Uni Round",
+      "mono_family": "Noto Sans Mono",
+      "faces": [
+        {
+          "role": "body-regular",
+          "file": "MasterpieceUniRound-Regular.ttf",
+          "weight": 400,
+          "italic": false,
+          "sha256": "3b62d12c206a58122e34c33bde3963edd629871a9baead9789bd3ad718dcd0dd"
+        },
+        {
+          "role": "mono-regular",
+          "file": "NotoSansMono-Regular.ttf",
+          "weight": 400,
+          "italic": false,
+          "sha256": "a45fb11bb1bf49bc2d21563ce6feb153c87dd2e5440601efecc4d9a29fcdf4a8"
+        },
+        {
+          "role": "mono-bold",
+          "file": "NotoSansMono-Bold.ttf",
+          "weight": 700,
+          "italic": false,
+          "sha256": "fe99ebe0d8134edd363c4ce5fedf0b13b71f8f11633e38172bc4a2c47d35b059"
+        }
+      ],
+      "licence": {
+        "file": "MasterpieceUniRound-OFL.txt",
+        "sha256": "e564f06d018e7b95bc3594c96a17f1d41865af4038c375e7aa974dd69df38602"
       }
     }
   }

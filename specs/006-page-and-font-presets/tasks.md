@@ -169,7 +169,7 @@ gains `pageSize`, `fontFamily`, `fontSize`, `chapters` (FR-023).
 
 ### Fonts (maintainer build, fixtures, release)
 
-- [ ] T021 [US3] Extend `scripts/build-fonts.py` per research R-07: `my-padauk` (Padauk v6.000
+- [X] T021 [US3] Extend `scripts/build-fonts.py` per research R-07: `my-padauk` (Padauk v6.000
   Regular/SemiBold/Bold copied unmodified from the release zip, zip checksum verified, `OFL.txt`)
   and `my-masterpiece` (Masterpiece Uni Round 1.0, checksum-pinned, merged with Noto Sans Latin
   at 0.93, Regular only, `OFL.txt` extracted from the font's name table); release `fonts-v2`;
@@ -186,7 +186,7 @@ gains `pageSize`, `fontFamily`, `fontSize`, `chapters` (FR-023).
   font, extracted text equals the source (0 replacement characters, 0 stray glyph-ID letters),
   code and terminal text is in the mono font, and the QA Burmese checks pass; the EPUB embeds the
   set's files with its licence file; make it pass
-- [ ] T025 [US3] Maintainer step (needs approval): create the `fonts-v2` GitHub release and upload
+- [ ] T025 [US3] **Blocks the next npm release**: the manifest now points at `fonts-v2`. Maintainer step (needs approval): create the `fonts-v2` GitHub release and upload
   `build/fonts/` (every set's files and licences); confirm `md2book fonts --set my-padauk` and
   `--set my-masterpiece` download and verify
 - [ ] T026 [US3] Visual verification (SC-003): build `test/fixtures/book-fonts` with each family
