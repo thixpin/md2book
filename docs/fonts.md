@@ -18,6 +18,37 @@ italic face, the renderer draws a synthetic bold or slant, and the QA
 report says so. Code and terminal blocks always use Noto Sans Mono
 (with Myanmar) in regular and bold, whatever the family.
 
+## Previews
+
+Each Myanmar set shows the Myanmar pangram, which uses every consonant
+of the alphabet, in regular and then in bold, and a line of Latin text.
+The images are rendered the way the PDF edition renders text, so the
+Masterpiece Uni Round bold is the synthetic one your book gets.
+
+### Noto Sans Myanmar
+
+![Noto Sans Myanmar: the Myanmar pangram သီဟိုဠ်မှ ဉာဏ်ကြီးရှင်သည် … in regular and bold, and a Latin line](images/fonts/my-sans.png)
+
+### Masterpiece Uni Round
+
+![Masterpiece Uni Round: the Myanmar pangram in regular and synthetic bold, and a Latin line](images/fonts/my-masterpiece.png)
+
+### Padauk
+
+![Padauk: the Myanmar pangram in regular and bold, and a Latin line](images/fonts/my-padauk.png)
+
+### Noto Serif Myanmar
+
+![Noto Serif Myanmar: the Myanmar pangram in regular and bold, and a Latin line](images/fonts/my-serif.png)
+
+### Noto Sans
+
+![Noto Sans: The quick brown fox jumps over the lazy dog, in regular and bold](images/fonts/en-sans.png)
+
+### Noto Serif
+
+![Noto Serif: The quick brown fox jumps over the lazy dog, in regular and bold](images/fonts/en-serif.png)
+
 ## Licences
 
 Every font md2book downloads is licensed under the
