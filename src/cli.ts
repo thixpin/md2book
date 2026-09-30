@@ -39,7 +39,7 @@ export async function runCli(argv: string[], deps: CliDeps = {}): Promise<number
     .description("Create a new book project: book.json and a first chapter.")
     .argument("[dir]", "target directory", ".")
     .option("-l, --lang <lang>", "book language: my (Myanmar; mm accepted) or en (English)")
-    .option("--font <set>", "font set: sans (default) or serif")
+    .option("--font <set>", "deprecated: use --font-family")
     .option("-t, --title <text>", "book title")
     .option("-a, --author <text>", "book author")
     .option("-p, --page-size <size>", "PDF page size: default (170 × 240 mm), a5, b5, a4 or letter")

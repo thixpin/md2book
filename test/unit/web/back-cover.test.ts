@@ -24,7 +24,7 @@ describe("writeBackCover", () => {
   it("copies a configured back cover", async () => {
     const dir = tempDir({ "back.jpg": PNG_1X1 });
     const out = tempDir();
-    const config = testConfig(dir, { back_cover: join(dir, "back.jpg") });
+    const config = testConfig(dir, { web_back_cover: join(dir, "back.jpg") });
     expect(await writeBackCover(config, out, facts, await mySans(), FIXTURE_FONTS)).toBe(
       "back-cover.jpg",
     );
@@ -33,7 +33,7 @@ describe("writeBackCover", () => {
 
   it("stops when a configured back cover is missing", async () => {
     const dir = tempDir();
-    const config = testConfig(dir, { back_cover: join(dir, "nope.png") });
+    const config = testConfig(dir, { web_back_cover: join(dir, "nope.png") });
     const error: unknown = await writeBackCover(
       config,
       tempDir(),
@@ -41,7 +41,7 @@ describe("writeBackCover", () => {
       await mySans(),
       FIXTURE_FONTS,
     ).catch((e: unknown) => e);
-    expect(error).toEqual(new BookError(join(dir, "nope.png"), "back_cover not found"));
+    expect(error).toEqual(new BookError(join(dir, "nope.png"), "web_back_cover not found"));
   });
 
   it(

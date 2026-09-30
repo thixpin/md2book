@@ -29,8 +29,7 @@ makes all the type smaller or larger together.
 
 - Page 1 is the first page of chapter one. Myanmar books number pages
   in Myanmar digits (`chapter_digits`).
-- `recto_chapter_start: true` starts every chapter on a right-hand page;
-  `running_headers: false` removes the page headers.
+- `recto_chapter_start: true` starts every chapter on a right-hand page.
 - The running heads and feet (author, book and chapter titles, page
   number) follow the book's [`running`](configuration.md#running-heads-and-feet)
   layout, mirrored on left and right pages.
@@ -104,12 +103,12 @@ every published chapter by its absolute URL; the 404 page is marked
 `noindex` and is not listed. A sitemap needs the site's address, so
 without `web_url` it is not written and `robots.txt` does not name it.
 
-| Key           | Effect                                                            |
-| ------------- | ----------------------------------------------------------------- |
-| `web_url`     | canonical and share links, the sitemap and the site's path        |
-| `description` | the page description (default `subtitle`, then `title`)           |
-| `favicon`     | an SVG icon                                                       |
-| `back_cover`  | the back cover; without it a plain one is generated with Chromium |
+| Key               | Effect                                                            |
+| ----------------- | ----------------------------------------------------------------- |
+| `web_url`         | canonical and share links, the sitemap and the site's path        |
+| `web_description` | the page description (default `subtitle`, then `title`)           |
+| `web_favicon`     | an SVG icon                                                       |
+| `web_back_cover`  | the back cover; without it a plain one is generated with Chromium |
 
 `serve` builds the site, then serves it at `http://127.0.0.1:8000/`
 (`--port` changes the port) until Ctrl+C.

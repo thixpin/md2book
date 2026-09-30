@@ -63,9 +63,16 @@ export const bookConfigSchema = z.object({
   identifier: nonEmpty,
   output_name: nonEmpty,
   cover: nonEmpty,
+  web_back_cover: z.string().optional(),
+  web_favicon: z.string().optional(),
+  web_url: z
+    .string()
+    .regex(/^https?:\/\/[^/\s]+/, "must be an absolute http(s) URL, like https://book.example.com/")
+    .optional(),
+  web_description: z.string().optional(),
+  // Deprecated names of web_back_cover, web_favicon and web_description (removed before 1.0).
   back_cover: z.string().optional(),
   favicon: z.string().optional(),
-  web_url: z.string().optional(),
   description: z.string().optional(),
   chapter_glob: nonEmpty,
   part_glob: z.string().optional(),

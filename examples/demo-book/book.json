@@ -7,7 +7,9 @@
   "output_name": "python",
   "cover": "cover/cover.png",
   "chapter_glob": "chapters/chapter-*.md",
-  "font_set": "sans",
+  "font": {
+    "family": "noto-sans-myanmar"
+  },
   "strings": {
     "licence_text": "This work is licensed under the MIT License. https://opensource.org/license/mit"
   },
@@ -18,9 +20,8 @@
     "chapter-02.md"
   ],
   "subtitle": "စတင်လေ့လာသူများအတွက် လက်တွေ့ လမ်းညွှန်",
-  "description": "Python ကို မြန်မာလို စတင်လေ့လာသူများအတွက် ဥပမာ စာအုပ်။",
+  "web_description": "Python ကို မြန်မာလို စတင်လေ့လာသူများအတွက် ဥပမာ စာအုပ်။",
   "recto_chapter_start": true,
-  "running_headers": true,
   "end_image": "cover/end.png",
   "end_image_after": "chapter-03.md"
 }

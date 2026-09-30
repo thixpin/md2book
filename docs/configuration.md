@@ -3,7 +3,7 @@
 A book is described by one JSON file, `book.json` by convention.
 `md2book init` writes a starting one with the required keys.
 
-This example sets every key except the legacy `font_set`. Only `title`, `author`, `year`,
+This example sets every current key ([deprecated keys](#deprecated-keys) are left out). Only `title`, `author`, `year`,
 `identifier`, `output_name`, `cover` and `chapter_glob` are required;
 leave out any other key to use its default, described in the tables
 below.
@@ -25,8 +25,8 @@ below.
   "code_root": "code",
 
   "cover": "cover/cover.png",
-  "back_cover": "cover/back.png",
-  "favicon": "cover/favicon.svg",
+  "web_back_cover": "cover/back.png",
+  "web_favicon": "cover/favicon.svg",
   "end_image": "cover/end.png",
   "end_image_after": "chapter-12.md",
 
@@ -34,7 +34,6 @@ below.
   "font": { "family": "noto-serif", "size": "s" },
 
   "recto_chapter_start": true,
-  "running_headers": true,
   "running": {
     "top": { "inner": "chapter-title", "center": "none", "outer": "author" },
     "bottom": { "inner": "book-title", "center": "none", "outer": "page-number" }
@@ -43,7 +42,7 @@ below.
   "web_published_chapters": ["chapter-01.md", "chapter-02.md"],
   "web_url": "https://book.example.com/",
   "web_analytics": { "provider": "plausible", "id": "book.example.com" },
-  "description": "Learn Python by building small, useful programs.",
+  "web_description": "Learn Python by building small, useful programs.",
 
   "strings": {
     "chapter_label": "Chapter",
@@ -116,8 +115,8 @@ See [Writing chapters](writing.md).
 | Key               | Required | Meaning                                                                       |
 | ----------------- | -------- | ----------------------------------------------------------------------------- |
 | `cover`           | yes      | cover image, PNG or JPEG                                                      |
-| `back_cover`      | no       | web edition back cover; without it a plain one is generated                   |
-| `favicon`         | no       | web edition icon, SVG                                                         |
+| `web_back_cover`  | no       | web edition back cover; without it a plain one is generated                   |
+| `web_favicon`     | no       | web edition icon, SVG                                                         |
 | `end_image`       | no       | closing image after the last chapter                                          |
 | `end_image_after` | no       | chapter file that must exist before `end_image` appears, e.g. `chapter-03.md` |
 
@@ -157,16 +156,15 @@ The family sets the typeface of every edition; code and terminal
 blocks always use Noto Sans Mono. See [Fonts](fonts.md) for each
 family's styles and licence.
 
-The older `font_set` key (`sans` or `serif`) still works and picks the
-Noto family of the book's language. Set either `font_set` or
-`font.family`; if both are set they must name the same family.
+The older `font_set` key (`sans` or `serif`) is
+[deprecated](#deprecated-keys): it still picks the Noto family of the
+book's language, with a warning; use `font.family`.
 
 ## PDF
 
 | Key                   | Default | Meaning                                  |
 | --------------------- | ------- | ---------------------------------------- |
 | `recto_chapter_start` | `false` | start every chapter on a right-hand page |
-| `running_headers`     | `true`  | `false` empties the PDF's whole top line |
 
 ## Running heads and feet
 
@@ -221,8 +219,8 @@ edge and no author:
 
 A value outside the list stops the command, naming the slot and the
 allowed values. The front matter and each chapter's first page carry
-no running head, as before. `running_headers: false` still empties the
-whole top line, in the PDF only.
+no running head, as before. To leave the top line empty, set its slots
+to `none`: `"running": { "top": { "inner": "none", "outer": "none" } }`.
 
 ## Web edition
 
@@ -230,13 +228,16 @@ whole top line, in the PDF only.
 | ------------------------ | --------------------------------------------------------------------------------- |
 | `web_published_chapters` | chapter file names to publish, e.g. `["chapter-01.md"]`; required for `build web` |
 | `web_url`                | the site's public URL, see below                                                  |
-| `description`            | the site's description (default: `subtitle`, then `title`)                        |
+| `web_description`        | the site's description (default: `subtitle`, then `title`)                        |
+| `web_favicon`            | the site's icon, see [Images](#images)                                            |
+| `web_back_cover`         | the back cover of the reader, see [Images](#images)                               |
 | `web_analytics`          | opt-in page-view analytics, see [Analytics](analytics.md)                         |
 
 ### Site URL
 
 `web_url` is the address readers open, like
-`https://book.example.com/`. The web edition uses it for:
+`https://book.example.com/`: an absolute `http` or `https` URL, or the
+command stops. The web edition uses it for:
 
 - the canonical and share (`og:url`, `og:image`) links of each page;
 - `sitemap.xml`, which lists the absolute URL of the home page and each
@@ -260,6 +261,21 @@ what is counted, and privacy.
 ```json
 "web_analytics": { "provider": "plausible", "id": "book.example.com" }
 ```
+
+## Deprecated keys
+
+These keys still work in 0.x but print a warning naming the
+replacement, and will be removed before md2book 1.0:
+
+| Deprecated        | Use instead                                                                           |
+| ----------------- | ------------------------------------------------------------------------------------- |
+| `description`     | `web_description`                                                                     |
+| `favicon`         | `web_favicon`                                                                         |
+| `back_cover`      | `web_back_cover`                                                                      |
+| `font_set`        | `font.family` (the warning names the family your `font_set` selects)                  |
+| `running_headers` | `running`: `false` becomes `"top": { "inner": "none", "outer": "none" }`; drop `true` |
+
+A key set under both its old and its new name stops the command.
 
 ## Strings
 

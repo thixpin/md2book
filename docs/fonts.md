@@ -2,7 +2,7 @@
 
 md2book typesets every edition with one of six curated font sets. The
 book's [`font.family`](configuration.md#page-and-fonts) picks the set
-(or the older `font_set`, which picks the Noto set of the language):
+(the deprecated `font_set` still picks the Noto set of the language):
 
 | `font.family`           | Set              | Body typeface         | Styles                                       |
 | ----------------------- | ---------------- | --------------------- | -------------------------------------------- |

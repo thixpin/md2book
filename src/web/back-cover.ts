@@ -10,7 +10,7 @@ import type { CoverFacts } from "./images.ts";
 const WIDTH = 850;
 
 /**
- * Copies `back_cover`, or renders a plain one in the cover's edge colour with the title near the
+ * Copies `web_back_cover`, or renders a plain one in the cover's edge colour with the title near the
  * top and the author near the bottom (reference web.py). A browser engine lays the text out so
  * Myanmar shapes correctly. Returns the file name written into `web`.
  */
@@ -21,11 +21,11 @@ export async function writeBackCover(
   set: FontSet,
   fontsDir: string,
 ): Promise<string> {
-  if (config.back_cover) {
-    if (!existsSync(config.back_cover))
-      throw new BookError(config.back_cover, "back_cover not found");
-    const name = `back-cover${extname(config.back_cover)}`;
-    copyFileSync(config.back_cover, join(web, name));
+  if (config.web_back_cover) {
+    if (!existsSync(config.web_back_cover))
+      throw new BookError(config.web_back_cover, "web_back_cover not found");
+    const name = `back-cover${extname(config.web_back_cover)}`;
+    copyFileSync(config.web_back_cover, join(web, name));
     return name;
   }
 

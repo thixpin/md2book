@@ -56,17 +56,22 @@
       "minLength": 1,
       "description": "PNG or JPEG. Must exist."
     },
-    "back_cover": {
-      "type": "string"
+    "web_back_cover": {
+      "type": "string",
+      "description": "The web edition's back cover image; without it a plain one is generated."
     },
-    "favicon": {
-      "type": "string"
+    "web_favicon": {
+      "type": "string",
+      "description": "An SVG icon for the web edition; without it an open book in the cover's edge colour."
     },
     "web_url": {
-      "type": "string"
+      "type": "string",
+      "pattern": "^https?:\\/\\/[^/\\s]+",
+      "description": "The web edition's public URL: absolute http(s); its path is the site's path (GitHub project Pages)."
     },
-    "description": {
-      "type": "string"
+    "web_description": {
+      "type": "string",
+      "description": "The web edition's page description (default: subtitle, then title)."
     },
     "chapter_glob": {
       "type": "string",
@@ -160,7 +165,8 @@
     },
     "running_headers": {
       "type": "boolean",
-      "default": true
+      "default": true,
+      "description": "Deprecated (removed before 1.0): use running.top."
     },
     "end_image": {
       "type": "string"
@@ -174,7 +180,7 @@
         "serif"
       ],
       "default": "sans",
-      "description": "Curated font set for the book's language.",
+      "description": "Deprecated (removed before 1.0): use font.family.",
       "type": "string"
     },
     "page": {
@@ -357,6 +363,18 @@
           "minLength": 1
         }
       }
+    },
+    "back_cover": {
+      "type": "string",
+      "description": "Deprecated (removed before 1.0): old name of web_back_cover."
+    },
+    "favicon": {
+      "type": "string",
+      "description": "Deprecated (removed before 1.0): old name of web_favicon."
+    },
+    "description": {
+      "type": "string",
+      "description": "Deprecated (removed before 1.0): old name of web_description."
     }
   }
 }

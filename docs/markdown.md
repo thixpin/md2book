@@ -222,5 +222,5 @@ Press <kbd>Ctrl</kbd>+<kbd>C</kbd> to stop.
 
 Images inside chapters are not supported: the PDF build stops with
 `unexpected request` and the EPUB would reference a missing file. The
-book's images are the `cover`, the web edition's `back_cover` and the
+book's images are the `cover`, the web edition's `web_back_cover` and the
 closing `end_image`, set in [`book.json`](configuration.md#images).

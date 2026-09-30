@@ -21,7 +21,7 @@ import { bookConfigSchema, type RawBookConfig } from "./schema.ts";
 
 export type BookConfig = Omit<
   RawBookConfig,
-  "strings" | "code_root" | "page" | "font" | "running"
+  "strings" | "code_root" | "page" | "font" | "running" | keyof typeof RENAMED
 > & {
   configPath: string;
   configDir: string;
@@ -43,10 +43,17 @@ export interface LoadedConfig {
   placeholders: { key: string; value: string }[];
 }
 
+// Deprecated names (removed before 1.0), still read with a warning.
+const RENAMED = {
+  description: "web_description",
+  favicon: "web_favicon",
+  back_cover: "web_back_cover",
+} as const;
+
 const PATH_KEYS = [
   "cover",
-  "back_cover",
-  "favicon",
+  "web_back_cover",
+  "web_favicon",
   "chapter_glob",
   "part_glob",
   "end_image",
@@ -69,12 +76,24 @@ export async function loadConfig(
   warnings.forEach(warn);
 
   const configDir = dirname(path);
-  const { strings, code_root, page, font, running, ...fields } = parsed.data;
+  const { strings, code_root, page, font, running, description, favicon, back_cover, ...fields } =
+    parsed.data;
   const family = resolveFamily(path, fields, font?.family, hasKey(raw, "font_set"));
+  const deprecated = deprecations(raw, family.id, fields.running_headers);
+  deprecated.forEach(warn);
+  warnings.push(...deprecated);
+  for (const [old, current] of Object.entries(RENAMED)) {
+    if (hasKey(raw, old) && hasKey(raw, current)) {
+      throw new BookError(path, `${old} is the old name of ${current}; keep only ${current}`);
+    }
+  }
   const pageId = page?.size ?? "default";
   const sizeId = font?.size ?? "m";
   const config: BookConfig = {
     ...fields,
+    web_description: fields.web_description ?? description,
+    web_favicon: fields.web_favicon ?? favicon,
+    web_back_cover: fields.web_back_cover ?? back_cover,
     publisher: fields.publisher || undefined,
     isbn: fields.isbn || undefined,
     configPath: path,
@@ -103,6 +122,25 @@ export async function loadConfig(
   }
 
   return { config, warnings, placeholders: findPlaceholders(parsed.data) };
+}
+
+/** One warning per deprecated key the file sets, naming what replaces it. */
+function deprecations(raw: unknown, familyId: string, runningHeaders: boolean): string[] {
+  const found: string[] = [];
+  for (const [old, current] of Object.entries(RENAMED)) {
+    if (hasKey(raw, old)) found.push(`${old} is deprecated; rename it ${current}`);
+  }
+  if (hasKey(raw, "font_set")) {
+    found.push(`font_set is deprecated; use "font": { "family": "${familyId}" }`);
+  }
+  if (hasKey(raw, "running_headers")) {
+    found.push(
+      runningHeaders
+        ? "running_headers is deprecated; remove it (the running heads are on by default)"
+        : 'running_headers is deprecated; set "running": { "top": { "inner": "none", "outer": "none" } }',
+    );
+  }
+  return found;
 }
 
 function hasKey(raw: unknown, key: string): boolean {

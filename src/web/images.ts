@@ -110,11 +110,11 @@ export async function writeFavicons(
   facts: CoverFacts,
 ): Promise<void> {
   const svg = join(web, "favicon.svg");
-  if (config.favicon) {
-    if (extname(config.favicon) !== ".svg" || !existsSync(config.favicon)) {
-      throw new BookError(config.favicon, "favicon must be an existing .svg file");
+  if (config.web_favicon) {
+    if (extname(config.web_favicon) !== ".svg" || !existsSync(config.web_favicon)) {
+      throw new BookError(config.web_favicon, "web_favicon must be an existing .svg file");
     }
-    copyFileSync(config.favicon, svg);
+    copyFileSync(config.web_favicon, svg);
   } else {
     writeFileSync(svg, defaultFaviconSvg(facts.edge));
   }

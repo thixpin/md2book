@@ -44,7 +44,7 @@ describe("build all performance (spec 004 SC-005)", () => {
         identifier: "urn:uuid:00000000-0000-4000-8000-000000000020",
         output_name: "big",
         cover: "cover.png",
-        back_cover: "cover.png",
+        web_back_cover: "cover.png",
         chapter_glob: "chapters/chapter-*.md",
         recto_chapter_start: true,
         web_published_chapters: names,

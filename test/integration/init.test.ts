@@ -68,6 +68,8 @@ describe("md2book init", () => {
       "Me",
     ]);
     expect(result.code).toBe(0);
+    const stderr = vi.mocked(process.stderr).write.mock.calls.map(([text]) => String(text));
+    expect(stderr.join("")).toContain("--font is deprecated; use --font-family noto-");
     expect(result.out.trimEnd().endsWith(`md2book fonts --config ${join(dir, "book.json")}`)).toBe(
       true,
     );

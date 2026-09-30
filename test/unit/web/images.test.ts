@@ -55,7 +55,7 @@ describe("favicons", () => {
   it("rejects a non-SVG favicon", async () => {
     const dir = tempDir({ "icon.png": PNG_1X1 });
     const error: unknown = await writeFavicons(
-      testConfig(dir, { favicon: join(dir, "icon.png") }),
+      testConfig(dir, { web_favicon: join(dir, "icon.png") }),
       tempDir(),
       facts,
     ).catch((e: unknown) => e);
@@ -66,7 +66,7 @@ describe("favicons", () => {
   it("rejects a missing favicon", async () => {
     const dir = tempDir();
     const error: unknown = await writeFavicons(
-      testConfig(dir, { favicon: join(dir, "missing.svg") }),
+      testConfig(dir, { web_favicon: join(dir, "missing.svg") }),
       tempDir(),
       facts,
     ).catch((e: unknown) => e);
@@ -76,7 +76,7 @@ describe("favicons", () => {
   it("copies the SVG and renders square 32 px and 180 px PNGs", async () => {
     const out = tempDir();
     const favicon = fixture("book-en", "cover", "favicon.svg");
-    await writeFavicons(testConfig(tempDir(), { favicon }), out, facts);
+    await writeFavicons(testConfig(tempDir(), { web_favicon: favicon }), out, facts);
     expect(existsSync(join(out, "favicon.svg"))).toBe(true);
     for (const [name, size] of [
       ["favicon-32.png", 32],

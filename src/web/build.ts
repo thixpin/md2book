@@ -68,7 +68,7 @@ export async function buildWeb(
     facts,
   };
 
-  const bookDescription = config.description || config.subtitle || config.title;
+  const bookDescription = config.web_description || config.subtitle || config.title;
   const common = { stylesheet: assets.stylesheet, favicon: true };
   const reader = {
     ...common,

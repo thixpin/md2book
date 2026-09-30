@@ -13,7 +13,7 @@
     "chapter-01.md",
     "chapter-02.md"
   ],
-  "description": "မြန်မာ စမ်းသပ်စာအုပ်၏ ဖော်ပြချက်။",
+  "web_description": "မြန်မာ စမ်းသပ်စာအုပ်၏ ဖော်ပြချက်။",
   "end_image": "cover/end.png",
   "end_image_after": "chapter-02.md"
 }

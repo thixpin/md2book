@@ -184,6 +184,60 @@ describe("loadConfig", () => {
     );
   });
 
+  it("reads the old names of the web keys, with a warning naming the new ones", async () => {
+    const { config, warnings } = await loadConfig(
+      book({ ...base, description: "D", favicon: "icon.svg", back_cover: "back.png" }),
+    );
+    expect(config).toMatchObject({ web_description: "D" });
+    expect(config.web_favicon).toMatch(/icon\.svg$/);
+    expect(config.web_back_cover).toMatch(/back\.png$/);
+    expect(warnings).toEqual([
+      "description is deprecated; rename it web_description",
+      "favicon is deprecated; rename it web_favicon",
+      "back_cover is deprecated; rename it web_back_cover",
+    ]);
+  });
+
+  it("stops when a web key is set under both its old and its new name", async () => {
+    const error = await loadError(book({ ...base, description: "D", web_description: "E" }));
+    expect(error.reason).toBe(
+      "description is the old name of web_description; keep only web_description",
+    );
+  });
+
+  it("warns about font_set and running_headers, naming what replaces them", async () => {
+    const { config, warnings } = await loadConfig(
+      book({ ...base, language: "en", font_set: "serif", running_headers: false }),
+    );
+    expect(config.font.family).toBe("noto-serif");
+    expect(config.running_headers).toBe(false);
+    expect(warnings).toEqual([
+      'font_set is deprecated; use "font": { "family": "noto-serif" }',
+      'running_headers is deprecated; set "running": { "top": { "inner": "none", "outer": "none" } }',
+    ]);
+    const on = await loadConfig(book({ ...base, running_headers: true }));
+    expect(on.warnings).toEqual([
+      "running_headers is deprecated; remove it (the running heads are on by default)",
+    ]);
+  });
+
+  it("warns about nothing for a config with only current keys", async () => {
+    const { warnings } = await loadConfig(
+      book({ ...base, web_description: "D", web_url: "https://book.example.com/" }),
+    );
+    expect(warnings).toEqual([]);
+  });
+
+  it.each(["book.example.com", "/my-book/", "ftp://book.example.com/"])(
+    "stops on a web_url that is not an absolute http(s) URL: %s",
+    async (web_url) => {
+      const error = await loadError(book({ ...base, web_url }));
+      expect(error.reason).toBe(
+        "web_url: must be an absolute http(s) URL, like https://book.example.com/",
+      );
+    },
+  );
+
   it("warns about unknown keys inside page and font", async () => {
     const { warnings } = await loadConfig(book({ ...base, page: { width: 100 } }));
     expect(warnings).toEqual(["unknown key: page.width"]);

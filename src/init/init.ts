@@ -1,7 +1,7 @@
 import { existsSync } from "node:fs";
 import { mkdir, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
-import { BookError } from "../errors.ts";
+import { BookError, warn } from "../errors.ts";
 import {
   normalizeChapters,
   normalizeFontFamily,
@@ -16,7 +16,7 @@ export interface InitOptions {
   dir?: string;
   /** `my`, `mm`, `myanmar`, `en` or `english`. */
   lang: string;
-  /** Legacy `sans` (default) or `serif`; `fontFamily` names the family directly. */
+  /** Deprecated (removed before 1.0): `sans` or `serif`; use `fontFamily`. */
   font?: string;
   /** A font family id of the book's language (spec 006). */
   fontFamily?: string;
@@ -34,6 +34,9 @@ export interface InitOptions {
 export async function runInit(options: InitOptions): Promise<{ files: string[] }> {
   const language = normalizeLanguage(options.lang);
   const family = normalizeFontFamily(language, options.fontFamily, options.font);
+  if (options.font !== undefined) {
+    warn(`--font is deprecated; use --font-family ${family.id}`);
+  }
   const pageSize = normalizePageSize(options.pageSize);
   const fontSize = normalizeFontSize(options.fontSize);
   const chapters = normalizeChapters(options.chapters);

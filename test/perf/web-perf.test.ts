@@ -38,7 +38,7 @@ describe("web build performance (SC-006)", () => {
       identifier: "urn:uuid:x",
       output_name: "big",
       cover: "cover.png",
-      back_cover: "back.png",
+      web_back_cover: "back.png",
       chapter_glob: "chapters/chapter-*.md",
       web_published_chapters: names,
     });

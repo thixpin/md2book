@@ -82,7 +82,7 @@ the rest default.
 | `-f, --font-family <id>` | a family of the book's language, e.g. `padauk`                  | language default |
 | `-s, --font-size <size>` | `xs`, `s`, `m`, `l`, `xl`                                       | `m`              |
 | `--chapters <folder>`    | a folder inside `dir`                                           | `chapters`       |
-| `--font <set>`           | `sans` or `serif`: the older way to pick the Noto family        |                  |
+| `--font <set>`           | deprecated: `sans` or `serif`; use `--font-family`              |                  |
 
 The new `book.json` gets a random `identifier`, an `output_name` made
 from the title, `cover: "cover/cover.png"`, `chapter_glob:

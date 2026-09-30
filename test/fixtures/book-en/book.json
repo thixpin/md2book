@@ -12,6 +12,6 @@
     "chapter-01.md",
     "chapter-02.md"
   ],
-  "favicon": "cover/favicon.svg",
-  "back_cover": "cover/back.png"
+  "web_favicon": "cover/favicon.svg",
+  "web_back_cover": "cover/back.png"
 }
