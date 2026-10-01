@@ -13,12 +13,6 @@ web edition and a QA report, with first-class support for Myanmar
 > (`build pdf`), the EPUB (`build epub`), the web edition (`build web`,
 > `serve`), the QA report (`qa`, `build all`) and `cover`.
 
-## See it in action
-
-See how md2book turns a Markdown manuscript into a real Burmese tech book.
-
-[![md2book in 40 seconds: from Markdown to a real Burmese tech book](https://img.youtube.com/vi/UpmgagatMpc/maxresdefault.jpg)](https://www.youtube.com/watch?v=UpmgagatMpc)
-
 ## How it works
 
 A 60-second tour in seven steps: install, init, write, fonts, build,
