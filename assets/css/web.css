@@ -512,3 +512,20 @@ pre { line-height: 1.7; }
   background: var(--accent); color: var(--paper); }
 .md2book-consent-settings { font: inherit; padding: 0; border: 0; background: none;
   color: inherit; text-decoration: underline; cursor: pointer; }
+
+/* md2book addition (specs/decision-log.md): on a single page (phones) the closed back cover is
+   seen from the back too, as in spreads: the spine shadow and hinge groove on the right, the
+   board edge on the left. The cover image itself is unchanged. */
+.book.is-single .book-back-cover {
+  box-shadow: inset -7px 0 9px -6px rgb(0 0 0 / 45%), inset 1px 0 0 rgb(255 255 255 / 8%),
+    -1px 0 0 color-mix(in srgb, var(--case) 62%, black),
+    -2px 0 0 color-mix(in srgb, var(--case) 48%, black);
+}
+.book.is-single .book-back-cover::after {
+  background:
+    linear-gradient(to left, rgb(0 0 0 / 36%) 0, rgb(0 0 0 / 12%) 1.4%, rgb(255 255 255 / 16%) 2.6%,
+      rgb(0 0 0 / 12%) 3.8%, rgb(255 255 255 / 5%) 5.5%, transparent 9%),
+    linear-gradient(235deg, rgb(255 255 255 / 13%) 0, rgb(255 255 255 / 3%) 35%, transparent 55%,
+      rgb(0 0 0 / 12%) 100%);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 6%), inset 2px 0 4px rgb(0 0 0 / 16%);
+}
