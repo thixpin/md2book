@@ -118,7 +118,8 @@
   const SEARCH_CONTEXT = 30;
   // The page edges dip slightly toward the spine where the paper bends into
   // the binding: DIP px deep, flattening out DIP_REACH px from the spine.
-  const DIP = 3.5;
+  // md2book: 2.1 px (reference 3.5), a quieter book while reading.
+  const DIP = 2.1;
   const DIP_REACH = 46;
   const DIP_SAMPLES = [0, 4, 9, 15, 23, 33, DIP_REACH];
 
@@ -240,7 +241,8 @@
   // book is closed at the front, "right" at the back), which is not drawn.
   function drawPaper(ratios, empty = null) {
     const g = geometry();
-    const step = (pagesPerView === 2 ? 15 : 7) / MAX_SHEETS;
+    // md2book: a thinner page block (reference 15 and 7 px), a quieter book while reading.
+    const step = (pagesPerView === 2 ? 9 : 4) / MAX_SHEETS;
     const sides = (pagesPerView === 2 ? [[-1, ratios.left], [1, ratios.right]] : [[1, ratios.right]])
       .filter(([side]) => side !== (empty === "left" ? -1 : empty === "right" ? 1 : 0))
       .map(([side, ratio]) => [side, ratio > 0 ? Math.max(1, Math.round(ratio * MAX_SHEETS)) : 0]);

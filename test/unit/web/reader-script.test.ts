@@ -9,6 +9,15 @@ const REFERENCE_SHA256 = "bb980615d4c6973b16cc0d9c6005054dbb81c149b3e7f816c90275
 // section-sized, preloaded turn surfaces recorded in specs/decision-log.md):
 // [edited text, reference text].
 export const READER_EDITS: [string, string][] = [
+  // md2book: a subtler book at rest: shallower page dip, thinner page block (specs/decision-log.md).
+  [
+    "  // The page edges dip slightly toward the spine where the paper bends into\n  // the binding: DIP px deep, flattening out DIP_REACH px from the spine.\n  // md2book: 2.1 px (reference 3.5), a quieter book while reading.\n  const DIP = 2.1;\n",
+    "  // The page edges dip slightly toward the spine where the paper bends into\n  // the binding: DIP px deep, flattening out DIP_REACH px from the spine.\n  const DIP = 3.5;\n",
+  ],
+  [
+    "    // md2book: a thinner page block (reference 15 and 7 px), a quieter book while reading.\n    const step = (pagesPerView === 2 ? 9 : 4) / MAX_SHEETS;\n",
+    "    const step = (pagesPerView === 2 ? 15 : 7) / MAX_SHEETS;\n",
+  ],
   // md2book: touch screens get easier swipes, edge tap zones and a shorter turn
   // (specs/decision-log.md).
   [
