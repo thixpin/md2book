@@ -19,6 +19,13 @@ See how md2book turns a Markdown manuscript into a real Burmese tech book.
 
 [![md2book in 40 seconds: from Markdown to a real Burmese tech book](https://img.youtube.com/vi/UpmgagatMpc/maxresdefault.jpg)](https://www.youtube.com/watch?v=UpmgagatMpc)
 
+## How it works
+
+A 60-second tour in seven steps: install, init, write, fonts, build,
+preview and publish to GitHub Pages.
+
+[![How md2book works: Markdown to PDF, EPUB and web book in 7 steps](https://img.youtube.com/vi/vEG7KM14Oh4/maxresdefault.jpg)](https://www.youtube.com/watch?v=vEG7KM14Oh4)
+
 ## Features
 
 - **PDF:** a 170 × 240 mm, A5, B5, A4 or Letter book in five type

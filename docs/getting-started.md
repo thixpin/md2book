@@ -1,6 +1,8 @@
 # Getting started
 
 This guide installs md2book and builds a small book in every edition.
+Prefer to watch first? [How md2book works](https://www.youtube.com/watch?v=vEG7KM14Oh4)
+shows the whole workflow in 60 seconds.
 
 ## Requirements
 

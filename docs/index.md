@@ -53,6 +53,23 @@ See how md2book turns a Markdown manuscript into a real Burmese tech book.
   ></iframe>
 </div>
 
+## How it works
+
+A 60-second tour in seven steps: install, init, write, fonts, build,
+preview and publish to GitHub Pages.
+
+<div style="position: relative; aspect-ratio: 16 / 9; margin-top: 16px; border-radius: 12px; overflow: hidden; background: var(--vp-c-bg-soft);">
+  <iframe
+    src="https://www.youtube-nocookie.com/embed/vEG7KM14Oh4"
+    title="How md2book works: Markdown to PDF, EPUB and web book in 7 steps"
+    style="position: absolute; inset: 0; width: 100%; height: 100%; border: 0;"
+    loading="lazy"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    referrerpolicy="strict-origin-when-cross-origin"
+    allowfullscreen
+  ></iframe>
+</div>
+
 ## Quick start
 
 ```console
