@@ -18,6 +18,8 @@ export interface PageOptions {
   favicon?: boolean;
   /** An image to fetch before the page body is parsed: the reader's loading cover. */
   preloadImage?: string;
+  /** The chapter the page opens at, for analytics (slug and title; none on the home page). */
+  chapter?: { slug: string; title: string };
 }
 
 /**
@@ -57,7 +59,15 @@ export function page(config: BookConfig, options: PageOptions): string {
 <meta name="description" content="${esc(description)}">
 <meta name="generator" content="md2book">
 ${social}
-${preload}<link rel="stylesheet" href="${root}/${stylesheet}">${icons}${path ? analyticsHead(config.web_analytics, config.strings) : ""}</head>
+${preload}<link rel="stylesheet" href="${root}/${stylesheet}">${icons}${
+    path
+      ? analyticsHead(config.web_analytics, config.strings, {
+          book: config.title,
+          chapter: options.chapter?.slug ?? "",
+          chapterTitle: options.chapter?.title ?? "",
+        })
+      : ""
+  }</head>
 <body><header class="site-header"><a href="${root}/" data-home><span class="site-title">${esc(config.title)}</span>
 <span class="site-subtitle">${esc(config.subtitle ?? "")}</span></a>${headerTools}</header>
 <main>${content}</main><footer class="footer">${esc(config.author)}</footer>

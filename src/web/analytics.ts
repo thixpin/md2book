@@ -5,6 +5,16 @@ import { escapeHtml as esc } from "../manuscript/text.ts";
 
 export type WebAnalytics = z.infer<typeof webAnalyticsSchema>;
 
+/**
+ * What a page view says besides the address: the book, and the chapter the page opens at (empty
+ * on the home page). Chapter changes in the reader send their own (md2book:pageview).
+ */
+export interface PageContext {
+  book: string;
+  chapter: string;
+  chapterTitle: string;
+}
+
 /** A value for an inline script: JSON, with `<` escaped so no text can close the script. */
 const scriptValue = (value: unknown) => JSON.stringify(value).replace(/</g, "\\u003c");
 
@@ -15,9 +25,11 @@ const scriptValue = (value: unknown) => JSON.stringify(value).replace(/</g, "\\u
  * switches Google Analytics off (`ga-disable-<id>`) and removes its `_ga` cookies. The banner
  * sits above the reader's page controls, so reading goes on while it shows.
  */
-function consentScript(id: string, text: SeriesStrings["consent"]): string {
+function consentScript(id: string, text: SeriesStrings["consent"], context: PageContext): string {
   return `<script>(() => {
 const ID = ${scriptValue(id)};
+const BOOK = ${scriptValue(context.book)};
+const PAGE = ${scriptValue({ chapter: context.chapter, chapter_title: context.chapterTitle })};
 const TEXT = ${scriptValue(text)};
 const KEY = "md2book:analytics-consent";
 const read = () => { try { return localStorage.getItem(KEY); } catch { return null; } };
@@ -30,7 +42,7 @@ const load = () => {
   window.dataLayer = window.dataLayer || [];
   window.gtag = function () { dataLayer.push(arguments); };
   gtag("js", new Date());
-  gtag("config", ID);
+  gtag("config", ID, { domain: location.hostname, book: BOOK, ...PAGE });
   const tag = document.createElement("script");
   tag.async = true;
   tag.src = "https://www.googletagmanager.com/gtag/js?id=" + ID;
@@ -51,7 +63,8 @@ const forget = () => {
 document.addEventListener("md2book:pageview", (event) => {
   if (!loaded || window["ga-disable-" + ID]) return;
   const detail = event.detail;
-  gtag("event", "page_view", { page_location: location.origin + detail.path, page_title: detail.title });
+  gtag("event", "page_view", { page_location: location.origin + detail.path, page_title: detail.title,
+    domain: location.hostname, book: BOOK, chapter: detail.chapter, chapter_title: detail.chapterTitle });
 });
 let banner = null;
 const place = () => {
@@ -117,12 +130,18 @@ else start();
 export function analyticsHead(
   analytics: WebAnalytics | undefined,
   strings: Pick<SeriesStrings, "consent">,
+  context: PageContext,
 ): string {
   if (!analytics) return "";
   if (analytics.provider === "google" && analytics.consent) {
-    return consentScript(analytics.id, strings.consent);
+    return consentScript(analytics.id, strings.consent, context);
   }
   const id = esc(analytics.id);
+  // The book and chapter go with every page view: Google Analytics event parameters, Plausible
+  // custom properties. GoatCounter and Cloudflare take no such fields.
+  const book = scriptValue(context.book);
+  const page = `{ domain: location.hostname, book: ${book}, chapter: ${scriptValue(context.chapter)}, chapter_title: ${scriptValue(context.chapterTitle)} }`;
+  const chapterFields = `domain: location.hostname, book: ${book}, chapter: detail.chapter, chapter_title: detail.chapterTitle`;
   const onPageview = (body: string) =>
     `<script>document.addEventListener("md2book:pageview", (event) => { const detail = event.detail; ${body} });</script>`;
   switch (analytics.provider) {
@@ -131,9 +150,9 @@ export function analyticsHead(
         `<script async src="https://www.googletagmanager.com/gtag/js?id=${id}"></script>` +
         "<script>window.dataLayer = window.dataLayer || []; " +
         "function gtag() { dataLayer.push(arguments); } " +
-        `gtag("js", new Date()); gtag("config", "${id}");</script>` +
+        `gtag("js", new Date()); gtag("config", "${id}", ${page});</script>` +
         onPageview(
-          'gtag("event", "page_view", { page_location: location.origin + detail.path, page_title: detail.title });',
+          `gtag("event", "page_view", { page_location: location.origin + detail.path, page_title: detail.title, ${chapterFields} });`,
         )
       );
     case "plausible":
@@ -142,8 +161,11 @@ export function analyticsHead(
       return (
         `<script defer data-domain="${id}" src="https://plausible.io/js/script.manual.js"></script>` +
         "<script>window.plausible = window.plausible || function () { " +
-        '(window.plausible.q = window.plausible.q || []).push(arguments); }; plausible("pageview");</script>' +
-        onPageview('plausible("pageview", { u: location.origin + detail.path });')
+        "(window.plausible.q = window.plausible.q || []).push(arguments); }; " +
+        `plausible("pageview", { props: ${page} });</script>` +
+        onPageview(
+          `plausible("pageview", { u: location.origin + detail.path, props: { ${chapterFields} } });`,
+        )
       );
     case "goatcounter":
       // GoatCounter counts the page it loads on; chapter changes are counted once it is there.

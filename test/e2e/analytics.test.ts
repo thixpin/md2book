@@ -50,6 +50,19 @@ describe("web analytics", { timeout: 120_000 }, () => {
   it("sends Google Analytics one page_view per chapter change", async () => {
     const { page, served } = await reader({ provider: "google", id: "G-AB12CD34EF" });
     await readOn(page);
+    const chapterTitle = await page.getAttribute(
+      'section[data-chapter="ch02"]',
+      "data-short-title",
+    );
+    const config = await page.evaluate(() =>
+      (window as unknown as { dataLayer: IArguments[] }).dataLayer
+        .map((entry) => Array.from(entry) as unknown[])
+        .find((entry) => entry[0] === "config"),
+    );
+    // The page the reader opened at: chapter 1.
+    expect(config?.[2]).toEqual(
+      expect.objectContaining({ domain: "127.0.0.1", book: base.title, chapter: "ch01" }),
+    );
     const views = await page.evaluate(() =>
       (window as unknown as { dataLayer: IArguments[] }).dataLayer
         .map((entry) => Array.from(entry) as unknown[])
@@ -61,6 +74,10 @@ describe("web analytics", { timeout: 120_000 }, () => {
         "page_view",
         expect.objectContaining({
           page_location: `${new URL(served.url).origin}/chapters/ch02.html`,
+          domain: "127.0.0.1",
+          book: base.title,
+          chapter: "ch02",
+          chapter_title: chapterTitle,
         }),
       ],
     ]);
@@ -76,9 +93,11 @@ describe("web analytics", { timeout: 120_000 }, () => {
         (entry) => Array.from(entry) as unknown[],
       ),
     );
+    const props = (chapter: string): unknown =>
+      expect.objectContaining({ domain: "127.0.0.1", book: base.title, chapter });
     expect(queue).toEqual([
-      ["pageview"],
-      ["pageview", { u: `${new URL(served.url).origin}/chapters/ch02.html` }],
+      ["pageview", { props: props("ch01") }],
+      ["pageview", { u: `${new URL(served.url).origin}/chapters/ch02.html`, props: props("ch02") }],
     ]);
     await page.context().close();
     await served.close();

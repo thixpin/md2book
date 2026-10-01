@@ -633,7 +633,7 @@
     // md2book: the page shows another chapter; web analytics (if the book has it) counts a
     // page view from this event. The reader itself knows no analytics provider.
     if (!laying) {
-      document.dispatchEvent(new CustomEvent("md2book:pageview", { detail: { path, title: document.title } }));
+      document.dispatchEvent(new CustomEvent("md2book:pageview", { detail: { path, title: document.title, chapter: current ? current.slug : "", chapterTitle: current ? current.shortTitle : "" } }));
     }
   }
 

@@ -111,6 +111,35 @@ How each service records the chapter views:
   changes by itself; it offers no way to send page views, so md2book
   only loads it.
 
+### Book and chapter fields
+
+Each page view also says which book and chapter was read:
+
+| Field           | Value                                                           |
+| --------------- | --------------------------------------------------------------- |
+| `domain`        | the site's host name, like `agentic-basic.thixpin.me`           |
+| `book`          | the book's `title`                                              |
+| `chapter`       | the chapter's id, `ch01`, `ch02`, … (empty on the home page)    |
+| `chapter_title` | the chapter's title, without its label (empty on the home page) |
+
+Google Analytics receives them as event parameters of each
+`page_view` (and of the first page, through its `config`); Plausible
+as custom properties. GoatCounter and Cloudflare take no such fields.
+`chapter` is the chapter's id in this site, so it stays the same when
+a title changes.
+
+The services collect them at once but show them in reports only after
+you register them:
+
+- **Google Analytics:** Admin → Data display → **Custom definitions**
+  → **Create custom dimension**, scope **Event**, once for each of
+  `book`, `chapter`, `chapter_title` and `domain` (the event parameter
+  name is the field name). Reports and Explorations then offer them as
+  dimensions; data from before you register them is not shown.
+- **Plausible:** Site settings → **Custom properties** → add `book`,
+  `chapter`, `chapter_title` and `domain`; they appear under
+  **Properties** on the dashboard.
+
 ## Privacy and consent
 
 - **Cookies.** Google Analytics sets cookies. In the EU, the UK and

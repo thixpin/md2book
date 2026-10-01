@@ -98,6 +98,7 @@ export async function buildWeb(
         description: pageDescription(ch.html ?? "", bookDescription),
         path: chapterHref(ch.slug),
         ogType: "article",
+        chapter: { slug: ch.slug, title: ch.title },
       }),
     );
   }

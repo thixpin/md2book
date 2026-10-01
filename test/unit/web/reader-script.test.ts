@@ -59,8 +59,8 @@ export const READER_EDITS: [string, string][] = [
     '  let running = null;\n  let paperKey = "";\n',
   ],
   [
-    '    // page view from this event. The reader itself knows no analytics provider.\n    if (!laying) {\n      document.dispatchEvent(new CustomEvent("md2book:pageview", { detail: { path, title: document.title } }));\n    }\n  }\n',
-    '    // page view from this event. The reader itself knows no analytics provider.\n    document.dispatchEvent(new CustomEvent("md2book:pageview", { detail: { path, title: document.title } }));\n  }\n',
+    '    // page view from this event. The reader itself knows no analytics provider.\n    if (!laying) {\n      document.dispatchEvent(new CustomEvent("md2book:pageview", { detail: { path, title: document.title, chapter: current ? current.slug : "", chapterTitle: current ? current.shortTitle : "" } }));\n    }\n  }\n',
+    '    // page view from this event. The reader itself knows no analytics provider.\n    document.dispatchEvent(new CustomEvent("md2book:pageview", { detail: { path, title: document.title, chapter: current ? current.slug : "", chapterTitle: current ? current.shortTitle : "" } }));\n  }\n',
   ],
   [
     "    turn = Math.floor(page / pagesPerView);\n    // md2book: an address change from a (re)layout is not a page the reader chose: no page view.\n    laying = true;\n    showTurn();\n",
@@ -77,7 +77,7 @@ export const READER_EDITS: [string, string][] = [
     "      // Opened from a file: the address cannot change, which is harmless.\n    }\n",
   ],
   [
-    '    }\n    // md2book: the page shows another chapter; web analytics (if the book has it) counts a\n    // page view from this event. The reader itself knows no analytics provider.\n    document.dispatchEvent(new CustomEvent("md2book:pageview", { detail: { path, title: document.title } }));\n  }\n',
+    '    }\n    // md2book: the page shows another chapter; web analytics (if the book has it) counts a\n    // page view from this event. The reader itself knows no analytics provider.\n    document.dispatchEvent(new CustomEvent("md2book:pageview", { detail: { path, title: document.title, chapter: current ? current.slug : "", chapterTitle: current ? current.shortTitle : "" } }));\n  }\n',
     "    }\n  }\n",
   ],
   // md2book: the running heads and feet follow the book's `running` layout (specs/decision-log.md).
