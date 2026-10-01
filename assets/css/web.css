@@ -488,3 +488,8 @@ pre { line-height: 1.7; }
 .page-number > .center, .page-head > .center { position: absolute; left: 50%; translate: -50% 0;
   max-width: 50%; }
 
+
+/* md2book addition (specs/decision-log.md): on a touch screen, while the whole book fits on the
+   screen and is not zoomed in, the book keeps every swipe on it (web-reader.js sets the class),
+   so a slanted thumb swipe is not taken as a scroll; pinch-zoom still works. */
+.reader-window.is-swipe-only { touch-action: pinch-zoom; }

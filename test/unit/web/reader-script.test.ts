@@ -9,6 +9,36 @@ const REFERENCE_SHA256 = "bb980615d4c6973b16cc0d9c6005054dbb81c149b3e7f816c90275
 // section-sized, preloaded turn surfaces recorded in specs/decision-log.md):
 // [edited text, reference text].
 export const READER_EDITS: [string, string][] = [
+  // md2book: touch screens get easier swipes, edge tap zones and a shorter turn
+  // (specs/decision-log.md).
+  [
+    "  const FLICK_SPEED = 0.35;\n  const COMPLETE_TRAVEL = 0.25;\n  // md2book: touch screens (no hovering fine pointer, so phones and tablets) get a lighter swipe,\n  // a shorter turn and tap zones at the page edges; mouse and trackpad readers are unchanged.\n  const TOUCH_TURN_MS = 280;\n  const TOUCH_FLICK_SPEED = 0.2;\n  const TOUCH_COMPLETE_TRAVEL = 0.12;\n  const TOUCH_COMPLETE_PROGRESS = 0.2;\n  // A thumb's arc still counts as a horizontal swipe up to about 60° from flat (tan 60° ≈ 1.7).\n  const TOUCH_SLOPE = 1.7;\n  const TAP_ZONE = 0.2;\n  const touchFirst = () => !finePointer.matches;\n",
+    "  const FLICK_SPEED = 0.35;\n  const COMPLETE_TRAVEL = 0.25;\n",
+  ],
+  [
+    "    const duration = Math.max(MIN_SETTLE_MS, Math.abs(to - from) * (touchFirst() ? TOUCH_TURN_MS : TURN_MS));\n",
+    "    const duration = Math.max(MIN_SETTLE_MS, Math.abs(to - from) * TURN_MS);\n",
+  ],
+  [
+    '  let drag = null;\n  // md2book: a touch that starts with text selected (moving a selection handle, or a tap that\n  // clears the selection) neither swipes nor taps a page; `swipedAt` keeps a swipe\'s end from\n  // counting as a tap.\n  let selectedAtDown = false;\n  let swipedAt = -Infinity;\n  windowEl.addEventListener("pointerdown", (event) => {\n    if (event.pointerType === "touch") selectedAtDown = !!window.getSelection().toString();\n    if (event.pointerType === "touch" && touchFirst()) {\n      // Zoomed in, a swipe pans the page; with text selected, it moves the selection.\n      if (selectedAtDown || (window.visualViewport?.scale ?? 1) > 1.01) return;\n      // A swipe during a turn lands that turn at once, as a key press does.\n      if (animating && running && !drag) running.jump();\n    }\n    // A drag inside a code block scrolls the code, not the page.\n    if (event.pointerType !== "touch" || drag || animating || event.target.closest("pre")) return;\n',
+    '  let drag = null;\n  windowEl.addEventListener("pointerdown", (event) => {\n    // A drag inside a code block scrolls the code, not the page.\n    if (event.pointerType !== "touch" || drag || animating || event.target.closest("pre")) return;\n',
+  ],
+  [
+    "    if (!drag.direction) {\n      // md2book: on touch screens a slanted swipe still turns (TOUCH_SLOPE).\n      const slope = touchFirst() ? TOUCH_SLOPE : 1;\n      if (Math.abs(dy) > DRAG_START_PX && Math.abs(dy) > Math.abs(dx) * slope) {\n        drag = null;\n        return;\n      }\n      if (Math.abs(dx) < DRAG_START_PX || Math.abs(dx) * slope < Math.abs(dy)) return;\n",
+    "    if (!drag.direction) {\n      if (Math.abs(dy) > DRAG_START_PX && Math.abs(dy) > Math.abs(dx)) {\n        drag = null;\n        return;\n      }\n      if (Math.abs(dx) < DRAG_START_PX || Math.abs(dx) < Math.abs(dy)) return;\n",
+  ],
+  [
+    "    if (!direction) return;\n    swipedAt = event.timeStamp;\n    // Velocity is px/ms along the drag; positive means toward completion.\n    const toward = -velocity * direction;\n    if (!sheet) return;\n    // A turn completes when the sheet is well on its way, the finger has\n    // travelled a quarter of a page, or it was flicked; a flick back cancels.\n    // md2book: touch screens need less of each (TOUCH_*).\n    const touch = touchFirst();\n    const flick = touch ? TOUCH_FLICK_SPEED : FLICK_SPEED;\n    const complete = !cancelled && toward > -flick &&\n      (progress > (touch ? TOUCH_COMPLETE_PROGRESS : 0.3) ||\n        travel > surfaces.g.page * (touch ? TOUCH_COMPLETE_TRAVEL : COMPLETE_TRAVEL) || toward > flick);\n",
+    "    if (!direction) return;\n    // Velocity is px/ms along the drag; positive means toward completion.\n    const toward = -velocity * direction;\n    if (!sheet) return;\n    // A turn completes when the sheet is well on its way, the finger has\n    // travelled a quarter of a page, or it was flicked; a flick back cancels.\n    const complete = !cancelled && toward > -FLICK_SPEED &&\n      (progress > 0.3 || travel > surfaces.g.page * COMPLETE_TRAVEL || toward > FLICK_SPEED);\n",
+  ],
+  [
+    '    // md2book: on touch screens a tap in the outer fifth of either side turns the page wherever it\n    // lands, on the text too; links, buttons, form controls and code keep their taps, and the\n    // middle of the page is left alone.\n    if (touchFirst()) {\n      if (selectedAtDown || event.timeStamp - swipedAt < 500 || window.getSelection().toString() ||\n        event.target.closest("a, button, input, select, textarea, label, summary, pre, [tabindex]")) return;\n      const x = event.clientX - windowEl.getBoundingClientRect().left;\n      if (x < windowEl.clientWidth * TAP_ZONE) changeTurn(-1);\n      else if (x > windowEl.clientWidth * (1 - TAP_ZONE)) changeTurn(1);\n      return;\n    }\n    if (event.target !== windowEl || window.getSelection().toString()) return;\n    if (event.offsetX < windowEl.clientWidth * 0.25) changeTurn(-1);\n',
+    "    if (event.target !== windowEl || window.getSelection().toString()) return;\n    if (event.offsetX < windowEl.clientWidth * 0.25) changeTurn(-1);\n",
+  ],
+  [
+    '  // md2book: on a touch screen the browser takes any swipe that starts more vertical than\n  // horizontal as a scroll and cancels it, so a thumb\'s slanted swipe rarely turned the page.\n  // While the whole book fits on the screen and is not zoomed in, a swipe on it keeps the whole\n  // gesture (web.css .is-swipe-only: pinch-zoom only); the page still scrolls from outside the\n  // book. Zoomed in, or on a screen shorter than the book, it pans as before.\n  const swipeOnly = () => {\n    const zoomed = (window.visualViewport?.scale ?? 1) > 1.01;\n    const fits = windowEl.getBoundingClientRect().height <= window.innerHeight;\n    windowEl.classList.toggle("is-swipe-only", touchFirst() && !zoomed && fits);\n  };\n  swipeOnly();\n  window.visualViewport?.addEventListener("resize", swipeOnly);\n  window.addEventListener("load", swipeOnly);\n  window.addEventListener("resize", () => {\n    swipeOnly();\n    window.clearTimeout(resizeTimer);\n    resizeTimer = window.setTimeout(measure, 100);\n',
+    '  window.addEventListener("resize", () => {\n    window.clearTimeout(resizeTimer);\n    resizeTimer = window.setTimeout(measure, 100);\n',
+  ],
   // md2book: a site served under a path (GitHub project Pages) has its home there
   // (specs/decision-log.md).
   [

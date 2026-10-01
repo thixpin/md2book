@@ -102,6 +102,16 @@
   const DRAG_START_PX = 8;
   const FLICK_SPEED = 0.35;
   const COMPLETE_TRAVEL = 0.25;
+  // md2book: touch screens (no hovering fine pointer, so phones and tablets) get a lighter swipe,
+  // a shorter turn and tap zones at the page edges; mouse and trackpad readers are unchanged.
+  const TOUCH_TURN_MS = 280;
+  const TOUCH_FLICK_SPEED = 0.2;
+  const TOUCH_COMPLETE_TRAVEL = 0.12;
+  const TOUCH_COMPLETE_PROGRESS = 0.2;
+  // A thumb's arc still counts as a horizontal swipe up to about 60° from flat (tan 60° ≈ 1.7).
+  const TOUCH_SLOPE = 1.7;
+  const TAP_ZONE = 0.2;
+  const touchFirst = () => !finePointer.matches;
   const OPEN_MS = 820;
   const HIDE_CONTROLS_MS = 2500;
   const MAX_SEARCH_RESULTS = 30;
@@ -1073,7 +1083,7 @@
   // MAX_FRAME_STEP, so a stalled frame (the first raster of the sheet's text
   // on the GPU takes ~50-85 ms) pauses the paper instead of letting it jump.
   function runTurn(sheet, from, to, done) {
-    const duration = Math.max(MIN_SETTLE_MS, Math.abs(to - from) * TURN_MS);
+    const duration = Math.max(MIN_SETTLE_MS, Math.abs(to - from) * (touchFirst() ? TOUCH_TURN_MS : TURN_MS));
     let elapsed = 0;
     let last = null;
     let shown = false;
@@ -1373,7 +1383,21 @@
   textSmaller?.addEventListener("click", () => stepTextScale(-1));
   textLarger?.addEventListener("click", () => stepTextScale(1));
   desktop.addEventListener("change", measure);
+  // md2book: on a touch screen the browser takes any swipe that starts more vertical than
+  // horizontal as a scroll and cancels it, so a thumb's slanted swipe rarely turned the page.
+  // While the whole book fits on the screen and is not zoomed in, a swipe on it keeps the whole
+  // gesture (web.css .is-swipe-only: pinch-zoom only); the page still scrolls from outside the
+  // book. Zoomed in, or on a screen shorter than the book, it pans as before.
+  const swipeOnly = () => {
+    const zoomed = (window.visualViewport?.scale ?? 1) > 1.01;
+    const fits = windowEl.getBoundingClientRect().height <= window.innerHeight;
+    windowEl.classList.toggle("is-swipe-only", touchFirst() && !zoomed && fits);
+  };
+  swipeOnly();
+  window.visualViewport?.addEventListener("resize", swipeOnly);
+  window.addEventListener("load", swipeOnly);
   window.addEventListener("resize", () => {
+    swipeOnly();
     window.clearTimeout(resizeTimer);
     resizeTimer = window.setTimeout(measure, 100);
   });
@@ -1409,7 +1433,19 @@
   // The book allows only vertical panning and pinch-zoom (touch-action), so
   // the browser leaves horizontal drags to us and still scrolls vertically.
   let drag = null;
+  // md2book: a touch that starts with text selected (moving a selection handle, or a tap that
+  // clears the selection) neither swipes nor taps a page; `swipedAt` keeps a swipe's end from
+  // counting as a tap.
+  let selectedAtDown = false;
+  let swipedAt = -Infinity;
   windowEl.addEventListener("pointerdown", (event) => {
+    if (event.pointerType === "touch") selectedAtDown = !!window.getSelection().toString();
+    if (event.pointerType === "touch" && touchFirst()) {
+      // Zoomed in, a swipe pans the page; with text selected, it moves the selection.
+      if (selectedAtDown || (window.visualViewport?.scale ?? 1) > 1.01) return;
+      // A swipe during a turn lands that turn at once, as a key press does.
+      if (animating && running && !drag) running.jump();
+    }
     // A drag inside a code block scrolls the code, not the page.
     if (event.pointerType !== "touch" || drag || animating || event.target.closest("pre")) return;
     drag = { id: event.pointerId, x: event.clientX, y: event.clientY, sheet: null,
@@ -1420,11 +1456,13 @@
     const dx = event.clientX - drag.x;
     const dy = event.clientY - drag.y;
     if (!drag.direction) {
-      if (Math.abs(dy) > DRAG_START_PX && Math.abs(dy) > Math.abs(dx)) {
+      // md2book: on touch screens a slanted swipe still turns (TOUCH_SLOPE).
+      const slope = touchFirst() ? TOUCH_SLOPE : 1;
+      if (Math.abs(dy) > DRAG_START_PX && Math.abs(dy) > Math.abs(dx) * slope) {
         drag = null;
         return;
       }
-      if (Math.abs(dx) < DRAG_START_PX || Math.abs(dx) < Math.abs(dy)) return;
+      if (Math.abs(dx) < DRAG_START_PX || Math.abs(dx) * slope < Math.abs(dy)) return;
       drag.direction = dx < 0 ? 1 : -1;
       const target = turn + drag.direction;
       // Opening or closing the book in a spread runs as one gesture; at the
@@ -1472,13 +1510,18 @@
     drag = null;
     if (frame) cancelAnimationFrame(frame);
     if (!direction) return;
+    swipedAt = event.timeStamp;
     // Velocity is px/ms along the drag; positive means toward completion.
     const toward = -velocity * direction;
     if (!sheet) return;
     // A turn completes when the sheet is well on its way, the finger has
     // travelled a quarter of a page, or it was flicked; a flick back cancels.
-    const complete = !cancelled && toward > -FLICK_SPEED &&
-      (progress > 0.3 || travel > surfaces.g.page * COMPLETE_TRAVEL || toward > FLICK_SPEED);
+    // md2book: touch screens need less of each (TOUCH_*).
+    const touch = touchFirst();
+    const flick = touch ? TOUCH_FLICK_SPEED : FLICK_SPEED;
+    const complete = !cancelled && toward > -flick &&
+      (progress > (touch ? TOUCH_COMPLETE_PROGRESS : 0.3) ||
+        travel > surfaces.g.page * (touch ? TOUCH_COMPLETE_TRAVEL : COMPLETE_TRAVEL) || toward > flick);
     runTurn(sheet, progress, complete ? 1 : 0, complete ? sheet.finish : sheet.cancel);
   };
   windowEl.addEventListener("pointerup", (event) => release(event, false));
@@ -1488,6 +1531,17 @@
     if (bookState === "closed" && !animating &&
       event.clientX >= windowEl.getBoundingClientRect().left + windowEl.clientWidth / 2) {
       changeTurn(1);
+      return;
+    }
+    // md2book: on touch screens a tap in the outer fifth of either side turns the page wherever it
+    // lands, on the text too; links, buttons, form controls and code keep their taps, and the
+    // middle of the page is left alone.
+    if (touchFirst()) {
+      if (selectedAtDown || event.timeStamp - swipedAt < 500 || window.getSelection().toString() ||
+        event.target.closest("a, button, input, select, textarea, label, summary, pre, [tabindex]")) return;
+      const x = event.clientX - windowEl.getBoundingClientRect().left;
+      if (x < windowEl.clientWidth * TAP_ZONE) changeTurn(-1);
+      else if (x > windowEl.clientWidth * (1 - TAP_ZONE)) changeTurn(1);
       return;
     }
     if (event.target !== windowEl || window.getSelection().toString()) return;

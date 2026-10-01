@@ -86,6 +86,15 @@ and fullscreen, and these keys:
 | `+` `-` | larger and smaller text (code blocks keep their size) |
 | `F`     | fullscreen                                            |
 
+On phones and tablets, a page turns with a swipe left or right anywhere
+on the book (a slanted thumb swipe counts, and a short flick is
+enough), or with a tap near the left or right edge of the page, on the
+text too. The middle of the page, links, buttons and code blocks keep
+their own taps, text can still be selected, and a pinch-zoomed page
+pans instead of turning. Turns are a little quicker there than with a
+mouse. With a mouse or trackpad, the arrows, the page edges and the
+keys turn the pages as before.
+
 The reading position, bookmarks and text size are remembered in the
 browser.
 
