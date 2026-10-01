@@ -45,6 +45,9 @@ PDF and the EPUB never contain analytics.
 Older Universal Analytics ids (`UA-…`) are not accepted: Google no
 longer collects data for them.
 
+To ask readers first, add `"consent": true`; see
+[Asking for consent](#asking-for-consent).
+
 ### Plausible
 
 1. In Plausible, add the site with the domain readers use, for example
@@ -112,9 +115,10 @@ How each service records the chapter views:
 
 - **Cookies.** Google Analytics sets cookies. In the EU, the UK and
   several other countries, cookies for analytics need the reader's
-  consent first, which usually means a consent banner; md2book does not
-  add one. The other three services use no cookies and generally need
-  no banner. Check the rules that apply to your readers.
+  consent first; turn on md2book's
+  [consent banner](#asking-for-consent) for that. The other three
+  services use no cookies and generally need no banner. Check the rules
+  that apply to your readers.
 - **What is sent.** The address and title of the page (or chapter), the
   referrer and what the browser tells every site (browser, language,
   screen size, rough location from the IP address). md2book sends no
@@ -122,6 +126,48 @@ How each service records the chapter views:
 - **Data stays in the browser.** The reader's position, bookmarks and
   text size are kept in the browser only, as before; analytics never
   sees them.
+
+## Asking for consent
+
+With Google Analytics, md2book can ask each reader before anything is
+counted:
+
+```json
+"web_analytics": { "provider": "google", "id": "G-AB12CD34EF", "consent": true }
+```
+
+- **Nothing loads before an answer.** Google's script is not requested
+  at all until the reader agrees, so no cookie is set and nothing is
+  sent.
+- **Agree and Decline**, side by side and alike, in a small banner above
+  the page controls; the book can be read while it shows.
+- **Asked once.** The answer is kept in the reader's browser, so the
+  banner does not come back on the next page or visit.
+- **The answer can be changed.** A **Cookie settings** button in the
+  page footer opens the banner again. Declining after agreeing switches
+  Google Analytics off and removes its `_ga` cookies.
+- After Agree, the page the reader is on is counted, then each chapter
+  they move to, as described above. After Decline, nothing is ever
+  sent.
+
+The banner's words follow the book's language (Burmese for `my` books,
+English for `en`); change them under
+[`strings.consent`](configuration.md#strings):
+
+```json
+"strings": {
+  "consent": {
+    "message": "We would like to count our readers with Google Analytics, which sets cookies.",
+    "agree": "Agree",
+    "decline": "No thanks",
+    "settings": "Cookie settings"
+  }
+}
+```
+
+`consent` exists for Google Analytics only: the other services set no
+cookies. A reader whose browser blocks scripts sees no banner and is
+never counted.
 
 ## Blocked scripts
 

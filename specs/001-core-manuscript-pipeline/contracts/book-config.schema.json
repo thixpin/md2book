@@ -99,6 +99,10 @@
             "id": {
               "type": "string",
               "pattern": "^G-[A-Z0-9]{4,}$"
+            },
+            "consent": {
+              "type": "boolean",
+              "description": "Ask readers first: Google Analytics loads only after they agree in a consent banner."
             }
           },
           "required": [
@@ -351,6 +355,24 @@
               "type": "string"
             }
           }
+        },
+        "consent": {
+          "type": "object",
+          "properties": {
+            "message": {
+              "type": "string"
+            },
+            "agree": {
+              "type": "string"
+            },
+            "decline": {
+              "type": "string"
+            },
+            "settings": {
+              "type": "string"
+            }
+          },
+          "description": "The web edition's consent banner (web_analytics.consent)."
         },
         "licence_text": {
           "type": "string"

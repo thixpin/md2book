@@ -16,6 +16,8 @@ export const webAnalyticsSchema = z.discriminatedUnion("provider", [
       /^G-[A-Z0-9]{4,}$/,
       "must be a Google Analytics measurement id like G-XXXXXXXXXX",
     ),
+    // Ask readers first: Google Analytics loads only after they agree (spec: docs/analytics.md).
+    consent: z.boolean().optional(),
   }),
   z.object({
     provider: z.literal("plausible"),
@@ -46,6 +48,9 @@ const stringsSchema = z
       .object({ cover: z.string(), contents: z.string(), back_cover: z.string() })
       .partial(),
     callout_titles: z.object({ note: z.string(), warning: z.string(), try: z.string() }).partial(),
+    consent: z
+      .object({ message: z.string(), agree: z.string(), decline: z.string(), settings: z.string() })
+      .partial(),
     licence_text: z.string(),
     typeface_line: z.string(),
     storage_prefix: nonEmpty,

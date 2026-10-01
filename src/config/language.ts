@@ -12,6 +12,8 @@ export interface SeriesStrings {
   contents_heading: string;
   page_names: { cover: string; contents: string; back_cover: string };
   callout_titles: { note: string; warning: string; try: string };
+  /** The web edition's consent banner for Google Analytics (`web_analytics.consent`). */
+  consent: { message: string; agree: string; decline: string; settings: string };
   licence_text: string;
   typeface_line: string;
   storage_prefix: string;
@@ -31,10 +33,32 @@ const CC_LICENCE =
 
 const PROFILES: Record<
   Language,
-  Pick<SeriesStrings, "chapter_label" | "chapter_digits" | "contents_heading">
+  Pick<SeriesStrings, "chapter_label" | "chapter_digits" | "contents_heading" | "consent">
 > = {
-  my: { chapter_label: "အခန်း", chapter_digits: "myanmar", contents_heading: "မာတိကာ" },
-  en: { chapter_label: "Chapter", chapter_digits: "ascii", contents_heading: "Contents" },
+  my: {
+    chapter_label: "အခန်း",
+    chapter_digits: "myanmar",
+    contents_heading: "မာတိကာ",
+    consent: {
+      message:
+        "စာဖတ်သူ အရေအတွက်ကို သိရှိနိုင်ရန် ဤဆိုက်တွင် cookie သုံးသော Google Analytics ကို အသုံးပြုလိုပါသည်။",
+      agree: "သဘောတူသည်",
+      decline: "ငြင်းပယ်သည်",
+      settings: "Cookie ဆက်တင်",
+    },
+  },
+  en: {
+    chapter_label: "Chapter",
+    chapter_digits: "ascii",
+    contents_heading: "Contents",
+    consent: {
+      message:
+        "This site would like to use Google Analytics, which sets cookies, to count its readers.",
+      agree: "Agree",
+      decline: "Decline",
+      settings: "Cookie settings",
+    },
+  },
 };
 
 export function fontSetId(language: Language, style: FontStyle): `${Language}-${FontStyle}` {

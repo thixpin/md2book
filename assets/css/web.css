@@ -493,3 +493,22 @@ pre { line-height: 1.7; }
    screen and is not zoomed in, the book keeps every swipe on it (web-reader.js sets the class),
    so a slanted thumb swipe is not taken as a scroll; pinch-zoom still works. */
 .reader-window.is-swipe-only { touch-action: pinch-zoom; }
+
+/* md2book addition (specs/decision-log.md): the consent banner for Google Analytics
+   (web_analytics.consent), built by the analytics script. A slim card above the page controls,
+   so reading goes on; Agree and Decline look the same, so neither is pushed. */
+.md2book-consent { position: fixed; left: 50%; translate: -50% 0; z-index: 30;
+  width: min(36rem, calc(100vw - 1.5rem)); box-sizing: border-box; display: flex;
+  flex-wrap: wrap; align-items: center; gap: .6rem 1rem; padding: .8rem 1rem;
+  background: var(--paper); color: var(--ink); border: 1px solid var(--rule);
+  border-radius: 12px; box-shadow: 0 8px 28px rgb(20 28 40 / 18%); font-size: .9rem; }
+.md2book-consent[hidden] { display: none; }
+.md2book-consent p { flex: 1 1 16rem; margin: 0; line-height: 1.6; }
+.md2book-consent div { display: flex; gap: .5rem; margin-left: auto; }
+.md2book-consent button { font: inherit; padding: .45rem 1rem; border-radius: 8px;
+  border: 1px solid var(--accent); background: var(--paper); color: var(--accent);
+  cursor: pointer; }
+.md2book-consent button:hover, .md2book-consent button:focus-visible {
+  background: var(--accent); color: var(--paper); }
+.md2book-consent-settings { font: inherit; padding: 0; border: 0; background: none;
+  color: inherit; text-decoration: underline; cursor: pointer; }

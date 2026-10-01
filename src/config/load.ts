@@ -229,6 +229,7 @@ function mergeStrings(
     ...explicit,
     page_names: { ...defaults.page_names, ...explicit.page_names },
     callout_titles: { ...defaults.callout_titles, ...explicit.callout_titles },
+    consent: { ...defaults.consent, ...explicit.consent },
   };
 }
 

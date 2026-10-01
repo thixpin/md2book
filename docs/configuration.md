@@ -282,16 +282,17 @@ A key set under both its old and its new name stops the command.
 `strings` overrides the words md2book puts on the page. Every key is
 optional; the defaults follow `language`.
 
-| Key                | `my` default                                                         | `en` default |
-| ------------------ | -------------------------------------------------------------------- | ------------ |
-| `chapter_label`    | `အခန်း`                                                              | `Chapter`    |
-| `chapter_digits`   | `myanmar`                                                            | `ascii`      |
-| `contents_heading` | `မာတိကာ`                                                             | `Contents`   |
-| `page_names`       | `cover`: `Cover`, `contents`: `Contents`, `back_cover`: `Back cover` | same         |
-| `callout_titles`   | `note`: `Note`, `warning`: `Warning`, `try`: `Try it yourself`       | same         |
-| `licence_text`     | CC BY-NC-ND 4.0 notice                                               | same         |
-| `typeface_line`    | `Typeface: <body font family>`                                       | same         |
-| `storage_prefix`   | `devbook`                                                            | same         |
+| Key                | `my` default                                                                           | `en` default                                                                     |
+| ------------------ | -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| `chapter_label`    | `အခန်း`                                                                                | `Chapter`                                                                        |
+| `chapter_digits`   | `myanmar`                                                                              | `ascii`                                                                          |
+| `contents_heading` | `မာတိကာ`                                                                               | `Contents`                                                                       |
+| `page_names`       | `cover`: `Cover`, `contents`: `Contents`, `back_cover`: `Back cover`                   | same                                                                             |
+| `callout_titles`   | `note`: `Note`, `warning`: `Warning`, `try`: `Try it yourself`                         | same                                                                             |
+| `consent`          | `message`, `agree`: `သဘောတူသည်`, `decline`: `ငြင်းပယ်သည်`, `settings`: `Cookie ဆက်တင်` | `message`, `agree`: `Agree`, `decline`: `Decline`, `settings`: `Cookie settings` |
+| `licence_text`     | CC BY-NC-ND 4.0 notice                                                                 | same                                                                             |
+| `typeface_line`    | `Typeface: <body font family>`                                                         | same                                                                             |
+| `storage_prefix`   | `devbook`                                                                              | same                                                                             |
 
 - `chapter_label` is the word chapter headings must start with, and
   `chapter_digits` how chapter and page numbers are written (`myanmar`

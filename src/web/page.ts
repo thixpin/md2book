@@ -57,7 +57,7 @@ export function page(config: BookConfig, options: PageOptions): string {
 <meta name="description" content="${esc(description)}">
 <meta name="generator" content="md2book">
 ${social}
-${preload}<link rel="stylesheet" href="${root}/${stylesheet}">${icons}${path ? analyticsHead(config.web_analytics) : ""}</head>
+${preload}<link rel="stylesheet" href="${root}/${stylesheet}">${icons}${path ? analyticsHead(config.web_analytics, config.strings) : ""}</head>
 <body><header class="site-header"><a href="${root}/" data-home><span class="site-title">${esc(config.title)}</span>
 <span class="site-subtitle">${esc(config.subtitle ?? "")}</span></a>${headerTools}</header>
 <main>${content}</main><footer class="footer">${esc(config.author)}</footer>
